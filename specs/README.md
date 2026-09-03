@@ -100,10 +100,10 @@ Grouped by folder. Slug is the stable id; the name links to the file.
 
 ### Phone validation
 
-| Slug                           | Spec                                                                        |
-| ------------------------------ | --------------------------------------------------------------------------- |
-| `phone-number-validation`      | [Phone Validation](phone-validation/phone-number-validation.json)           |
-| `bulk-phone-number-validation` | [Bulk Phone Validation](phone-validation/bulk-phone-number-validation.json) |
+| Slug                           | Spec                                                                               |
+| ------------------------------ | ---------------------------------------------------------------------------------- |
+| `phone-validation`             | [Phone Validation](phone-number-validation/phone-validation.json)                  |
+| `bulk-phone-number-validation` | [Bulk Phone Validation](phone-number-validation/bulk-phone-number-validation.json) |
 
 ### SSL
 
@@ -133,12 +133,12 @@ Grouped by folder. Slug is the stable id; the name links to the file.
 | Slug                         | Spec                                                          |
 | ---------------------------- | ------------------------------------------------------------- |
 | `merge-pdf`                  | [Merge](pdf/merge-pdf.json)                                   |
-| `pdf-split-pages`            | [Split](pdf/pdf-split-pages.json)                             |
+| `split-pdf`                  | [Split](pdf/split-pdf.json)                                   |
 | `pdf-extract-pages`          | [Extract Pages](pdf/pdf-extract-pages.json)                   |
 | `delete-pdf-page`            | [Remove Pages](pdf/delete-pdf-page.json)                      |
 | `pdf-to-image`               | [Convert to Image](pdf/pdf-to-image.json)                     |
 | `pdf-generator`              | [Generate from Template](pdf/pdf-generator.json)              |
-| `bulk-pdf-generator`         | [Bulk Generate from CSV](pdf/bulk-pdf-generator.json)         |
+| `pdf-generator-bulk`         | [Bulk Generate from CSV](pdf/pdf-generator-bulk.json)         |
 | `pdf-compress`               | [Compress](pdf/pdf-compress.json)                             |
 | `rotate-pdf-pages`           | [Rotate](pdf/rotate-pdf-pages.json)                           |
 | `pdf-encrypt`                | [Encrypt](pdf/pdf-encrypt.json)                               |

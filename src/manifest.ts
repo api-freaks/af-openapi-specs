@@ -51,29 +51,29 @@ import _s46 from '../specs/ip-intelligence/bulk-ip-lookup.json' with { type: 'js
 import _s47 from '../specs/ip-intelligence/bulk-ip-threat-intelligence.json' with { type: 'json' };
 import _s48 from '../specs/ip-intelligence/ip-locator.json' with { type: 'json' };
 import _s49 from '../specs/ip-intelligence/ip-threat-intelligence.json' with { type: 'json' };
-import _s50 from '../specs/pdf/bulk-pdf-generator.json' with { type: 'json' };
-import _s51 from '../specs/pdf/delete-pdf-page.json' with { type: 'json' };
-import _s52 from '../specs/pdf/linearize-pdf.json' with { type: 'json' };
-import _s53 from '../specs/pdf/merge-pdf.json' with { type: 'json' };
-import _s54 from '../specs/pdf/pdf-compress.json' with { type: 'json' };
-import _s55 from '../specs/pdf/pdf-decrypt.json' with { type: 'json' };
-import _s56 from '../specs/pdf/pdf-encrypt.json' with { type: 'json' };
-import _s57 from '../specs/pdf/pdf-extract-pages.json' with { type: 'json' };
-import _s58 from '../specs/pdf/pdf-file-status.json' with { type: 'json' };
-import _s59 from '../specs/pdf/pdf-file.json' with { type: 'json' };
-import _s60 from '../specs/pdf/pdf-files.json' with { type: 'json' };
+import _s50 from '../specs/pdf/delete-pdf-page.json' with { type: 'json' };
+import _s51 from '../specs/pdf/linearize-pdf.json' with { type: 'json' };
+import _s52 from '../specs/pdf/merge-pdf.json' with { type: 'json' };
+import _s53 from '../specs/pdf/pdf-compress.json' with { type: 'json' };
+import _s54 from '../specs/pdf/pdf-decrypt.json' with { type: 'json' };
+import _s55 from '../specs/pdf/pdf-encrypt.json' with { type: 'json' };
+import _s56 from '../specs/pdf/pdf-extract-pages.json' with { type: 'json' };
+import _s57 from '../specs/pdf/pdf-file-status.json' with { type: 'json' };
+import _s58 from '../specs/pdf/pdf-file.json' with { type: 'json' };
+import _s59 from '../specs/pdf/pdf-files.json' with { type: 'json' };
+import _s60 from '../specs/pdf/pdf-generator-bulk.json' with { type: 'json' };
 import _s61 from '../specs/pdf/pdf-generator.json' with { type: 'json' };
 import _s62 from '../specs/pdf/pdf-resource-download.json' with { type: 'json' };
 import _s63 from '../specs/pdf/pdf-resource-upload-binary.json' with { type: 'json' };
 import _s64 from '../specs/pdf/pdf-resource-upload.json' with { type: 'json' };
 import _s65 from '../specs/pdf/pdf-restrict.json' with { type: 'json' };
-import _s66 from '../specs/pdf/pdf-split-pages.json' with { type: 'json' };
-import _s67 from '../specs/pdf/pdf-task-status.json' with { type: 'json' };
-import _s68 from '../specs/pdf/pdf-to-image.json' with { type: 'json' };
-import _s69 from '../specs/pdf/pdf-unrestrict.json' with { type: 'json' };
-import _s70 from '../specs/pdf/rotate-pdf-pages.json' with { type: 'json' };
-import _s71 from '../specs/phone-validation/bulk-phone-number-validation.json' with { type: 'json' };
-import _s72 from '../specs/phone-validation/phone-number-validation.json' with { type: 'json' };
+import _s66 from '../specs/pdf/pdf-task-status.json' with { type: 'json' };
+import _s67 from '../specs/pdf/pdf-to-image.json' with { type: 'json' };
+import _s68 from '../specs/pdf/pdf-unrestrict.json' with { type: 'json' };
+import _s69 from '../specs/pdf/rotate-pdf-pages.json' with { type: 'json' };
+import _s70 from '../specs/pdf/split-pdf.json' with { type: 'json' };
+import _s71 from '../specs/phone-number-validation/bulk-phone-number-validation.json' with { type: 'json' };
+import _s72 from '../specs/phone-number-validation/phone-validation.json' with { type: 'json' };
 import _s73 from '../specs/scraper/web-scraper.json' with { type: 'json' };
 import _s74 from '../specs/screenshot/bulk-screenshot.json' with { type: 'json' };
 import _s75 from '../specs/screenshot/website-screenshot.json' with { type: 'json' };
@@ -157,29 +157,29 @@ export const SPECS: Record<string, OpenAPISpec> = {
   'bulk-ip-threat-intelligence': _s47 as OpenAPISpec,
   'ip-locator': _s48 as OpenAPISpec,
   'ip-threat-intelligence': _s49 as OpenAPISpec,
-  'bulk-pdf-generator': _s50 as OpenAPISpec,
-  'delete-pdf-page': _s51 as OpenAPISpec,
-  'linearize-pdf': _s52 as OpenAPISpec,
-  'merge-pdf': _s53 as OpenAPISpec,
-  'pdf-compress': _s54 as OpenAPISpec,
-  'pdf-decrypt': _s55 as OpenAPISpec,
-  'pdf-encrypt': _s56 as OpenAPISpec,
-  'pdf-extract-pages': _s57 as OpenAPISpec,
-  'pdf-file-status': _s58 as OpenAPISpec,
-  'pdf-file': _s59 as OpenAPISpec,
-  'pdf-files': _s60 as OpenAPISpec,
+  'delete-pdf-page': _s50 as OpenAPISpec,
+  'linearize-pdf': _s51 as OpenAPISpec,
+  'merge-pdf': _s52 as OpenAPISpec,
+  'pdf-compress': _s53 as OpenAPISpec,
+  'pdf-decrypt': _s54 as OpenAPISpec,
+  'pdf-encrypt': _s55 as OpenAPISpec,
+  'pdf-extract-pages': _s56 as OpenAPISpec,
+  'pdf-file-status': _s57 as OpenAPISpec,
+  'pdf-file': _s58 as OpenAPISpec,
+  'pdf-files': _s59 as OpenAPISpec,
+  'pdf-generator-bulk': _s60 as OpenAPISpec,
   'pdf-generator': _s61 as OpenAPISpec,
   'pdf-resource-download': _s62 as OpenAPISpec,
   'pdf-resource-upload-binary': _s63 as OpenAPISpec,
   'pdf-resource-upload': _s64 as OpenAPISpec,
   'pdf-restrict': _s65 as OpenAPISpec,
-  'pdf-split-pages': _s66 as OpenAPISpec,
-  'pdf-task-status': _s67 as OpenAPISpec,
-  'pdf-to-image': _s68 as OpenAPISpec,
-  'pdf-unrestrict': _s69 as OpenAPISpec,
-  'rotate-pdf-pages': _s70 as OpenAPISpec,
+  'pdf-task-status': _s66 as OpenAPISpec,
+  'pdf-to-image': _s67 as OpenAPISpec,
+  'pdf-unrestrict': _s68 as OpenAPISpec,
+  'rotate-pdf-pages': _s69 as OpenAPISpec,
+  'split-pdf': _s70 as OpenAPISpec,
   'bulk-phone-number-validation': _s71 as OpenAPISpec,
-  'phone-number-validation': _s72 as OpenAPISpec,
+  'phone-validation': _s72 as OpenAPISpec,
   'web-scraper': _s73 as OpenAPISpec,
   'bulk-screenshot': _s74 as OpenAPISpec,
   'website-screenshot': _s75 as OpenAPISpec,
@@ -213,9 +213,9 @@ export const SPECS: Record<string, OpenAPISpec> = {
   'zip-codes-radius-search': _s103 as OpenAPISpec,
 };
 
-export const SPEC_SLUGS: string[] = ['usage-credits', 'commodity-fluctuation', 'commodity-prices', 'commodity-symbols', 'commodity-time-series', 'historical-commodity-prices', 'currency-converter', 'currency-fluctuation', 'currency-historical-data-limit', 'currency-rate', 'currency-supported', 'currency-symbols', 'currency-time-series', 'geolocalized-currency-conversion', 'historical-currency-converter', 'historical-currency-rate', 'bulk-dns-lookup', 'dns-history-lookup', 'dns-lookup', 'reverse-dns-lookup', 'bulk-domain-checker', 'domain-search-with-suggestions', 'domain-search', 'subdomain-lookup', 'bulk-email-validation', 'email-checker', 'bulk-vat-rates-country', 'financial-apis-supported-countries', 'iban-validation', 'swift-code-finder', 'swift-code-lookup', 'vat-number-validation', 'vat-rates-by-ip', 'vat-rates-country', 'forward-geocoding', 'reverse-geocoding', 'administrative-units-details', 'administrative-units-levels', 'administrative-units', 'cities', 'countries-details', 'countries', 'flags-supported', 'flags', 'regions', 'subregions', 'bulk-ip-lookup', 'bulk-ip-threat-intelligence', 'ip-locator', 'ip-threat-intelligence', 'bulk-pdf-generator', 'delete-pdf-page', 'linearize-pdf', 'merge-pdf', 'pdf-compress', 'pdf-decrypt', 'pdf-encrypt', 'pdf-extract-pages', 'pdf-file-status', 'pdf-file', 'pdf-files', 'pdf-generator', 'pdf-resource-download', 'pdf-resource-upload-binary', 'pdf-resource-upload', 'pdf-restrict', 'pdf-split-pages', 'pdf-task-status', 'pdf-to-image', 'pdf-unrestrict', 'rotate-pdf-pages', 'bulk-phone-number-validation', 'phone-number-validation', 'web-scraper', 'bulk-screenshot', 'website-screenshot', 'ssl-certificate-chain-lookup', 'ssl-certificate-lookup', 'timezone-converter', 'timezone-lookup', 'bulk-user-agent-parser', 'user-agent-parser', 'air-quality', 'astronomy-data', 'bulk-live-weather', 'flood-forecast', 'historical-weather', 'live-weather', 'marine-weather', 'time-series-weather', 'weather-forecast', 'asn-lookup', 'bulk-whois-lookup', 'domain-whois-history-lookup', 'reverse-whois', 'whois-domain-lookup', 'whois-ip-lookup', 'bulk-zip-code-lookup', 'zip-code-api', 'zip-code-distance-match', 'zip-code-distance', 'zip-codes-by-city', 'zip-codes-by-region', 'zip-codes-radius-search'];
+export const SPEC_SLUGS: string[] = ['usage-credits', 'commodity-fluctuation', 'commodity-prices', 'commodity-symbols', 'commodity-time-series', 'historical-commodity-prices', 'currency-converter', 'currency-fluctuation', 'currency-historical-data-limit', 'currency-rate', 'currency-supported', 'currency-symbols', 'currency-time-series', 'geolocalized-currency-conversion', 'historical-currency-converter', 'historical-currency-rate', 'bulk-dns-lookup', 'dns-history-lookup', 'dns-lookup', 'reverse-dns-lookup', 'bulk-domain-checker', 'domain-search-with-suggestions', 'domain-search', 'subdomain-lookup', 'bulk-email-validation', 'email-checker', 'bulk-vat-rates-country', 'financial-apis-supported-countries', 'iban-validation', 'swift-code-finder', 'swift-code-lookup', 'vat-number-validation', 'vat-rates-by-ip', 'vat-rates-country', 'forward-geocoding', 'reverse-geocoding', 'administrative-units-details', 'administrative-units-levels', 'administrative-units', 'cities', 'countries-details', 'countries', 'flags-supported', 'flags', 'regions', 'subregions', 'bulk-ip-lookup', 'bulk-ip-threat-intelligence', 'ip-locator', 'ip-threat-intelligence', 'delete-pdf-page', 'linearize-pdf', 'merge-pdf', 'pdf-compress', 'pdf-decrypt', 'pdf-encrypt', 'pdf-extract-pages', 'pdf-file-status', 'pdf-file', 'pdf-files', 'pdf-generator-bulk', 'pdf-generator', 'pdf-resource-download', 'pdf-resource-upload-binary', 'pdf-resource-upload', 'pdf-restrict', 'pdf-task-status', 'pdf-to-image', 'pdf-unrestrict', 'rotate-pdf-pages', 'split-pdf', 'bulk-phone-number-validation', 'phone-validation', 'web-scraper', 'bulk-screenshot', 'website-screenshot', 'ssl-certificate-chain-lookup', 'ssl-certificate-lookup', 'timezone-converter', 'timezone-lookup', 'bulk-user-agent-parser', 'user-agent-parser', 'air-quality', 'astronomy-data', 'bulk-live-weather', 'flood-forecast', 'historical-weather', 'live-weather', 'marine-weather', 'time-series-weather', 'weather-forecast', 'asn-lookup', 'bulk-whois-lookup', 'domain-whois-history-lookup', 'reverse-whois', 'whois-domain-lookup', 'whois-ip-lookup', 'bulk-zip-code-lookup', 'zip-code-api', 'zip-code-distance-match', 'zip-code-distance', 'zip-codes-by-city', 'zip-codes-by-region', 'zip-codes-radius-search'];
 
-export const SPEC_CATEGORIES: string[] = ['billing', 'commodity', 'currency', 'dns', 'domain', 'email-validation', 'financial', 'geocoding', 'geography', 'ip-intelligence', 'pdf', 'phone-validation', 'scraper', 'screenshot', 'ssl', 'timezone', 'user-agent', 'weather', 'whois', 'zip-code'];
+export const SPEC_CATEGORIES: string[] = ['billing', 'commodity', 'currency', 'dns', 'domain', 'email-validation', 'financial', 'geocoding', 'geography', 'ip-intelligence', 'pdf', 'phone-number-validation', 'scraper', 'screenshot', 'ssl', 'timezone', 'user-agent', 'weather', 'whois', 'zip-code'];
 
 export const SPECS_BY_CATEGORY: Record<string, string[]> = {
   'billing': ['usage-credits'],
@@ -228,8 +228,8 @@ export const SPECS_BY_CATEGORY: Record<string, string[]> = {
   'geocoding': ['forward-geocoding', 'reverse-geocoding'],
   'geography': ['administrative-units-details', 'administrative-units-levels', 'administrative-units', 'cities', 'countries-details', 'countries', 'flags-supported', 'flags', 'regions', 'subregions'],
   'ip-intelligence': ['bulk-ip-lookup', 'bulk-ip-threat-intelligence', 'ip-locator', 'ip-threat-intelligence'],
-  'pdf': ['bulk-pdf-generator', 'delete-pdf-page', 'linearize-pdf', 'merge-pdf', 'pdf-compress', 'pdf-decrypt', 'pdf-encrypt', 'pdf-extract-pages', 'pdf-file-status', 'pdf-file', 'pdf-files', 'pdf-generator', 'pdf-resource-download', 'pdf-resource-upload-binary', 'pdf-resource-upload', 'pdf-restrict', 'pdf-split-pages', 'pdf-task-status', 'pdf-to-image', 'pdf-unrestrict', 'rotate-pdf-pages'],
-  'phone-validation': ['bulk-phone-number-validation', 'phone-number-validation'],
+  'pdf': ['delete-pdf-page', 'linearize-pdf', 'merge-pdf', 'pdf-compress', 'pdf-decrypt', 'pdf-encrypt', 'pdf-extract-pages', 'pdf-file-status', 'pdf-file', 'pdf-files', 'pdf-generator-bulk', 'pdf-generator', 'pdf-resource-download', 'pdf-resource-upload-binary', 'pdf-resource-upload', 'pdf-restrict', 'pdf-task-status', 'pdf-to-image', 'pdf-unrestrict', 'rotate-pdf-pages', 'split-pdf'],
+  'phone-number-validation': ['bulk-phone-number-validation', 'phone-validation'],
   'scraper': ['web-scraper'],
   'screenshot': ['bulk-screenshot', 'website-screenshot'],
   'ssl': ['ssl-certificate-chain-lookup', 'ssl-certificate-lookup'],
@@ -258,7 +258,6 @@ export const SpecSlug = {
   BULK_IP_LOOKUP: 'bulk-ip-lookup',
   BULK_IP_THREAT_INTELLIGENCE: 'bulk-ip-threat-intelligence',
   BULK_LIVE_WEATHER: 'bulk-live-weather',
-  BULK_PDF_GENERATOR: 'bulk-pdf-generator',
   BULK_PHONE_NUMBER_VALIDATION: 'bulk-phone-number-validation',
   BULK_SCREENSHOT: 'bulk-screenshot',
   BULK_USER_AGENT_PARSER: 'bulk-user-agent-parser',
@@ -311,20 +310,21 @@ export const SpecSlug = {
   PDF_FILE_STATUS: 'pdf-file-status',
   PDF_FILES: 'pdf-files',
   PDF_GENERATOR: 'pdf-generator',
+  PDF_GENERATOR_BULK: 'pdf-generator-bulk',
   PDF_RESOURCE_DOWNLOAD: 'pdf-resource-download',
   PDF_RESOURCE_UPLOAD: 'pdf-resource-upload',
   PDF_RESOURCE_UPLOAD_BINARY: 'pdf-resource-upload-binary',
   PDF_RESTRICT: 'pdf-restrict',
-  PDF_SPLIT_PAGES: 'pdf-split-pages',
   PDF_TASK_STATUS: 'pdf-task-status',
   PDF_TO_IMAGE: 'pdf-to-image',
   PDF_UNRESTRICT: 'pdf-unrestrict',
-  PHONE_NUMBER_VALIDATION: 'phone-number-validation',
+  PHONE_VALIDATION: 'phone-validation',
   REGIONS: 'regions',
   REVERSE_DNS_LOOKUP: 'reverse-dns-lookup',
   REVERSE_GEOCODING: 'reverse-geocoding',
   REVERSE_WHOIS: 'reverse-whois',
   ROTATE_PDF_PAGES: 'rotate-pdf-pages',
+  SPLIT_PDF: 'split-pdf',
   SSL_CERTIFICATE_CHAIN_LOOKUP: 'ssl-certificate-chain-lookup',
   SSL_CERTIFICATE_LOOKUP: 'ssl-certificate-lookup',
   SUBDOMAIN_LOOKUP: 'subdomain-lookup',
@@ -369,7 +369,7 @@ export const SpecCategory = {
   GEOGRAPHY: 'geography',
   IP_INTELLIGENCE: 'ip-intelligence',
   PDF: 'pdf',
-  PHONE_VALIDATION: 'phone-validation',
+  PHONE_NUMBER_VALIDATION: 'phone-number-validation',
   SCRAPER: 'scraper',
   SCREENSHOT: 'screenshot',
   SSL: 'ssl',
