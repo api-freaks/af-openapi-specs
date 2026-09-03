@@ -1,6 +1,12 @@
-import { readdirSync, writeFileSync, statSync } from "node:fs";
+import {
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+  statSync,
+} from "node:fs";
 import { join, basename, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { toYaml } from "./yaml.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const specsDir = join(__dirname, "..", "specs");
@@ -61,6 +67,13 @@ const specEntries = specs.map((s, i) => {
 
 const slugs = specs.map((s) => `'${s.slug}'`);
 
+const yamlEntries = specs.map((s) => {
+  const parsed = JSON.parse(
+    readFileSync(join(specsDir, s.relPath), "utf-8"),
+  );
+  return `  '${s.slug}': ${JSON.stringify(toYaml(parsed))},`;
+});
+
 const categories = [...new Set(specs.map((s) => s.category))].sort();
 
 const categoryEntries = categories.map((cat) => {
@@ -90,6 +103,14 @@ ${specEntries.join("\n")}
 };
 
 export const SPEC_SLUGS: string[] = [${slugs.join(", ")}];
+
+/**
+ * YAML text for each spec, pre-rendered at build time so consumers never
+ * pay a runtime YAML-dump cost.
+ */
+export const SPECS_YAML: Record<string, string> = {
+${yamlEntries.join("\n")}
+};
 
 export const SPEC_CATEGORIES: string[] = [${categories.map((c) => `'${c}'`).join(", ")}];
 

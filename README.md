@@ -23,17 +23,21 @@ Importing anything from `@apifreaks/openapi-specs` (the package entry) loads eve
 
 ```ts
 import {
-  getSpec,
+  getSpecJson,
+  getSpecYaml,
   getSpecsByCategory,
   SpecSlug,
   SpecCategory,
 } from "@apifreaks/openapi-specs";
 
-const spec = getSpec(SpecSlug.IP_LOCATOR);
+const spec = getSpecJson(SpecSlug.IP_LOCATOR);
+const yaml = getSpecYaml(SpecSlug.IP_LOCATOR);
 const ipSlugs = getSpecsByCategory(SpecCategory.IP_INTELLIGENCE);
 ```
 
-`SpecSlug` and `SpecCategory` are generated from `specs/`. If you write `SpecSlug.IP_LOCATOR` and that file is later renamed or removed, TypeScript fails at compile time. Raw strings (`getSpec("ip-locator")`) still typecheck; unknown slugs return `undefined` at runtime. Unknown categories return `[]`.
+`SpecSlug` and `SpecCategory` are generated from `specs/`. If you write `SpecSlug.IP_LOCATOR` and that file is later renamed or removed, TypeScript fails at compile time. Raw strings (`getSpecJson("ip-locator")`) still typecheck; unknown slugs return `undefined` at runtime. Unknown categories return `[]`.
+
+`getSpec` is a deprecated alias for `getSpecJson` and will be removed in the next major version.
 
 ### Single spec
 
@@ -43,12 +47,12 @@ JSON is published from `specs/`. TypeScript JSON imports need `"resolveJsonModul
 import ipLocator from "@apifreaks/openapi-specs/specs/ip-intelligence/ip-locator.json";
 ```
 
-YAML copies are generated at build time into `dist/specs/` (not in the GitHub `specs/` folder). They are files on disk after install. Node cannot import `.yaml` as a module; use the JSON import or `getSpec`.
+YAML copies are also generated at build time into `dist/specs/` (not in the GitHub `specs/` folder) and published as files, but the YAML text is also embedded in the manifest — reading it through `getSpecYaml(slug)` at runtime, rather than importing the `.yaml` file, works from any module system (Node can't `import` `.yaml`) and needs no filesystem access.
 
 ### CommonJS
 
 ```js
-const { getSpec, SpecSlug } = require("@apifreaks/openapi-specs");
+const { getSpecJson, getSpecYaml, SpecSlug } = require("@apifreaks/openapi-specs");
 ```
 
 ## Exports
@@ -57,13 +61,16 @@ Importing any of these from `@apifreaks/openapi-specs` loads every spec.
 
 | Export | Type | Description |
 | ------ | ---- | ----------- |
-| `getSpec(slug)` | `(string) => OpenAPISpec \| undefined` | Spec object for a slug |
+| `getSpecJson(slug)` | `(string) => OpenAPISpec \| undefined` | Spec object for a slug |
+| `getSpecYaml(slug)` | `(string) => string \| undefined` | Pre-rendered YAML text for a slug |
+| `getSpec(slug)` | `(string) => OpenAPISpec \| undefined` | **Deprecated.** Alias for `getSpecJson`, removed in the next major version |
 | `getSpecsByCategory(category)` | `(string) => string[]` | Slugs in a category, or `[]` |
 | `SpecSlug` | `{ IP_LOCATOR: "ip-locator", … }` | Enumerated slugs |
 | `SpecCategory` | `{ IP_INTELLIGENCE: "ip-intelligence", … }` | Enumerated categories |
 | `SPEC_SLUGS` | `string[]` | All slugs |
 | `SPEC_CATEGORIES` | `string[]` | All category names |
 | `SPECS` | `Record<string, OpenAPISpec>` | Spec objects keyed by slug |
+| `SPECS_YAML` | `Record<string, string>` | Pre-rendered YAML text keyed by slug |
 | `SPECS_BY_CATEGORY` | `Record<string, string[]>` | Slugs grouped by category |
 
 ```ts
@@ -85,8 +92,9 @@ src/
   types.ts                 # OpenAPISpec
   manifest.ts              # AUTO-GENERATED. Do not edit.
 scripts/
-  generate-manifest.ts     # Walks specs/, writes src/manifest.ts
-  generate-yaml.ts         # JSON → dist/specs/**/*.yaml
+  generate-manifest.ts     # Walks specs/, writes src/manifest.ts (embeds JSON + YAML)
+  generate-yaml.ts         # JSON → dist/specs/**/*.yaml (published files)
+  yaml.ts                  # Shared JSON->YAML dump used by both scripts
 test/
   validate.test.ts         # JSON well-formedness; YAML round-trip after build
 ```
@@ -99,7 +107,7 @@ npm run typecheck
 npm test
 ```
 
-`src/manifest.ts` is produced by `npm run generate`. It imports every spec and builds `SPECS`, `SPEC_SLUGS`, `SpecSlug`, and `SpecCategory`.
+`src/manifest.ts` is produced by `npm run generate`. It imports every spec and builds `SPECS`, `SPECS_YAML`, `SPEC_SLUGS`, `SpecSlug`, and `SpecCategory`.
 
 ### Adding a spec
 

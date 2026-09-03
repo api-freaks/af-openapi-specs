@@ -7,7 +7,7 @@ import {
 } from "node:fs";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { dump, load } from "js-yaml";
+import { toYaml } from "./yaml.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const specsDir = join(__dirname, "..", "specs");
@@ -31,10 +31,11 @@ const jsonFiles = walkJsonFiles(specsDir);
 for (const jsonPath of jsonFiles) {
   const relPath = relative(specsDir, jsonPath);
   const parsed = JSON.parse(readFileSync(jsonPath, "utf-8"));
-  const yaml = dump(parsed, { noRefs: true, lineWidth: -1 });
-
-  if (JSON.stringify(load(yaml)) !== JSON.stringify(parsed)) {
-    throw new Error(`YAML round-trip mismatch for ${relPath}`);
+  let yaml: string;
+  try {
+    yaml = toYaml(parsed);
+  } catch (err) {
+    throw new Error(`YAML round-trip mismatch for ${relPath}`, { cause: err });
   }
 
   const outPath = join(outDir, relPath.replace(/\.json$/, ".yaml"));
