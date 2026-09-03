@@ -1,6 +1,11 @@
 # @apifreaks/openapi-specs
 
-OpenAPI 3.1 specifications for all [APIFreaks](https://apifreaks.com) API products. Ships 104 production specs across 20 categories as typed JSON, importable as ESM, CJS, or raw JSON.
+[![npm](https://img.shields.io/npm/v/@apifreaks/openapi-specs.svg)](https://www.npmjs.com/package/@apifreaks/openapi-specs)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+npm package and source repo for the public [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.1.html) specifications of [APIFreaks](https://apifreaks.com) products.
+
+The specs (catalog, authentication, and how to open them in Swagger, Postman, or a code generator) are in **[specs/README.md](specs/README.md)**. This README is the package: install, the typed lookup API, and how the repo is built.
 
 ## Install
 
@@ -8,148 +13,112 @@ OpenAPI 3.1 specifications for all [APIFreaks](https://apifreaks.com) API produc
 npm install @apifreaks/openapi-specs
 ```
 
+Node.js 18 or later. ESM and CommonJS are both supported.
+
 ## Usage
 
-### Programmatic API
+Importing anything from `@apifreaks/openapi-specs` (the package entry) loads every spec. Use that when you need to list or look up specs at runtime. For a single product, import the JSON file (see below) so you do not go through that entry.
+
+### Lookup
 
 ```ts
 import {
   getSpec,
   getSpecsByCategory,
-  SPEC_SLUGS,
-  SPEC_CATEGORIES,
-  SPECS_BY_CATEGORY,
+  SpecSlug,
+  SpecCategory,
 } from "@apifreaks/openapi-specs";
 
-// Get a single spec by slug
-const spec = getSpec("ip-locator");
-
-// Get all slugs in a category
-const ipSlugs = getSpecsByCategory("ip-intelligence");
-
-// All available slugs
-console.log(SPEC_SLUGS); // ['ip-locator', 'dns-lookup', ...]
-
-// All categories
-console.log(SPEC_CATEGORIES); // ['currency', 'dns', 'ip-intelligence', ...]
-
-// All slugs grouped by category
-console.log(SPECS_BY_CATEGORY);
+const spec = getSpec(SpecSlug.IP_LOCATOR);
+const ipSlugs = getSpecsByCategory(SpecCategory.IP_INTELLIGENCE);
 ```
 
-### Direct JSON import (tree-shakable)
+`SpecSlug` and `SpecCategory` are generated from `specs/`. If you write `SpecSlug.IP_LOCATOR` and that file is later renamed or removed, TypeScript fails at compile time. Raw strings (`getSpec("ip-locator")`) still typecheck; unknown slugs return `undefined` at runtime. Unknown categories return `[]`.
+
+### Single spec
+
+JSON is published from `specs/`. TypeScript JSON imports need `"resolveJsonModule": true`.
 
 ```ts
 import ipLocator from "@apifreaks/openapi-specs/specs/ip-intelligence/ip-locator.json";
 ```
 
+YAML copies are generated at build time into `dist/specs/` (not in the GitHub `specs/` folder). They are files on disk after install. Node cannot import `.yaml` as a module; use the JSON import or `getSpec`.
+
 ### CommonJS
 
 ```js
-const { getSpec, SPEC_SLUGS } = require("@apifreaks/openapi-specs");
+const { getSpec, SpecSlug } = require("@apifreaks/openapi-specs");
 ```
 
-## API
+## Exports
 
-| Export                         | Type                                   | Description                                         |
-| ------------------------------ | -------------------------------------- | --------------------------------------------------- |
-| `getSpec(slug)`                | `(string) => OpenAPISpec \| undefined` | Returns the full spec object for a given slug       |
-| `getSpecsByCategory(category)` | `(string) => string[]`                 | Returns all slugs in a category, or `[]` if unknown |
-| `SPEC_SLUGS`                   | `string[]`                             | All 104 spec slugs                                  |
-| `SPEC_CATEGORIES`              | `string[]`                             | All 20 category names                               |
-| `SPECS`                        | `Record<string, OpenAPISpec>`          | Full spec objects keyed by slug                     |
-| `SPECS_BY_CATEGORY`            | `Record<string, string[]>`             | Slugs grouped by category                           |
+Importing any of these from `@apifreaks/openapi-specs` loads every spec.
 
-### Types
+| Export | Type | Description |
+| ------ | ---- | ----------- |
+| `getSpec(slug)` | `(string) => OpenAPISpec \| undefined` | Spec object for a slug |
+| `getSpecsByCategory(category)` | `(string) => string[]` | Slugs in a category, or `[]` |
+| `SpecSlug` | `{ IP_LOCATOR: "ip-locator", … }` | Enumerated slugs |
+| `SpecCategory` | `{ IP_INTELLIGENCE: "ip-intelligence", … }` | Enumerated categories |
+| `SPEC_SLUGS` | `string[]` | All slugs |
+| `SPEC_CATEGORIES` | `string[]` | All category names |
+| `SPECS` | `Record<string, OpenAPISpec>` | Spec objects keyed by slug |
+| `SPECS_BY_CATEGORY` | `Record<string, string[]>` | Slugs grouped by category |
 
 ```ts
-import type { OpenAPISpec } from "@apifreaks/openapi-specs";
-
-// OpenAPISpec has: openapi, info, servers?, paths?, components?, [key: string]
+import type {
+  OpenAPISpec,
+  SpecSlugValue,
+  SpecCategoryValue,
+} from "@apifreaks/openapi-specs";
 ```
 
-## Categories
-
-| Category           | Count | Description                                             |
-| ------------------ | ----- | ------------------------------------------------------- |
-| `billing`          | 1     | Usage and credits                                       |
-| `commodity`        | 5     | Commodity prices, symbols, time series                  |
-| `currency`         | 10    | Exchange rates, conversion, historical data             |
-| `dns`              | 4     | DNS lookup, reverse DNS, history                        |
-| `domain`           | 4     | Domain search, checker, subdomain lookup                |
-| `email-validation` | 2     | Email verification and bulk validation                  |
-| `financial`        | 8     | VAT rates, IBAN/SWIFT validation                        |
-| `geocoding`        | 2     | Forward and reverse geocoding                           |
-| `geography`        | 10    | Countries, cities, regions, flags, administrative units |
-| `ip-intelligence`  | 4     | IP geolocation, threat intelligence, bulk lookup        |
-| `pdf`              | 19    | PDF manipulation, conversion, encryption                |
-| `phone-validation` | 2     | Phone number validation                                 |
-| `scraper`          | 1     | Web scraping                                            |
-| `screenshot`       | 2     | Website screenshots                                     |
-| `ssl`              | 2     | SSL certificate lookup                                  |
-| `timezone`         | 2     | Timezone lookup and conversion                          |
-| `user-agent`       | 2     | User-agent parsing                                      |
-| `weather`          | 9     | Current, forecast, historical, marine weather, astronomy |
-| `whois`            | 6     | WHOIS lookup, ASN, reverse WHOIS                        |
-| `zip-code`         | 7     | Zip code lookup, distance, radius search                |
+`OpenAPISpec` is a typed envelope (`openapi`, `info`, `paths`, …), not a full OpenAPI 3.1 schema.
 
 ## Development
 
+```
+specs/                     # OpenAPI JSON. See specs/README.md
+src/
+  index.ts                 # Public API
+  types.ts                 # OpenAPISpec
+  manifest.ts              # AUTO-GENERATED. Do not edit.
+scripts/
+  generate-manifest.ts     # Walks specs/, writes src/manifest.ts
+  generate-yaml.ts         # JSON → dist/specs/**/*.yaml
+test/
+  validate.test.ts         # JSON well-formedness; YAML round-trip after build
+```
+
 ```bash
-# Install deps
 npm install
-
-# Generate manifest (auto-discovers specs/ and writes src/manifest.ts)
-npm run generate
-
-# Build (generate + tsup)
-npm run build
-
-# Typecheck
+npm run generate      # regenerate src/manifest.ts from specs/
+npm run build         # generate + bundle + YAML
 npm run typecheck
-
-# Test
 npm test
 ```
 
-### Project structure
+`src/manifest.ts` is produced by `npm run generate`. It imports every spec and builds `SPECS`, `SPEC_SLUGS`, `SpecSlug`, and `SpecCategory`.
 
-```
-specs/               # OpenAPI 3.1 JSON files, organized by category
-  currency/
-    currency-converter.json
-  ip-intelligence/
-    ip-locator.json
-  ...
-src/
-  index.ts           # Public API
-  manifest.ts        # AUTO-GENERATED — do not edit manually
-  types.ts           # OpenAPISpec type definition
-scripts/
-  generate-manifest.ts   # Reads specs/, writes src/manifest.ts
-test/
-  validate.test.ts   # Validates every spec is valid JSON + well-formed OpenAPI
-```
+### Adding a spec
 
-### Adding a new spec
+1. Add a complete OpenAPI 3.1 document at `specs/<category>/<slug>.json`. Use the same security schemes as the existing files: header `X-apiKey` and query `apiKey`.
+2. Run `npm run generate`. Do not edit `src/manifest.ts` by hand.
+3. Run `npm test`, then `npm run build`.
 
-1. Add the `.json` file under the appropriate category in `specs/`
-2. Run `npm run generate` to regenerate `src/manifest.ts`
-3. Run `npm test` to validate
-4. Run `npm run build` to rebuild the package
+## Maintainers
 
-`src/manifest.ts` is auto-generated and must not be edited by hand.
+`prepublishOnly` runs the build. The published tarball includes `dist/`, `specs/`, `package.json`, README, and LICENSE.
 
-## Publishing
-
-The package is built automatically before publish via `prepublishOnly`.
+Pushing a tag matching `v*` publishes to npm via GitHub Actions. The bump scripts **test, commit a version, tag, and push**; they will trigger that publish:
 
 ```bash
-npm publish --access public
+npm run bump:patch
+npm run bump:minor
+npm run bump:major
 ```
-
-The published package includes only `dist/` and `specs/`. Tests, scripts, and build configs are excluded.
 
 ## License
 
-MIT
+[MIT](LICENSE)
