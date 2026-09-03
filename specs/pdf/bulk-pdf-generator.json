@@ -246,8 +246,8 @@
       "ApiKeyAuthHeader": {
         "type": "apiKey",
         "in": "header",
-        "name": "X-apikey",
-        "description": "Pass your API key via the X-apikey request header."
+        "name": "X-apiKey",
+        "description": "Pass your API key via the X-apiKey request header."
       },
       "ApiKeyAuthQuery": {
         "type": "apiKey",
