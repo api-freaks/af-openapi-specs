@@ -8,7 +8,6 @@ import {
   SPECS,
   SPEC_CATEGORIES,
   SPECS_BY_CATEGORY,
-  getSpec,
   getSpecsByCategory,
 } from "../src/index.js";
 
@@ -96,13 +95,6 @@ describe("Category structure", () => {
           `SPECS_BY_CATEGORY['${cat}'] contains '${slug}' which should be in SPECS`,
         );
       }
-    }
-  });
-
-  it("getSpec works for all slugs", () => {
-    for (const slug of SPEC_SLUGS) {
-      const spec = getSpec(slug);
-      assert.ok(spec, `getSpec('${slug}') should return a spec`);
     }
   });
 

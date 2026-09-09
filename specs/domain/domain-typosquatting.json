@@ -1,0 +1,344 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Domain Typosquatting API - Find Typo and Look-Alike Domains for Brand Protection and Phishing Discovery",
+    "version": "1.0.0",
+    "description": "Search for registered domains that read like typo variants of a brand keyword, or that match a wildcard pattern, across the full TLD set. Each match returns what is available of its registration date, expiry date, last-seen date, and drop status, paginated at 100 domains per page. Built for brand and trademark protection, phishing discovery, scheduled monitoring, and domain reclaim.",
+    "contact": {
+      "name": "APIFreaks Support",
+      "url": "https://apifreaks.com/contact",
+      "email": "support@apifreaks.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.apifreaks.com/v1.0",
+      "description": "Domain Typosquatting API Server"
+    }
+  ],
+  "paths": {
+    "/domain/typosquatting": {
+      "get": {
+        "tags": ["Domain APIs"],
+        "summary": "Find registered typo-variant or wildcard-pattern domains for a brand keyword.",
+        "description": "The Domain Typosquatting API searches for registered domains that are typo or look-alike variants of a brand keyword, or that match a wildcard pattern. Results include registration lifecycle data and drop status across 1529+ TLDs, paginated at 100 domains per page.",
+        "parameters": [
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["json", "xml"],
+              "default": "json"
+            },
+            "description": "Format of the response."
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 63
+            },
+            "description": "Brand or label to find typo variants for. 3-63 characters, letters, digits, or hyphens, a single label with no dots. Case-insensitive. Use either keyword or pattern, never both."
+          },
+          {
+            "name": "pattern",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 63
+            },
+            "description": "Wildcard search string that combines fuzzy matching with * wildcards. 3-63 characters total, * is the only supported wildcard and each one matches zero or more characters, maximum 3 asterisks per request. Use either keyword or pattern, never both."
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Token from nextPageToken in the previous response. Required to retrieve page 2 and onward. The original keyword or pattern must be passed alongside the token on every page request. Results page at 100 domains per page."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainTyposquattingResponse"
+                },
+                "examples": {
+                  "keywordSuccess": {
+                    "summary": "Keyword search (paypal)",
+                    "value": {
+                      "status": true,
+                      "totalRecords": 1284,
+                      "currentPage": 1,
+                      "hasNextPage": true,
+                      "totalPages": 13,
+                      "nextPageToken": "<opaque_token>",
+                      "domains": [
+                        {
+                          "domainName": "p-aypal.com",
+                          "createDate": "2025-04-17",
+                          "expiryDate": "2026-04-17",
+                          "lastSeen": "2026-05-29",
+                          "isDropped": true
+                        },
+                        {
+                          "domainName": "p-aypal.de",
+                          "lastSeen": "2024-07-11",
+                          "isDropped": true
+                        },
+                        {
+                          "domainName": "p0aypal.com",
+                          "createDate": "2017-12-29",
+                          "expiryDate": "2026-12-29",
+                          "lastSeen": "2026-08-18",
+                          "isDropped": false
+                        },
+                        {
+                          "domainName": "p7ypal.com",
+                          "isDropped": true
+                        },
+                        {
+                          "domainName": "pa-pal.club",
+                          "createDate": "2019-10-25",
+                          "expiryDate": "2020-10-25",
+                          "isDropped": false
+                        }
+                      ]
+                    }
+                  },
+                  "patternSuccess": {
+                    "summary": "Wildcard pattern search (*paypal*)",
+                    "value": {
+                      "status": true,
+                      "totalRecords": 5471,
+                      "currentPage": 1,
+                      "hasNextPage": true,
+                      "totalPages": 55,
+                      "nextPageToken": "<opaque_token>",
+                      "domains": [
+                        {
+                          "domainName": "paypal-support.com",
+                          "createDate": "2024-11-02",
+                          "expiryDate": "2026-11-02",
+                          "lastSeen": "2026-08-30",
+                          "isDropped": false
+                        },
+                        {
+                          "domainName": "login-paypal.net",
+                          "lastSeen": "2025-12-14",
+                          "isDropped": true
+                        }
+                      ]
+                    }
+                  },
+                  "emptyResult": {
+                    "summary": "No matches found",
+                    "value": {
+                      "status": true,
+                      "totalRecords": 0,
+                      "currentPage": 1,
+                      "hasNextPage": false,
+                      "totalPages": 0,
+                      "domains": []
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request – Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "shortPattern": {
+                    "summary": "Pattern has too few non-wildcard characters",
+                    "value": {
+                      "error": "Invalid Pattern Exception",
+                      "message": "The pattern must contain at least 5 non-wildcard characters and no more than 3 wildcards.",
+                      "path": "/v1.0/domain/typosquatting",
+                      "status": 400,
+                      "timestamp": "2026-09-08T12:00:00.000Z"
+                    }
+                  },
+                  "bothParams": {
+                    "summary": "Both keyword and pattern supplied",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Use either the \"keyword\" or the \"pattern\" parameter, never both.",
+                      "path": "/v1.0/domain/typosquatting",
+                      "status": 400,
+                      "timestamp": "2026-09-08T12:00:00.000Z"
+                    }
+                  },
+                  "missingParam": {
+                    "summary": "Neither keyword nor pattern supplied",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide either a \"keyword\" or a \"pattern\" parameter.",
+                      "path": "/v1.0/domain/typosquatting",
+                      "status": 400,
+                      "timestamp": "2026-09-08T12:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          }
+        },
+        "operationId": "getDomainTyposquatting"
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuthHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-apiKey",
+        "description": "Pass your API key via the X-apiKey request header."
+      },
+      "ApiKeyAuthQuery": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "Pass your API key via the apiKey query parameter."
+      }
+    },
+    "schemas": {
+      "DomainTyposquattingResponse": {
+        "type": "object",
+        "required": ["status", "totalRecords", "currentPage", "hasNextPage", "totalPages", "domains"],
+        "properties": {
+          "status": {
+            "type": "boolean",
+            "description": "Indicates if the request was successful."
+          },
+          "totalRecords": {
+            "type": "integer",
+            "description": "Total number of domains found."
+          },
+          "currentPage": {
+            "type": "integer",
+            "description": "Page number of the current response. Starts at 1."
+          },
+          "hasNextPage": {
+            "type": "boolean",
+            "description": "true if at least one additional page is available."
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages available."
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Opaque token to pass as pageToken on the next request. Present only when hasNextPage is true."
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DomainItem"
+            },
+            "description": "List of typo-variant or pattern-matched domains on the current page."
+          }
+        },
+        "description": "Paginated response containing typo-variant or pattern-matched domains."
+      },
+      "DomainItem": {
+        "type": "object",
+        "required": ["domainName", "isDropped"],
+        "properties": {
+          "domainName": {
+            "type": "string",
+            "description": "Domain name."
+          },
+          "createDate": {
+            "type": "string",
+            "description": "Domain creation date (YYYY-MM-DD). May be absent for older or less-actively-tracked entries."
+          },
+          "expiryDate": {
+            "type": "string",
+            "description": "Domain expiration date (YYYY-MM-DD). May be absent for older or less-actively-tracked entries."
+          },
+          "lastSeen": {
+            "type": "string",
+            "description": "Last time the domain was observed (YYYY-MM-DD). One of the two fields reliably meaningful across a full result set."
+          },
+          "isDropped": {
+            "type": "boolean",
+            "description": "Indicates whether the domain has dropped out of the registry and become available to register again."
+          }
+        },
+        "description": "A single typo-variant or pattern-matched domain with registration lifecycle data."
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error envelope returned by the API on failed requests.",
+        "required": ["message"],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Short error category or exception type."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message describing the failure."
+          },
+          "path": {
+            "type": "string",
+            "description": "API endpoint path that produced the error."
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code returned with the error."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the error occurred (ISO 8601)."
+          }
+        }
+      }
+    },
+    "headers": {
+      "X-AF-Credits-Cost": {
+        "description": "Specifies the number of credits consumed by the current request.",
+        "schema": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuthHeader": []
+    },
+    {
+      "ApiKeyAuthQuery": []
+    }
+  ]
+}

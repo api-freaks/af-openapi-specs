@@ -28,13 +28,6 @@ export function getSpecYaml(
   return SPECS_YAML[slug];
 }
 
-/** @deprecated Use {@link getSpecJson} instead. Removed in the next major version. */
-export function getSpec(
-  slug: SpecSlugValue | (string & {}),
-): OpenAPISpec | undefined {
-  return getSpecJson(slug);
-}
-
 export function getSpecsByCategory(
   category: SpecCategoryValue | (string & {}),
 ): string[] {

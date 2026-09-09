@@ -1,0 +1,1115 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Domain Reputation API - Real-Time Risk Verdict, Trust Score, DGA Detection, and Threat Intelligence for Any Domain",
+    "version": "1.0.0",
+    "description": "Assess any domain and get a synthesized risk verdict, a weighted trust score, DGA detection, threat intelligence matches, and a full email deliverability check in one call. Every score carries the evidence behind it, and partial data is called out in errors rather than silently dropped. Built for fraud screening, phishing triage, email vetting, brand protection, and threat intel enrichment.",
+    "contact": {
+      "name": "APIFreaks Support",
+      "url": "https://apifreaks.com/contact",
+      "email": "support@apifreaks.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.apifreaks.com/v1.0",
+      "description": "Domain Reputation API Server"
+    }
+  ],
+  "paths": {
+    "/domain/reputation": {
+      "get": {
+        "tags": ["Domain APIs"],
+        "summary": "Get a real-time risk verdict, trust score, and threat intelligence for any domain.",
+        "description": "The Domain Reputation API assesses a domain and returns a risk verdict, trust score, DGA detection results, threat intelligence matches, email deliverability analysis, and evidence summary. Partial data is flagged in the errors array rather than silently dropped.",
+        "parameters": [
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["json", "xml"],
+              "default": "json"
+            },
+            "description": "Format of the response."
+          },
+          {
+            "name": "domainName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The domain name to assess (e.g. example.com). Must contain at least one dot and be at most 253 characters. Automatically lowercased."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainReputationResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Safe domain (apple.com)",
+                    "value": {
+                      "input": {
+                        "domain": "apple.com"
+                      },
+                      "assessed_at": "2026-09-08T08:36:23.820181075Z",
+                      "version": "1.0.0",
+                      "processing_time_ms": 1739,
+                      "risk_category": {
+                        "verdict": "safe",
+                        "confidence": 0.8,
+                        "primary_threat": null,
+                        "severity": "none",
+                        "threat_types": [],
+                        "sources": [],
+                        "pivot_matches": []
+                      },
+                      "dga_score": {
+                        "score": 0.0,
+                        "is_dga": false,
+                        "model": "deterministic_features_v1",
+                        "features": {
+                          "domain_length": 5,
+                          "vowel_consonant_ratio": 0.6666666666666666,
+                          "ngram_perplexity": -8.83,
+                          "shannon_entropy": 1.9219280948873623,
+                          "digit_letter_ratio": 0.0,
+                          "consonant_streak_max": 3,
+                          "tld_in_known_dga_set": false
+                        },
+                        "interpretation": "human_readable"
+                      },
+                      "trust_signals": {
+                        "trust_score": 72,
+                        "trust_band": "high",
+                        "signals": {
+                          "positive": [
+                            {
+                              "code": "spf_configured",
+                              "weight": 5,
+                              "polarity": "positive",
+                              "category": "email_security",
+                              "evidence": "SPF record found",
+                              "confidence": 1.0
+                            },
+                            {
+                              "code": "dmarc_present",
+                              "weight": 5,
+                              "polarity": "positive",
+                              "category": "email_security",
+                              "evidence": "DMARC record present",
+                              "confidence": 1.0
+                            },
+                            {
+                              "code": "established_domain",
+                              "weight": 10,
+                              "polarity": "positive",
+                              "category": "domain_age",
+                              "evidence": "Domain age > 2 years",
+                              "confidence": 1.0
+                            },
+                            {
+                              "code": "mature_domain",
+                              "weight": 5,
+                              "polarity": "positive",
+                              "category": "domain_age",
+                              "evidence": "Domain age > 5 years",
+                              "confidence": 1.0
+                            },
+                            {
+                              "code": "paid_ssl",
+                              "weight": 5,
+                              "polarity": "positive",
+                              "category": "ssl_certificate",
+                              "evidence": "Uses paid SSL certificate",
+                              "confidence": 0.9
+                            },
+                            {
+                              "code": "valid_ssl",
+                              "weight": 3,
+                              "polarity": "positive",
+                              "category": "ssl_certificate",
+                              "evidence": "Valid SSL certificate",
+                              "confidence": 1.0
+                            }
+                          ],
+                          "negative": [
+                            {
+                              "code": "privacy_whois",
+                              "weight": 1,
+                              "polarity": "negative",
+                              "category": "whois_privacy",
+                              "evidence": "WHOIS information is privacy-protected",
+                              "confidence": 0.9
+                            },
+                            {
+                              "code": "external_redirect",
+                              "weight": 10,
+                              "polarity": "negative",
+                              "category": "content_analysis",
+                              "evidence": "Site redirects visitors to an external domain",
+                              "confidence": 0.8
+                            }
+                          ],
+                          "neutral": []
+                        },
+                        "indicators": {
+                          "is_newly_registered": false,
+                          "uses_free_extension": false,
+                          "uses_free_ssl": false,
+                          "has_privacy_whois": true,
+                          "ssl_age_days": 26,
+                          "has_dmarc": true,
+                          "has_spf": true,
+                          "redirects_externally": true,
+                          "javascript_obfuscated": false,
+                          "domain_age_days": 14446,
+                          "registrar": "NOM-IQ Ltd dba Com Laude"
+                        }
+                      },
+                      "email_deliverability": {
+                        "score": 95,
+                        "grade": "excellent",
+                        "can_receive_email": true,
+                        "authentication": {
+                          "spf": {
+                            "present": true,
+                            "policy": "~all",
+                            "record": "v=spf1 include:_spf.apple.com include:_spf-txn.apple.com ~all"
+                          },
+                          "dkim": {
+                            "found": true,
+                            "selectors_found": ["selector1", "selector2"],
+                            "providers_detected": [],
+                            "note": "Only common selectors are probed; a domain may use a custom selector"
+                          },
+                          "dmarc": {
+                            "present": true,
+                            "policy": "quarantine",
+                            "reporting_configured": true
+                          }
+                        },
+                        "infrastructure": {
+                          "mx_count": 6,
+                          "mx_records": [
+                            "mx-in-ma.apple.com.",
+                            "mx-in.g.apple.com.",
+                            "mx-in-rn.apple.com.",
+                            "mx-in-sg.apple.com.",
+                            "mx-in-hfd.apple.com.",
+                            "mx-in-vib.apple.com."
+                          ],
+                          "mx_provider": "self_hosted",
+                          "null_mx": false
+                        },
+                        "reputation": {
+                          "spam_blacklisted": false,
+                          "newly_registered": false,
+                          "domain_age_days": 14446
+                        },
+                        "issues": [
+                          {
+                            "code": "spf_softfail",
+                            "severity": "low",
+                            "message": "The SPF policy '~all' only soft-fails unauthorized senders",
+                            "recommendation": "Move to '-all' once all legitimate sending sources are listed"
+                          }
+                        ]
+                      },
+                      "intelligence": {
+                        "ioc_type": "domain",
+                        "ioc_value": "apple.com",
+                        "related_iocs": [
+                          {
+                            "type": "ipv4",
+                            "value": "17.253.144.10",
+                            "confidence": 0.9
+                          },
+                          {
+                            "type": "ipv6",
+                            "value": "2620:149:af0:0:0:0:0:10",
+                            "confidence": 0.9
+                          }
+                        ],
+                        "feed_tags": [
+                          "verdict:safe",
+                          "severity:none",
+                          "ns:d.ns.apple.com.",
+                          "ns:b.ns.apple.com.",
+                          "ns:c.ns.apple.com.",
+                          "ns:a.ns.apple.com.",
+                          "mx:mx-in-ma.apple.com.",
+                          "mx:mx-in.g.apple.com.",
+                          "mx:mx-in-rn.apple.com.",
+                          "mx:mx-in-sg.apple.com.",
+                          "mx:mx-in-hfd.apple.com.",
+                          "mx:mx-in-vib.apple.com."
+                        ],
+                        "stix_pattern": "[domain-name:value = 'apple.com' OR ipv4-addr:value = '17.253.144.10' OR ipv6-addr:value = '2620:149:af0:0:0:0:0:10']",
+                        "recommended_action": "allow",
+                        "first_seen": null,
+                        "last_seen": null
+                      },
+                      "evidence_summary": {
+                        "why_flagged": []
+                      },
+                      "errors": []
+                    }
+                  },
+                  "partialData": {
+                    "summary": "Partial data (WHOIS lookup failed)",
+                    "value": {
+                      "input": {
+                        "domain": "apifreaks.com"
+                      },
+                      "risk_category": {
+                        "verdict": "safe",
+                        "confidence": 0.7,
+                        "severity": "none"
+                      },
+                      "trust_signals": {
+                        "trust_score": 70,
+                        "trust_band": "high",
+                        "indicators": {
+                          "is_newly_registered": null,
+                          "has_privacy_whois": null,
+                          "domain_age_days": null,
+                          "registrar": null
+                        }
+                      },
+                      "errors": ["WHOIS lookup failed"]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request – Invalid or missing domainName parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidDomain": {
+                    "summary": "Invalid domain parameter",
+                    "value": {
+                      "error": "Invalid Domain Exception",
+                      "message": "Please provide a valid domain name in the \"domainName\" parameter.",
+                      "path": "/v1.0/domain/reputation",
+                      "status": 400,
+                      "timestamp": "2026-09-08T12:00:00.000Z"
+                    }
+                  },
+                  "missingDomain": {
+                    "summary": "Missing domainName parameter",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide a valid domain name in the \"domainName\" parameter.",
+                      "path": "/v1.0/domain/reputation",
+                      "status": 400,
+                      "timestamp": "2026-09-08T12:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable – The assessment service is temporarily unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "serviceUnavailable": {
+                    "summary": "Service Unavailable",
+                    "value": {
+                      "error": "Service Unavailable",
+                      "message": "Service is unavailable. Please try after some time. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/domain/reputation",
+                      "status": 503,
+                      "timestamp": "2026-09-08T12:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          }
+        },
+        "operationId": "getDomainReputation"
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuthHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-apiKey",
+        "description": "Pass your API key via the X-apiKey request header."
+      },
+      "ApiKeyAuthQuery": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "Pass your API key via the apiKey query parameter."
+      }
+    },
+    "schemas": {
+      "DomainReputationResponse": {
+        "type": "object",
+        "required": [
+          "input",
+          "assessed_at",
+          "version",
+          "processing_time_ms",
+          "risk_category",
+          "dga_score",
+          "trust_signals",
+          "email_deliverability",
+          "intelligence",
+          "evidence_summary",
+          "errors"
+        ],
+        "properties": {
+          "input": {
+            "type": "object",
+            "required": ["domain"],
+            "properties": {
+              "domain": {
+                "type": "string",
+                "description": "Domain name being analyzed."
+              }
+            },
+            "description": "Input object containing the analyzed domain."
+          },
+          "assessed_at": {
+            "type": "string",
+            "description": "Timestamp when the assessment was performed (YYYY-MM-DDTHH:mm:ssZ)."
+          },
+          "version": {
+            "type": "string",
+            "description": "API / response schema version."
+          },
+          "processing_time_ms": {
+            "type": "integer",
+            "description": "Time taken to process the request, in milliseconds."
+          },
+          "risk_category": {
+            "$ref": "#/components/schemas/RiskCategory"
+          },
+          "dga_score": {
+            "$ref": "#/components/schemas/DgaScore"
+          },
+          "trust_signals": {
+            "$ref": "#/components/schemas/TrustSignals"
+          },
+          "email_deliverability": {
+            "$ref": "#/components/schemas/EmailDeliverability"
+          },
+          "intelligence": {
+            "$ref": "#/components/schemas/Intelligence"
+          },
+          "evidence_summary": {
+            "$ref": "#/components/schemas/EvidenceSummary"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of errors encountered during processing, if any (e.g. \"WHOIS lookup failed\"). An empty array means every signal resolved."
+          }
+        },
+        "description": "Full domain reputation assessment response."
+      },
+      "RiskCategory": {
+        "type": "object",
+        "required": [
+          "verdict",
+          "confidence",
+          "primary_threat",
+          "severity",
+          "threat_types",
+          "sources",
+          "pivot_matches"
+        ],
+        "properties": {
+          "verdict": {
+            "type": "string",
+            "enum": ["safe", "suspicious"],
+            "description": "Final verdict of the risk assessment."
+          },
+          "confidence": {
+            "type": "number",
+            "format": "float",
+            "description": "Confidence score for the verdict (0-1)."
+          },
+          "primary_threat": {
+            "type": ["string", "null"],
+            "description": "Main threat type identified (e.g. phishing). null when no threat was identified."
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["none", "low", "medium", "high"],
+            "description": "Severity level of the risk."
+          },
+          "threat_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of threat types associated with the domain."
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ThreatSource"
+            },
+            "description": "Threat intelligence sources that flagged the domain. Empty when nothing flagged it."
+          },
+          "pivot_matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PivotMatch"
+            },
+            "description": "Related pivots (nameserver, email, etc.) linked to known threats."
+          }
+        },
+        "description": "Overall risk assessment for the domain."
+      },
+      "ThreatSource": {
+        "type": "object",
+        "required": [
+          "source",
+          "indicator",
+          "threat_type",
+          "confidence",
+          "first_seen",
+          "last_seen"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "Name of the threat intelligence source (e.g. Spamhaus)."
+          },
+          "indicator": {
+            "type": "string",
+            "description": "Indicator matched by this source."
+          },
+          "threat_type": {
+            "type": "string",
+            "description": "Threat type reported by this source."
+          },
+          "confidence": {
+            "type": "number",
+            "format": "float",
+            "description": "Confidence score from this source (0-1)."
+          },
+          "first_seen": {
+            "type": "string",
+            "description": "First time this indicator was seen by the source (YYYY-MM-DDTHH:mm:ssZ)."
+          },
+          "last_seen": {
+            "type": "string",
+            "description": "Last time this indicator was seen by the source (YYYY-MM-DDTHH:mm:ssZ)."
+          }
+        },
+        "description": "A threat intelligence source that flagged the domain."
+      },
+      "PivotMatch": {
+        "type": "object",
+        "required": [
+          "pivot",
+          "pivot_type",
+          "total_related_threats",
+          "confidence"
+        ],
+        "properties": {
+          "pivot": {
+            "type": "string",
+            "description": "Pivot value (e.g. a nameserver or email address)."
+          },
+          "pivot_type": {
+            "type": "string",
+            "description": "Type of pivot."
+          },
+          "total_related_threats": {
+            "type": "integer",
+            "description": "Total number of threats related to this pivot."
+          },
+          "confidence": {
+            "type": "number",
+            "format": "float",
+            "description": "Confidence score for the pivot match (0-1)."
+          }
+        },
+        "description": "A related pivot linked to known threats."
+      },
+      "DgaScore": {
+        "type": "object",
+        "required": ["score", "is_dga", "model", "features", "interpretation"],
+        "properties": {
+          "score": {
+            "type": "number",
+            "format": "float",
+            "description": "DGA likelihood score (0-1)."
+          },
+          "is_dga": {
+            "type": "boolean",
+            "description": "Indicates whether the domain is likely DGA-generated."
+          },
+          "model": {
+            "type": "string",
+            "description": "Model used to compute the DGA score."
+          },
+          "features": {
+            "$ref": "#/components/schemas/DgaFeatures"
+          },
+          "interpretation": {
+            "type": "string",
+            "description": "Human-readable interpretation of the DGA score."
+          }
+        },
+        "description": "Domain Generation Algorithm (DGA) detection results."
+      },
+      "DgaFeatures": {
+        "type": "object",
+        "required": [
+          "domain_length",
+          "vowel_consonant_ratio",
+          "ngram_perplexity",
+          "shannon_entropy",
+          "digit_letter_ratio",
+          "consonant_streak_max",
+          "tld_in_known_dga_set"
+        ],
+        "properties": {
+          "domain_length": {
+            "type": "integer",
+            "description": "Length of the domain name."
+          },
+          "vowel_consonant_ratio": {
+            "type": "number",
+            "format": "float",
+            "description": "Ratio of vowels to consonants in the domain."
+          },
+          "ngram_perplexity": {
+            "type": "number",
+            "format": "float",
+            "description": "N-gram perplexity score of the domain string."
+          },
+          "shannon_entropy": {
+            "type": "number",
+            "format": "float",
+            "description": "Shannon entropy of the domain string."
+          },
+          "digit_letter_ratio": {
+            "type": "number",
+            "format": "float",
+            "description": "Ratio of digits to letters in the domain."
+          },
+          "consonant_streak_max": {
+            "type": "integer",
+            "description": "Maximum consecutive consonant streak in the domain."
+          },
+          "tld_in_known_dga_set": {
+            "type": "boolean",
+            "description": "Indicates if the TLD belongs to a known DGA set."
+          }
+        },
+        "description": "Underlying lexical / statistical features used in DGA detection."
+      },
+      "TrustSignals": {
+        "type": "object",
+        "required": ["trust_score", "trust_band", "signals", "indicators"],
+        "properties": {
+          "trust_score": {
+            "type": "integer",
+            "description": "Overall trust score (0-100)."
+          },
+          "trust_band": {
+            "type": "string",
+            "description": "Trust score band / category (e.g. low, medium, high)."
+          },
+          "signals": {
+            "$ref": "#/components/schemas/TrustScoreSignals"
+          },
+          "indicators": {
+            "$ref": "#/components/schemas/TrustIndicators"
+          }
+        },
+        "description": "Trust scoring and supporting signals for the domain."
+      },
+      "TrustScoreSignals": {
+        "type": "object",
+        "required": ["positive", "negative", "neutral"],
+        "properties": {
+          "positive": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrustSignalItem"
+            },
+            "description": "Signals that positively affect the trust score."
+          },
+          "negative": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrustSignalItem"
+            },
+            "description": "Signals that negatively affect the trust score."
+          },
+          "neutral": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrustSignalItem"
+            },
+            "description": "Signals that are neutral to the trust score."
+          }
+        },
+        "description": "Signals contributing to the trust score."
+      },
+      "TrustSignalItem": {
+        "type": "object",
+        "required": [
+          "code",
+          "weight",
+          "polarity",
+          "category",
+          "evidence",
+          "confidence"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Signal code identifier (e.g. valid_ssl, dmarc_missing)."
+          },
+          "weight": {
+            "type": "integer",
+            "description": "Weight assigned to the signal."
+          },
+          "polarity": {
+            "type": "string",
+            "enum": ["positive", "negative", "neutral"],
+            "description": "Polarity of the signal."
+          },
+          "category": {
+            "type": "string",
+            "description": "Category the signal belongs to (e.g. ssl_certificate)."
+          },
+          "evidence": {
+            "type": "string",
+            "description": "Evidence supporting the signal."
+          },
+          "confidence": {
+            "type": "number",
+            "format": "float",
+            "description": "Confidence score for the signal (0-1)."
+          }
+        },
+        "description": "A single trust signal contributing to the trust score."
+      },
+      "TrustIndicators": {
+        "type": "object",
+        "properties": {
+          "is_newly_registered": {
+            "type": ["boolean", "null"],
+            "description": "Indicates whether the domain was recently registered. null when WHOIS data is unavailable."
+          },
+          "uses_free_extension": {
+            "type": "boolean",
+            "description": "Indicates whether the domain uses a free TLD extension."
+          },
+          "uses_free_ssl": {
+            "type": "boolean",
+            "description": "Indicates whether the domain uses a free SSL certificate."
+          },
+          "has_privacy_whois": {
+            "type": ["boolean", "null"],
+            "description": "Indicates whether WHOIS privacy protection is enabled. null when WHOIS data is unavailable."
+          },
+          "ssl_age_days": {
+            "type": ["integer", "null"],
+            "description": "Age of the SSL certificate in days."
+          },
+          "has_dmarc": {
+            "type": "boolean",
+            "description": "Indicates whether a DMARC record exists."
+          },
+          "has_spf": {
+            "type": "boolean",
+            "description": "Indicates whether an SPF record exists."
+          },
+          "redirects_externally": {
+            "type": "boolean",
+            "description": "Indicates whether the domain redirects to an external site."
+          },
+          "javascript_obfuscated": {
+            "type": "boolean",
+            "description": "Indicates whether obfuscated JavaScript was detected."
+          },
+          "domain_age_days": {
+            "type": ["integer", "null"],
+            "description": "Age of the domain in days. null when WHOIS data is unavailable."
+          },
+          "registrar": {
+            "type": ["string", "null"],
+            "description": "Domain registrar name. null when WHOIS data is unavailable."
+          }
+        },
+        "description": "Individual trust / risk indicators for the domain."
+      },
+      "EmailDeliverability": {
+        "type": "object",
+        "required": [
+          "score",
+          "grade",
+          "can_receive_email",
+          "authentication",
+          "infrastructure",
+          "reputation",
+          "issues"
+        ],
+        "properties": {
+          "score": {
+            "type": "integer",
+            "description": "Overall email deliverability score out of 100."
+          },
+          "grade": {
+            "type": "string",
+            "description": "Letter / word grade summarizing the deliverability score."
+          },
+          "can_receive_email": {
+            "type": "boolean",
+            "description": "Indicates whether the domain is configured to receive email."
+          },
+          "authentication": {
+            "$ref": "#/components/schemas/EmailAuthentication"
+          },
+          "infrastructure": {
+            "$ref": "#/components/schemas/EmailInfrastructure"
+          },
+          "reputation": {
+            "$ref": "#/components/schemas/EmailReputation"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmailIssue"
+            },
+            "description": "List of detected email deliverability issues or misconfigurations."
+          }
+        },
+        "description": "Assessment of the domain's ability to send and receive email reliably."
+      },
+      "EmailAuthentication": {
+        "type": "object",
+        "required": ["spf", "dkim", "dmarc"],
+        "properties": {
+          "spf": {
+            "$ref": "#/components/schemas/SpfRecord"
+          },
+          "dkim": {
+            "$ref": "#/components/schemas/DkimRecord"
+          },
+          "dmarc": {
+            "$ref": "#/components/schemas/DmarcRecord"
+          }
+        },
+        "description": "Email authentication mechanisms configured for the domain."
+      },
+      "SpfRecord": {
+        "type": "object",
+        "required": ["present", "policy", "record"],
+        "properties": {
+          "present": {
+            "type": "boolean",
+            "description": "Indicates whether an SPF record was found."
+          },
+          "policy": {
+            "type": "string",
+            "description": "SPF enforcement policy qualifier found in the record (e.g. ~all, -all)."
+          },
+          "record": {
+            "type": "string",
+            "description": "Raw SPF DNS TXT record string."
+          }
+        },
+        "description": "Sender Policy Framework configuration."
+      },
+      "DkimRecord": {
+        "type": "object",
+        "required": ["found", "selectors_found", "providers_detected", "note"],
+        "properties": {
+          "found": {
+            "type": "boolean",
+            "description": "Indicates whether a DKIM record was found for any probed selector."
+          },
+          "selectors_found": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of DKIM selectors for which a record was found."
+          },
+          "providers_detected": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Email service providers inferred from the matched DKIM selectors."
+          },
+          "note": {
+            "type": "string",
+            "description": "Clarifying note about the limitations of DKIM selector probing."
+          }
+        },
+        "description": "DomainKeys Identified Mail configuration."
+      },
+      "DmarcRecord": {
+        "type": "object",
+        "required": ["present", "policy", "reporting_configured"],
+        "properties": {
+          "present": {
+            "type": "boolean",
+            "description": "Indicates whether a DMARC record was found."
+          },
+          "policy": {
+            "type": "string",
+            "description": "DMARC enforcement policy applied to failing messages (e.g. none, quarantine, reject)."
+          },
+          "reporting_configured": {
+            "type": "boolean",
+            "description": "Indicates whether DMARC aggregate / forensic reporting addresses are configured."
+          }
+        },
+        "description": "Domain-based Message Authentication, Reporting and Conformance configuration."
+      },
+      "EmailInfrastructure": {
+        "type": "object",
+        "required": ["mx_count", "mx_records", "mx_provider", "null_mx"],
+        "properties": {
+          "mx_count": {
+            "type": "integer",
+            "description": "Number of MX records found for the domain."
+          },
+          "mx_records": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of mail exchange server hostnames for the domain."
+          },
+          "mx_provider": {
+            "type": "string",
+            "description": "Email hosting provider inferred from the MX records."
+          },
+          "null_mx": {
+            "type": "boolean",
+            "description": "Indicates whether the domain explicitly declines email via a null MX record."
+          }
+        },
+        "description": "Mail server infrastructure backing the domain."
+      },
+      "EmailReputation": {
+        "type": "object",
+        "required": ["spam_blacklisted", "newly_registered"],
+        "properties": {
+          "spam_blacklisted": {
+            "type": "boolean",
+            "description": "Indicates whether the domain appears on known spam blacklists."
+          },
+          "newly_registered": {
+            "type": "boolean",
+            "description": "Indicates whether the domain was registered recently."
+          },
+          "domain_age_days": {
+            "type": ["integer", "null"],
+            "description": "Age of the domain in days since registration."
+          }
+        },
+        "description": "Reputation and trust signals related to the domain's email sending history."
+      },
+      "EmailIssue": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Machine-readable code identifying the specific deliverability issue."
+          },
+          "severity": {
+            "type": "string",
+            "description": "Severity level assigned to the detected issue."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable explanation of the issue."
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Plain-language description of the exact fix to apply."
+          }
+        },
+        "description": "A detected email deliverability issue or misconfiguration."
+      },
+      "Intelligence": {
+        "type": "object",
+        "required": [
+          "ioc_type",
+          "ioc_value",
+          "related_iocs",
+          "feed_tags",
+          "stix_pattern",
+          "recommended_action",
+          "first_seen",
+          "last_seen"
+        ],
+        "properties": {
+          "ioc_type": {
+            "type": "string",
+            "description": "Type of the indicator of compromise (e.g. domain)."
+          },
+          "ioc_value": {
+            "type": "string",
+            "description": "Value of the indicator of compromise."
+          },
+          "related_iocs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelatedIoc"
+            },
+            "description": "Other IOCs related to this domain."
+          },
+          "feed_tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tags associated with this IOC from threat feeds."
+          },
+          "stix_pattern": {
+            "type": "string",
+            "description": "STIX 2.1 pattern representation of the IOC, ready to wrap into an Indicator object."
+          },
+          "recommended_action": {
+            "type": "string",
+            "enum": ["allow", "monitor", "block"],
+            "description": "Recommended action based on the assessment."
+          },
+          "first_seen": {
+            "type": ["string", "null"],
+            "description": "First time this IOC was observed (YYYY-MM-DDTHH:mm:ssZ). null when never observed on a feed."
+          },
+          "last_seen": {
+            "type": ["string", "null"],
+            "description": "Last time this IOC was observed (YYYY-MM-DDTHH:mm:ssZ). null when never observed on a feed."
+          }
+        },
+        "description": "Threat intelligence details for the indicator of compromise (IOC)."
+      },
+      "RelatedIoc": {
+        "type": "object",
+        "required": ["type", "value", "confidence"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of the related IOC (e.g. ipv4, ipv6)."
+          },
+          "value": {
+            "type": "string",
+            "description": "Value of the related IOC."
+          },
+          "confidence": {
+            "type": "number",
+            "format": "float",
+            "description": "Confidence score for the related IOC (0-1)."
+          }
+        },
+        "description": "A related indicator of compromise."
+      },
+      "EvidenceSummary": {
+        "type": "object",
+        "required": ["why_flagged"],
+        "properties": {
+          "why_flagged": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of reasons why the domain was flagged. Empty for a clean domain."
+          }
+        },
+        "description": "Summary of reasons behind the risk assessment."
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error envelope returned by the API on failed requests.",
+        "required": ["message"],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Short error category or exception type."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message describing the failure."
+          },
+          "path": {
+            "type": "string",
+            "description": "API endpoint path that produced the error."
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code returned with the error."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the error occurred (ISO 8601)."
+          }
+        }
+      }
+    },
+    "headers": {
+      "X-AF-Credits-Cost": {
+        "description": "Specifies the number of credits consumed by the current request.",
+        "schema": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuthHeader": []
+    },
+    {
+      "ApiKeyAuthQuery": []
+    }
+  ]
+}
