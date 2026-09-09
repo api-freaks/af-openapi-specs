@@ -3,7 +3,7 @@
   "info": {
     "title": "Email Checker API - Real-Time Validation, Deliverability & Risk Signals",
     "version": "1.0.0",
-    "description": "Validate a single email address and receive comprehensive results including syntax validation, domain verification, account detection, DNS records (MX and A records), and optional IP-based geolocation and security enrichment. Returns deliverability assessment with valid/invalid/unknown/risky/app_server_blocked status.",
+    "description": "Validate a single email address and receive comprehensive results including syntax validation, domain verification, account detection, DNS records (MX and A records), and optional IP-based geolocation and security enrichment. Returns deliverability assessment with valid/accept_all/invalid/unknown/risky/app_server_blocked status.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -96,8 +96,8 @@
                       }
                     }
                   },
-                  "noMxRecord": {
-                    "summary": "Valid syntax, domain has no MX record",
+                  "nonexistentDomain": {
+                    "summary": "Valid syntax, domain does not exist (NXDOMAIN)",
                     "value": {
                       "success": true,
                       "email": "test@nonexistentdomainxyz123abc.com",
@@ -114,6 +114,83 @@
                       },
                       "account": {
                         "role": false
+                      }
+                    }
+                  },
+                  "acceptAll": {
+                    "summary": "Catch-all domain accepted the recipient — mailbox unconfirmed",
+                    "value": {
+                      "success": true,
+                      "email": "random12345@yahoo.com",
+                      "validEmail": "accept_all",
+                      "validSyntax": true,
+                      "reason": "domain accepts all addresses.",
+                      "domain": {
+                        "name": "yahoo.com",
+                        "disposable": false,
+                        "spam": false,
+                        "free": true,
+                        "validDomain": true,
+                        "catchAll": true
+                      },
+                      "account": {
+                        "role": false,
+                        "fullMailBox": false
+                      },
+                      "dns": {
+                        "mxRecord": [
+                          "mta5.am0.yahoodns.net.",
+                          "mta6.am0.yahoodns.net.",
+                          "mta7.am0.yahoodns.net."
+                        ]
+                      }
+                    }
+                  },
+                  "nullMxDomain": {
+                    "summary": "Domain publishes a null MX (single \".\") — accepts no mail at all",
+                    "value": {
+                      "success": true,
+                      "email": "test@example.com",
+                      "validEmail": "invalid",
+                      "validSyntax": true,
+                      "reason": "domain does not accept mail.",
+                      "domain": {
+                        "name": "example.com",
+                        "disposable": true,
+                        "spam": false,
+                        "free": false,
+                        "validDomain": true,
+                        "catchAll": false
+                      },
+                      "account": {
+                        "role": false
+                      },
+                      "dns": {
+                        "mxRecord": ["."]
+                      }
+                    }
+                  },
+                  "noMxAddressOnly": {
+                    "summary": "Domain has no MX record but a working A record — gets a real SMTP probe",
+                    "value": {
+                      "success": true,
+                      "email": "test@neverssl.com",
+                      "validEmail": "unknown",
+                      "validSyntax": true,
+                      "reason": "We are unable to determine if email is valid or invalid.",
+                      "domain": {
+                        "name": "neverssl.com",
+                        "disposable": false,
+                        "spam": false,
+                        "free": false,
+                        "validDomain": true,
+                        "catchAll": false
+                      },
+                      "account": {
+                        "role": false
+                      },
+                      "dns": {
+                        "aRecord": ["34.223.124.45"]
                       }
                     }
                   },
@@ -387,12 +464,12 @@
           },
           "reason": {
             "type": "string",
-            "description": "Detailed explanation returned when validEmail is not valid."
+            "description": "Detailed explanation returned when validEmail is not valid. Omitted entirely when validEmail is valid."
           },
           "validEmail": {
             "type": "string",
-            "enum": ["valid", "invalid", "INVALID_EMAIL", "unknown", "risky", "app_server_blocked"],
-            "description": "Comprehensive deliverability assessment. Casing is inconsistent in the live API: syntactically invalid addresses return INVALID_EMAIL, while semantically invalid (undeliverable) addresses return lowercase invalid. risky is a documented possibility not observed during testing. app_server_blocked is returned when the recipient mail server blocked the live verification attempt (reason explains that retrying later may succeed)."
+            "enum": ["valid", "accept_all", "invalid", "INVALID_EMAIL", "unknown", "risky", "app_server_blocked"],
+            "description": "Comprehensive deliverability assessment. valid: recipient confirmed deliverable, reason omitted. accept_all: the domain is catch-all and accepted the recipient, so this specific mailbox is unconfirmed — see domain.catchAll, reason 'domain accepts all addresses.'. invalid: rejected mailbox, syntax failure, or the domain accepts no mail at all (a null MX). unknown: no conclusive answer, most common for domains with no MX record that only get a probe against their address record. risky: mailbox exists but over quota, or the server deferred with a greylist response. app_server_blocked: our verifier IP was blocked by the receiving server. Casing is inconsistent in the live API: syntactically invalid addresses can return the raw enum name INVALID_EMAIL instead of lowercase invalid — this is a known API bug, handle it defensively as equivalent to invalid."
           },
           "validSyntax": {
             "type": "boolean",
@@ -444,7 +521,7 @@
           },
           "catchAll": {
             "type": "boolean",
-            "description": "Detection flag for domains configured to accept mail for any recipient address."
+            "description": "Detection flag for domains configured to accept mail for any recipient address. true always corresponds to a top-level validEmail of accept_all."
           }
         },
         "description": "Domain validation details for the email address."
@@ -466,24 +543,24 @@
       },
       "DnsObject": {
         "type": "object",
-        "required": ["mxRecord"],
+        "required": [],
         "properties": {
           "mxRecord": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Collection of MX (Mail Exchange) hostname records from DNS queries."
+            "description": "Every MX hostname at the domain's lowest preference (not just one). [\".\"]  means the domain publishes a null MX and accepts no mail at all. Absent entirely when the domain has no MX record of any kind — check aRecord in that case."
           },
           "aRecord": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Collection of A (Address) records for the domain. Not observed in testing — may be rarely or never populated."
+            "description": "Collection of A (Address) records for the domain. Present when the domain has no MX record but does resolve to a web server or other host."
           }
         },
-        "description": "DNS records for the email domain."
+        "description": "DNS records for the email domain. Absent entirely when the domain publishes neither an MX nor an A record."
       },
       "AddressObject": {
         "type": "object",
