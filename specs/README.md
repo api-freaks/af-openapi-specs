@@ -118,6 +118,8 @@ Grouped by folder. Slug is the stable id; the name links to the file.
 | -------------------------------- | ---------------------------------------------------------------------------- |
 | `domain-search`                  | [Domain Availability](domain/domain-search.json)                             |
 | `domain-search-with-suggestions` | [Domain Search with Suggestions](domain/domain-search-with-suggestions.json) |
+| `domain-reputation`              | [Domain Reputation](domain/domain-reputation.json)                           |
+| `domain-typosquatting`           | [Domain Typosquatting](domain/domain-typosquatting.json)                     |
 | `subdomain-lookup`               | [Subdomain Finder](domain/subdomain-lookup.json)                             |
 | `bulk-domain-checker`            | [Bulk Domain Checker](domain/bulk-domain-checker.json)                       |
 
