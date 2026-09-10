@@ -370,20 +370,20 @@
             "description": "Registered name of the registrar."
           },
           "whois_server": {
-            "type": "string",
-            "description": "WHOIS server operated by the registrar."
+            "type": ["string", "null"],
+            "description": "WHOIS server operated by the registrar, when published."
           },
           "website_url": {
             "type": "string",
             "description": "Registrar's website URL."
           },
           "email_address": {
-            "type": "string",
-            "description": "Registrar abuse or contact email address."
+            "type": ["string", "null"],
+            "description": "Registrar abuse or contact email address, when published."
           },
           "phone_number": {
-            "type": "string",
-            "description": "Registrar contact phone number."
+            "type": ["string", "null"],
+            "description": "Registrar contact phone number, when published."
           }
         }
       },

@@ -492,7 +492,7 @@
           },
           "status": {
             "type": ["string", "null"],
-            "description": "Accreditation status of the registrar (e.g., 'accredited')."
+            "description": "Accreditation status of the registrar (e.g., 'accredited'), when published."
           },
           "registrar_name": {
             "type": ["string", "null"],
@@ -500,16 +500,16 @@
           },
           "normalized_name": {
             "type": ["string", "null"],
-            "description": "Normalized (lowercase, stripped) registrar name."
+            "description": "Normalized (lowercase, stripped) registrar name, when published."
           },
           "whois_server": {
             "type": ["string", "null"],
-            "description": "WHOIS server of the registrar."
+            "description": "WHOIS server of the registrar, when published."
           },
           "rdap_server": {
             "type": ["string", "null"],
             "format": "uri",
-            "description": "RDAP (Registration Data Access Protocol) server URL of the registrar."
+            "description": "RDAP (Registration Data Access Protocol) server URL of the registrar, when published."
           },
           "website_url": {
             "type": ["string", "null"],
@@ -534,6 +534,10 @@
           "id": {
             "type": ["string", "null"],
             "description": "Contact identifier."
+          },
+          "handle": {
+            "type": ["string", "null"],
+            "description": "Registry handle for the contact, when published."
           },
           "name": {
             "type": ["string", "null"],

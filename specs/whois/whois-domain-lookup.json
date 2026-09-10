@@ -392,7 +392,7 @@
             "description": "IANA registrar ID."
           },
           "status": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Registrar's ICANN accreditation status (e.g. accredited), when published at the registrar level."
           },
           "registrar_name": {
@@ -400,15 +400,15 @@
             "description": "Registered name of the registrar."
           },
           "normalized_name": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Lowercased, normalized form of the registrar name, when published at the registrar level."
           },
           "whois_server": {
-            "type": "string",
-            "description": "WHOIS server operated by the registrar."
+            "type": ["string", "null"],
+            "description": "WHOIS server operated by the registrar, when published."
           },
           "rdap_server": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "RDAP server URL operated by the registrar, when published at the registrar level."
           },
           "website_url": {
@@ -416,12 +416,12 @@
             "description": "Registrar's website URL."
           },
           "email_address": {
-            "type": "string",
-            "description": "Registrar abuse or contact email address."
+            "type": ["string", "null"],
+            "description": "Registrar abuse or contact email address, when published."
           },
           "phone_number": {
-            "type": "string",
-            "description": "Registrar contact phone number."
+            "type": ["string", "null"],
+            "description": "Registrar contact phone number, when published."
           }
         }
       },
