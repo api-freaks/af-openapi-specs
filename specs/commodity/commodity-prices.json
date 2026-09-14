@@ -3,7 +3,7 @@
   "info": {
     "title": "Live Commodity Prices API - Real Time Market Insights",
     "version": "2.0.0",
-    "description": "Get real-time prices for 245+ commodities in a single request. Returns current market prices for each requested symbol plus unit and quote currency metadata. Supports an optional quote parameter to convert prices into a desired currency, defaulting to each commodity's native market currency. Accepts 10-minute or 1-minute update frequencies for price freshness. If some requested symbols can't be resolved, a 206 Partial Content response is returned with the resolved rates plus an `unresolved` object; if none resolve, a 404 is returned instead. An unsupported quote currency also returns a 404.",
+    "description": "Real-time prices for 245+ commodities in a single request, updated on a rolling ~10 minute cadence. Optionally convert prices into a target quote currency. Unresolved symbols degrade to a 206 partial response instead of failing the whole request.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -45,17 +45,6 @@
             }
           },
           {
-            "name": "updates",
-            "in": "query",
-            "required": true,
-            "description": "Update frequency. Accepted values: `10m` (default), `1m`.",
-            "schema": {
-              "type": "string",
-              "enum": ["10m", "1m"],
-              "default": "10m"
-            }
-          },
-          {
             "name": "quote",
             "in": "query",
             "required": false,
@@ -75,7 +64,7 @@
                 },
                 "examples": {
                   "success": {
-                    "summary": "Successful response (10m update frequency)",
+                    "summary": "Successful response",
                     "value": {
                       "success": true,
                       "timestamp": 1789375397,
@@ -196,16 +185,6 @@
                       "path": "/v2.0/commodity/rates/latest",
                       "status": 400,
                       "timestamp": "2026-09-14T08:43:43.964Z"
-                    }
-                  },
-                  "invalidUpdates": {
-                    "summary": "updates is not 10m or 1m",
-                    "value": {
-                      "error": "Invalid Param Exception",
-                      "message": "please pass correct parameters",
-                      "path": "/v2.0/commodity/rates/latest",
-                      "status": 400,
-                      "timestamp": "2026-09-14T08:43:44.440Z"
                     }
                   }
                 }

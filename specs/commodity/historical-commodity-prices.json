@@ -3,7 +3,7 @@
   "info": {
     "title": "Historical Commodity Prices, Delivered Simply.",
     "version": "2.0.0",
-    "description": "Retrieve OHLC (open, high, low, close) price data for any supported commodity on a specific date. Data is available from January 1990 onwards for 245+ commodities, and only closing rates are available for monthly-updated commodities. If a commodity has no rate on the requested date, the API falls back to the last available rate before that date and returns it along with its actual date. Accepts one or more comma-separated commodity symbols and a date in YYYY-MM-DD format. If some requested symbols can't be resolved (unsupported, or no rate on or before the requested date), a 206 Partial Content response is returned with the resolved rates plus an `unresolved` object. Returns a 400 error for invalid dates and a 404 error for unsupported symbols or missing rates.",
+    "description": "OHLC price data for one or more commodities on a specific date, back to January 1990. Falls back to the nearest earlier rate if none exists for the exact date. Monthly-updated commodities only have a closing price — `open`, `high`, and `low` come back as `0`. Unresolved symbols degrade to a 206 partial response instead of failing the whole request.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -82,6 +82,22 @@
                           "high": 2697.85,
                           "low": 2663.61,
                           "close": 2689.44
+                        }
+                      }
+                    }
+                  },
+                  "monthlyCommodity": {
+                    "summary": "Monthly-updated commodity (open/high/low unavailable)",
+                    "value": {
+                      "success": true,
+                      "date": "2025-01-10",
+                      "rates": {
+                        "NG-EU": {
+                          "date": "2025-01-01",
+                          "open": 0,
+                          "high": 0,
+                          "low": 0,
+                          "close": 14.66
                         }
                       }
                     }
@@ -319,27 +335,27 @@
       },
       "HistoricalCommodityRate": {
         "type": "object",
-        "description": "OHLC price data for a single commodity on a specific date.",
+        "description": "OHLC price data for a single commodity on a specific date. For monthly-updated commodities, only `close` is meaningful — `open`, `high`, and `low` are returned as `0`.",
         "required": ["date", "open", "high", "low", "close"],
         "properties": {
           "date": {
             "type": "string",
-            "description": "Date for which prices were fetched (YYYY-MM-DD). May differ from the requested `date` when the API falls back to the last available rate before it."
+            "description": "Date for which prices were fetched (YYYY-MM-DD). May differ from the requested `date` when the API falls back to the last available rate before it, or snaps to the first day of the month for monthly-updated commodities."
           },
           "open": {
             "type": "number",
             "format": "float",
-            "description": "Opening price on the given date."
+            "description": "Opening price on the given date. `0` for monthly-updated commodities."
           },
           "high": {
             "type": "number",
             "format": "float",
-            "description": "Highest price recorded on the given date."
+            "description": "Highest price recorded on the given date. `0` for monthly-updated commodities."
           },
           "low": {
             "type": "number",
             "format": "float",
-            "description": "Lowest price recorded on the given date."
+            "description": "Lowest price recorded on the given date. `0` for monthly-updated commodities."
           },
           "close": {
             "type": "number",

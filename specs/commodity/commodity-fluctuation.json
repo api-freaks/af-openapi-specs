@@ -3,7 +3,7 @@
   "info": {
     "title": "Commodity Fluctuation API ",
     "version": "2.0.0",
-    "description": "Calculate price change and percentage movement for any commodity over a custom date range. Returns the opening price, closing price, absolute change, and percentage change for each symbol, rounded to 2 decimal places. For monthly-updated commodities, the fluctuation is computed between the first day of the start month and the first day of the end month. There is no limit on the date range. Accepts one or more comma-separated commodity symbols with a start and end date in YYYY-MM-DD format. If some requested symbols can't be resolved, a 206 Partial Content response is returned with the resolved rates plus an `unresolved` object. Returns a 400 error for invalid dates or a date range where start is after end, and a 404 error for unsupported symbols or a date range with no available data.",
+    "description": "Price change and percentage movement for one or more commodities over a custom date range, with no limit on range length. For monthly-updated commodities the range snaps to month boundaries. Unresolved symbols degrade to a 206 partial response instead of failing the whole request.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",

@@ -3,6 +3,26 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed — Rewrote all five commodity `info.description` fields
+
+Each `info.description` had accumulated redundant clauses across several rounds of edits (restating parameter formats already covered by the parameter objects, spelling out every error status already covered by the `responses` object). Rewrote all five from scratch as a single tight paragraph — what the endpoint returns plus the one or two behavioral quirks that aren't obvious from the schema (206 partial results, monthly-commodity `0` values, historical fallback). No functional/schema change. The Postman "APIFreaks" workspace, "Commodity APIs" collection description and all five folder descriptions were rewritten to match (kept the parameter/response/error reference tables — those are structured reference material, not prose noise).
+
+### Changed — `commodity-prices` (Live Commodity Prices) — `updates` query parameter removed
+
+Per product decision (not yet deployed live — backend cutover expected this evening), the `updates` query parameter has been **removed entirely** from `GET /commodity/rates/latest`:
+
+- APIFreaks is switching this endpoint to sit directly on top of the upstream provider's `latest` endpoint, which has no per-request update-frequency knob — rates are simply served on a rolling ~10 minute cadence (previously `updates=10m` was already APIFreaks' default; `updates=1m` is no longer offered).
+- `specs/commodity/commodity-prices.json`: removed the `updates` parameter object, the `invalidUpdates` 400 example (that failure mode no longer exists — an invalid `updates` value can't be sent), the `updates` value from the `missingSymbols`-adjacent example URLs, and reworded the endpoint description to drop the "10-minute or 1-minute" language in favor of "rolling ~10 minute cadence."
+- **Not a breaking removal of a required param in the sense of new failures** — `symbols` remains the only required query parameter. Existing callers that still send `updates=10m` or `updates=1m` should continue to work once the backend ignores/accepts the extra query param (unverified — backend change lands separately from this spec update).
+- Postman "APIFreaks" workspace, "Live Commodity Prices API" folder/request updated to match (param, curl examples, and the invalid-updates 400 example removed).
+- The `af_website` docs/playground/reference pages for this endpoint **have not been updated yet** — tracked as follow-up, to be done after the backend change is confirmed live.
+
+### Fixed — monthly-updated commodities return `open`/`high`/`low` as `0`
+
+`commodity-time-series` and `historical-commodity-prices`: documented and added dedicated `200 OK` examples for monthly-updated commodities (`updateInterval: PER_MONTH`, e.g. `NG-EU`) where only `close` is a real value — `open`, `high`, and `low` come back as `0`, and the date snaps to the first day of the month. This was previously undocumented and looked like a bug when first encountered live.
+
 ## [0.4.3] - 2026-09-14
 
 ### Changed — Commodity APIs migrated from v1.0 to v2.0

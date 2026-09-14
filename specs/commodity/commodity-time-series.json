@@ -3,7 +3,7 @@
   "info": {
     "title": "Commodities Time Series API",
     "version": "2.0.0",
-    "description": "Retrieve daily OHLC (open, high, low, close) price data for any supported commodity over a date range of up to 365 days. Accepts one or more comma-separated commodity symbols with a start and end date in YYYY-MM-DD format. Returns a date-indexed object where each date key maps to per-symbol OHLC data. Non-trading days are automatically excluded, and only closing rates are available for monthly-updated commodities. A symbol is considered resolved if it appears on at least one date in the range; if some requested symbols can't be resolved at all, a 206 Partial Content response is returned with an `unresolved` object. Returns a 400 error for invalid dates or a range exceeding 365 days, and a 404 error for unsupported symbols or a date range with no available data.",
+    "description": "Daily OHLC history for one or more commodities over a date range of up to 365 days, indexed by date. Non-trading days are excluded. Monthly-updated commodities only have a closing price — `open`, `high`, and `low` come back as `0`. Unresolved symbols degrade to a 206 partial response instead of failing the whole request.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -101,6 +101,40 @@
                             "high": 2674.68,
                             "low": 2668.58,
                             "close": 2671.8
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "monthlyCommodity": {
+                    "summary": "Monthly-updated commodity (open/high/low unavailable)",
+                    "value": {
+                      "success": true,
+                      "startDate": "2025-01-01",
+                      "endDate": "2025-03-01",
+                      "rates": {
+                        "2025-01-01": {
+                          "NG-EU": {
+                            "open": 0,
+                            "high": 0,
+                            "low": 0,
+                            "close": 14.66
+                          }
+                        },
+                        "2025-02-01": {
+                          "NG-EU": {
+                            "open": 0,
+                            "high": 0,
+                            "low": 0,
+                            "close": 15.34
+                          }
+                        },
+                        "2025-03-01": {
+                          "NG-EU": {
+                            "open": 0,
+                            "high": 0,
+                            "low": 0,
+                            "close": 13.24
                           }
                         }
                       }
@@ -373,23 +407,23 @@
       },
       "CommodityOhlc": {
         "type": "object",
-        "description": "OHLC price data for a single commodity on a single trading day.",
+        "description": "OHLC price data for a single commodity on a single trading day. For monthly-updated commodities, only `close` is meaningful — `open`, `high`, and `low` are returned as `0`.",
         "required": ["open", "high", "low", "close"],
         "properties": {
           "open": {
             "type": "number",
             "format": "float",
-            "description": "Opening price on the given date."
+            "description": "Opening price on the given date. `0` for monthly-updated commodities."
           },
           "high": {
             "type": "number",
             "format": "float",
-            "description": "Highest price on the given date."
+            "description": "Highest price on the given date. `0` for monthly-updated commodities."
           },
           "low": {
             "type": "number",
             "format": "float",
-            "description": "Lowest price on the given date."
+            "description": "Lowest price on the given date. `0` for monthly-updated commodities."
           },
           "close": {
             "type": "number",
