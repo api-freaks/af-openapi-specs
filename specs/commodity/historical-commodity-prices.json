@@ -2,8 +2,8 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Historical Commodity Prices, Delivered Simply.",
-    "version": "1.0.0",
-    "description": "Retrieve OHLC (open, high, low, close) price data for any supported commodity on a specific date. Data is available from January 1990 onwards for 130+ commodities. Accepts one or more comma-separated commodity symbols and a date in YYYY-MM-DD format. The response contains the opening, high, low, and closing price for each symbol on the given date. Returns a 400 error for invalid dates and a 404 error for unsupported symbols or missing rates.",
+    "version": "2.0.0",
+    "description": "Retrieve OHLC (open, high, low, close) price data for any supported commodity on a specific date. Data is available from January 1990 onwards for 245+ commodities, and only closing rates are available for monthly-updated commodities. If a commodity has no rate on the requested date, the API falls back to the last available rate before that date and returns it along with its actual date. Accepts one or more comma-separated commodity symbols and a date in YYYY-MM-DD format. If some requested symbols can't be resolved (unsupported, or no rate on or before the requested date), a 206 Partial Content response is returned with the resolved rates plus an `unresolved` object. Returns a 400 error for invalid dates and a 404 error for unsupported symbols or missing rates.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "https://api.apifreaks.com/v1.0",
+      "url": "https://api.apifreaks.com/v2.0",
       "description": "Historical Commodity Prices API Server"
     }
   ],
@@ -95,32 +95,107 @@
               }
             }
           },
+          "206": {
+            "description": "Partial Content — Some requested symbols could not be resolved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalCommodityPricesResponse"
+                },
+                "examples": {
+                  "partial": {
+                    "summary": "One valid symbol, one unresolved symbol",
+                    "value": {
+                      "success": true,
+                      "date": "2025-01-10",
+                      "rates": {
+                        "XAU": {
+                          "date": "2025-01-10",
+                          "open": 2669.93,
+                          "high": 2697.85,
+                          "low": 2663.61,
+                          "close": 2689.44
+                        }
+                      },
+                      "unresolved": {
+                        "FAKESYM": {
+                          "message": "We don't support this symbol, please visit our symbols page to see supported symbols."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
           "400": {
-            "description": "Bad request - Invalid date format",
+            "description": "Bad Request — Missing parameters or invalid date",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
+                  "missingSymbols": {
+                    "summary": "Missing required symbols parameter",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "please pass correct parameters",
+                      "path": "/v2.0/commodity/rates/historical",
+                      "status": 400,
+                      "timestamp": "2026-09-14T08:44:32.013Z"
+                    }
+                  },
                   "invalidDateFormat": {
                     "summary": "Invalid date format",
                     "value": {
-                      "timestamp": 1781792620618,
-                      "status": 400,
+                      "timestamp": "2026-09-14T08:45:13.934Z",
+                      "path": "/rates/historical",
+                      "code": 400,
                       "error": "VALIDATION_ERROR",
-                      "message": "Invalid Date Format (YYYY-MM-DD).",
-                      "path": "/v1.0/commodity/rates/historical"
+                      "message": "Invalid Date Format (YYYY-MM-DD)."
                     }
                   },
                   "dateNotExist": {
                     "summary": "Date does not exist",
                     "value": {
-                      "timestamp": 1781792620618,
-                      "status": 400,
+                      "timestamp": "2026-09-14T08:44:01.487Z",
+                      "path": "/rates/historical",
+                      "code": 400,
                       "error": "VALIDATION_ERROR",
-                      "message": "Invalid Date: The provided date does not exist.",
-                      "path": "/v1.0/commodity/rates/historical"
+                      "message": "Invalid Date: The provided date does not exist."
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "402": {
+            "description": "Payment Required — Maximum symbols per request exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "maxSymbolsExceeded": {
+                    "summary": "Too many symbols requested",
+                    "value": {
+                      "timestamp": "2026-09-14T08:44:01.978Z",
+                      "path": "/rates/historical",
+                      "code": 402,
+                      "error": "PAYMENT_REQUIRED",
+                      "message": "Maximum symbols per request exceeded"
                     }
                   }
                 }
@@ -143,21 +218,26 @@
                   "symbolNotFound": {
                     "summary": "Symbol Not Found",
                     "value": {
-                      "timestamp": 1781792620618,
-                      "status": 404,
+                      "timestamp": "2026-09-14T08:44:01.978Z",
+                      "path": "/rates/historical",
+                      "code": 404,
                       "error": "SYMBOL_NOT_FOUND",
                       "message": "The symbol is not supported, please visit the documentation for a list of supported symbols",
-                      "path": "/v1.0/commodity/rates/historical"
+                      "unresolved": {
+                        "FAKESYM": {
+                          "message": "We don't support this symbol, please visit our symbols page to see supported symbols."
+                        }
+                      }
                     }
                   },
                   "rateNotFound": {
                     "summary": "Rate Not Found",
                     "value": {
-                      "timestamp": 1781792620618,
-                      "status": 404,
+                      "timestamp": "2026-09-14T08:44:02.528Z",
+                      "path": "/rates/historical",
+                      "code": 404,
                       "error": "RATE_NOT_FOUND",
-                      "message": "no rates found for the specified date",
-                      "path": "/v1.0/commodity/rates/historical"
+                      "message": "no rates found for the specified date"
                     }
                   }
                 }
@@ -203,6 +283,26 @@
           },
           "rates": {
             "$ref": "#/components/schemas/HistoricalCommodityRates"
+          },
+          "unresolved": {
+            "type": "object",
+            "description": "Present only on a 206 Partial Content response, when some requested symbols could not be resolved. Map of each unresolved symbol to a detail message and optional close-match suggestions.",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Detail message explaining why this symbol was not resolved."
+                },
+                "suggestions": {
+                  "type": "array",
+                  "description": "Optional list of supported symbols that closely match the unresolved symbol.",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         },
         "description": "Historical commodity prices response containing success status, date, and OHLC rate data."
@@ -224,7 +324,7 @@
         "properties": {
           "date": {
             "type": "string",
-            "description": "Date for which prices were fetched (YYYY-MM-DD)."
+            "description": "Date for which prices were fetched (YYYY-MM-DD). May differ from the requested `date` when the API falls back to the last available rate before it."
           },
           "open": {
             "type": "number",
@@ -250,19 +350,12 @@
       },
       "ErrorResponse": {
         "type": "object",
-        "required": ["timestamp", "status", "error", "message", "path"],
+        "description": "Standard error envelope returned by the API on failed requests. Gateway-level validation errors populate status; commodity-service errors (date/symbol/rate validation) populate code instead — check whichever is present.",
+        "required": ["message"],
         "properties": {
-          "timestamp": {
-            "type": "integer",
-            "description": "Unix timestamp in milliseconds when the error occurred."
-          },
-          "status": {
-            "type": "integer",
-            "description": "HTTP status code returned with the error."
-          },
           "error": {
             "type": "string",
-            "description": "Specific error type (e.g., SYMBOL_NOT_FOUND, VALIDATION_ERROR)."
+            "description": "Short error category or exception type (e.g., Invalid Param Exception, VALIDATION_ERROR, SYMBOL_NOT_FOUND, RATE_NOT_FOUND)."
           },
           "message": {
             "type": "string",
@@ -270,10 +363,42 @@
           },
           "path": {
             "type": "string",
-            "description": "API endpoint path that produced the error."
+            "description": "API endpoint path (gateway errors) or internal service path (commodity-service errors) that produced the error."
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code. Present on gateway-level errors."
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP status code. Present on commodity-service errors instead of status."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the error occurred (ISO 8601)."
+          },
+          "unresolved": {
+            "type": "object",
+            "description": "Present only on SYMBOL_NOT_FOUND errors. Map of each unresolved symbol to a detail message and optional close-match suggestions.",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Detail message explaining why this symbol was not resolved."
+                },
+                "suggestions": {
+                  "type": "array",
+                  "description": "Optional list of supported symbols that closely match the unresolved symbol.",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
-        },
-        "description": "Standard error envelope returned by the API on failed requests."
+        }
       }
     },
     "headers": {

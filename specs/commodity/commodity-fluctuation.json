@@ -2,8 +2,8 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Commodity Fluctuation API ",
-    "version": "1.0.0",
-    "description": "Calculate price change and percentage movement for any commodity over a custom date range. Returns the opening price, closing price, absolute change, and percentage change for each symbol. Accepts one or more comma-separated commodity symbols with a start and end date in YYYY-MM-DD format. Returns a 400 error for invalid dates or a date range where start is after end, and a 404 error for unsupported symbols or a date range with no available data.",
+    "version": "2.0.0",
+    "description": "Calculate price change and percentage movement for any commodity over a custom date range. Returns the opening price, closing price, absolute change, and percentage change for each symbol, rounded to 2 decimal places. For monthly-updated commodities, the fluctuation is computed between the first day of the start month and the first day of the end month. There is no limit on the date range. Accepts one or more comma-separated commodity symbols with a start and end date in YYYY-MM-DD format. If some requested symbols can't be resolved, a 206 Partial Content response is returned with the resolved rates plus an `unresolved` object. Returns a 400 error for invalid dates or a date range where start is after end, and a 404 error for unsupported symbols or a date range with no available data.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "https://api.apifreaks.com/v1.0",
+      "url": "https://api.apifreaks.com/v2.0",
       "description": "Commodity Fluctuation API Server"
     }
   ],
@@ -103,6 +103,44 @@
               }
             }
           },
+          "206": {
+            "description": "Partial Content — Some requested symbols could not be resolved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommodityFluctuationResponse"
+                },
+                "examples": {
+                  "partial": {
+                    "summary": "One valid symbol, one unresolved symbol",
+                    "value": {
+                      "success": true,
+                      "startDate": "2024-01-01",
+                      "endDate": "2024-01-31",
+                      "rates": {
+                        "XAU": {
+                          "startRate": 2063.63,
+                          "endRate": 2039.83,
+                          "change": -23.8,
+                          "changePercent": -1.15
+                        }
+                      },
+                      "unresolved": {
+                        "FAKESYM": {
+                          "message": "We don't support this symbol, please visit our symbols page to see supported symbols."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
           "400": {
             "description": "Bad Request — Missing parameters or invalid dates",
             "content": {
@@ -113,9 +151,9 @@
                     "value": {
                       "error": "Invalid Param Exception",
                       "message": "please pass correct parameters",
-                      "path": "/v1.0/commodity/fluctuation",
+                      "path": "/v2.0/commodity/fluctuation",
                       "status": 400,
-                      "timestamp": "2026-07-27T11:37:24.273Z"
+                      "timestamp": "2026-09-14T08:43:46.481Z"
                     }
                   },
                   "invalidDateFormat": {
@@ -160,6 +198,33 @@
               }
             }
           },
+          "402": {
+            "description": "Payment Required — Maximum symbols per request exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "maxSymbolsExceeded": {
+                    "summary": "Too many symbols requested",
+                    "value": {
+                      "timestamp": "2026-09-14T08:43:48.408Z",
+                      "path": "/rates/fluctuation",
+                      "code": 402,
+                      "error": "PAYMENT_REQUIRED",
+                      "message": "Maximum symbols per request exceeded"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
           "404": {
             "description": "Not found - Symbol or data not available",
             "content": {
@@ -171,17 +236,22 @@
                   "symbolNotFound": {
                     "summary": "Symbol Not Found",
                     "value": {
-                      "timestamp": "2026-07-27T11:37:23.759Z",
+                      "timestamp": "2026-09-14T08:43:48.408Z",
                       "path": "/rates/fluctuation",
                       "code": 404,
                       "error": "SYMBOL_NOT_FOUND",
-                      "message": "The symbol is not supported, please visit the documentation for a list of supported symbols"
+                      "message": "The symbol is not supported, please visit the documentation for a list of supported symbols",
+                      "unresolved": {
+                        "FAKESYM": {
+                          "message": "We don't support this symbol, please visit our symbols page to see supported symbols."
+                        }
+                      }
                     }
                   },
                   "noData": {
                     "summary": "No data available for the given date range",
                     "value": {
-                      "timestamp": "2026-07-27T11:37:34.167Z",
+                      "timestamp": "2026-09-14T08:44:31.022Z",
                       "path": "/rates/fluctuation",
                       "code": 404,
                       "error": "DATA_NOT_FOUND",
@@ -235,6 +305,26 @@
           },
           "rates": {
             "$ref": "#/components/schemas/CommodityFluctuationRates"
+          },
+          "unresolved": {
+            "type": "object",
+            "description": "Present only on a 206 Partial Content response, when some requested symbols could not be resolved. Map of each unresolved symbol to a detail message and optional close-match suggestions.",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Detail message explaining why this symbol was not resolved."
+                },
+                "suggestions": {
+                  "type": "array",
+                  "description": "Optional list of supported symbols that closely match the unresolved symbol.",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         },
         "description": "Commodity fluctuation response containing price change data per symbol over a date range."
@@ -300,6 +390,26 @@
             "type": "string",
             "format": "date-time",
             "description": "Timestamp when the error occurred (ISO 8601)."
+          },
+          "unresolved": {
+            "type": "object",
+            "description": "Present only on SYMBOL_NOT_FOUND errors. Map of each unresolved symbol to a detail message and optional close-match suggestions.",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Detail message explaining why this symbol was not resolved."
+                },
+                "suggestions": {
+                  "type": "array",
+                  "description": "Optional list of supported symbols that closely match the unresolved symbol.",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         }
       }

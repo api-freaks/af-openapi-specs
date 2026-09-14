@@ -41,7 +41,7 @@ Successful responses include `X-AF-Credits-Cost`, the credits consumed by that r
 
 Each document declares its base URL under `servers`. Most products use `https://api.apifreaks.com/v1.0`.
 
-These use `https://api.apifreaks.com/v2.0`: IP geolocation, bulk IP geolocation, timezone lookup, domain WHOIS, bulk WHOIS, and astronomy.
+These use `https://api.apifreaks.com/v2.0`: IP geolocation, bulk IP geolocation, timezone lookup, domain WHOIS, bulk WHOIS, astronomy, and all commodity endpoints (live prices, historical prices, fluctuation, time series, symbols).
 
 Weather products (except astronomy) use `https://api.apifreaks.com/v1.0/weather`.
 

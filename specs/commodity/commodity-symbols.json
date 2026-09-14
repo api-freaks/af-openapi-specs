@@ -2,8 +2,8 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Commodity Symbols API Reference",
-    "version": "1.0.0",
-    "description": "List all supported commodity symbols available in the APIFreaks Commodity API. Returns an array of commodity objects with symbol, name, category, pricing currency, unit of measurement, status, and update interval. Supports metals, energy, agriculture, and livestock categories.",
+    "version": "2.0.0",
+    "description": "List all supported commodity symbols available in the APIFreaks Commodity API. Returns an array of commodity objects with symbol, name, category, pricing currency, unit of measurement, status, and update interval. Supports metals, energy, agriculture, industrial, raw materials, oils and meals, textiles, meats, poultry, and livestock categories across 245+ commodities. Deprecated symbols are included with `status: \"inactive\"` and a `deprecationDate`; historical rates remain available for them up to their deprecation date, but latest rates do not.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "https://api.apifreaks.com/v1.0",
+      "url": "https://api.apifreaks.com/v2.0",
       "description": "Commodity Symbols API Server"
     }
   ],
@@ -81,6 +81,40 @@
                             "symbol": "MMBtu",
                             "name": "Million British Thermal Units"
                           }
+                        },
+                        {
+                          "symbol": "NG-EU",
+                          "name": "Natural Gas, Europe",
+                          "category": "Energy",
+                          "status": "active",
+                          "updateInterval": "PER_MONTH",
+                          "exchange": "World Bank",
+                          "currency": {
+                            "code": "USD",
+                            "name": "US Dollar",
+                            "symbol": "$"
+                          },
+                          "unit": {
+                            "symbol": "MMBtu",
+                            "name": "Million British Thermal Units"
+                          }
+                        },
+                        {
+                          "symbol": "UANEU",
+                          "name": "Urea Ammonium Nitrate",
+                          "category": "Industrial",
+                          "status": "inactive",
+                          "updateInterval": "PER_MINUTE",
+                          "deprecationDate": "2024-04-14",
+                          "currency": {
+                            "code": "USD",
+                            "name": "US Dollar",
+                            "symbol": "$"
+                          },
+                          "unit": {
+                            "symbol": "T",
+                            "name": "Metric Ton"
+                          }
                         }
                       ]
                     }
@@ -147,23 +181,46 @@
         "properties": {
           "symbol": {
             "type": "string",
-            "description": "Unique identifier/ticker symbol for the commodity (e.g., XAU, NG-FUT)."
+            "description": "Unique identifier/ticker symbol for the commodity (e.g., XAU, NG-FUT). Use this value in the `symbols` parameter of the rate endpoints."
           },
           "name": {
             "type": "string",
             "description": "Full name of the commodity (e.g., Gold, Natural Gas Futures)."
           },
+          "description": {
+            "type": "string",
+            "description": "Short description of the commodity. May be an empty string for some symbols."
+          },
           "category": {
             "type": "string",
-            "description": "Category the commodity belongs to (e.g., Metals, Energy)."
+            "description": "Category the commodity belongs to (e.g., Metals, Energy, Agriculture, Industrial, Raw Materials, Oils and Meals, Textiles, Meats, Poultry, Livestock)."
           },
           "status": {
             "type": "string",
-            "description": "Current status of the commodity. Value: active."
+            "enum": ["active", "inactive"],
+            "description": "Current status of the commodity. `inactive` means the symbol is deprecated: latest rates are unavailable, but historical rates remain available up to its `deprecationDate`."
           },
           "updateInterval": {
             "type": "string",
-            "description": "Rate at which the price is updated. Values: PER_SECOND, PER_MINUTE."
+            "enum": [
+              "PER_SECOND",
+              "PER_MINUTE",
+              "PER_10_MINUTES",
+              "PER_HOUR",
+              "PER_DAY",
+              "PER_WEEK",
+              "PER_MONTH"
+            ],
+            "description": "Rate at which the price is updated."
+          },
+          "exchange": {
+            "type": "string",
+            "description": "Optional. Data source for the symbol (e.g., World Bank). Present only for some symbols."
+          },
+          "deprecationDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Optional. Present only when `status` is `inactive`. Date the symbol was deprecated (YYYY-MM-DD)."
           },
           "currency": {
             "$ref": "#/components/schemas/CommodityCurrency"

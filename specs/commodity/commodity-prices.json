@@ -2,8 +2,8 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Live Commodity Prices API - Real Time Market Insights",
-    "version": "1.0.0",
-    "description": "Get real-time prices for 130+ commodities in a single request. Returns current market prices for each requested symbol plus unit and quote currency metadata. Supports an optional quote parameter to convert prices into a desired currency, defaulting to each commodity's native market currency. Accepts 1-minute or 10-minute update frequencies for price freshness. An unsupported symbol or quote currency returns a 404.",
+    "version": "2.0.0",
+    "description": "Get real-time prices for 245+ commodities in a single request. Returns current market prices for each requested symbol plus unit and quote currency metadata. Supports an optional quote parameter to convert prices into a desired currency, defaulting to each commodity's native market currency. Accepts 10-minute or 1-minute update frequencies for price freshness. If some requested symbols can't be resolved, a 206 Partial Content response is returned with the resolved rates plus an `unresolved` object; if none resolve, a 404 is returned instead. An unsupported quote currency also returns a 404.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "https://api.apifreaks.com/v1.0",
+      "url": "https://api.apifreaks.com/v2.0",
       "description": "Live Commodity Prices API Server"
     }
   ],
@@ -48,11 +48,11 @@
             "name": "updates",
             "in": "query",
             "required": true,
-            "description": "Update frequency. Accepted values: `1m` (default), `10m`.",
+            "description": "Update frequency. Accepted values: `10m` (default), `1m`.",
             "schema": {
               "type": "string",
-              "enum": ["1m", "10m"],
-              "default": "1m"
+              "enum": ["10m", "1m"],
+              "default": "10m"
             }
           },
           {
@@ -75,13 +75,13 @@
                 },
                 "examples": {
                   "success": {
-                    "summary": "Successful response",
+                    "summary": "Successful response (10m update frequency)",
                     "value": {
                       "success": true,
-                      "timestamp": 1785152172,
+                      "timestamp": 1789375397,
                       "rates": {
-                        "XAU": 4099.1,
-                        "WTIOIL-SPOT": 81.88
+                        "XAU": 4313.04,
+                        "WTIOIL-SPOT": 100
                       },
                       "metadata": {
                         "XAU": {
@@ -99,14 +99,74 @@
                     "summary": "Price converted to a target quote currency",
                     "value": {
                       "success": true,
-                      "timestamp": 1785152172,
+                      "timestamp": 1789375426,
                       "rates": {
-                        "XAU": 3597.734
+                        "XAU": 3739.023
                       },
                       "metadata": {
                         "XAU": {
                           "unit": "T.oz",
                           "quote": "EUR"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "206": {
+            "description": "Partial Content — Some requested symbols could not be resolved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiveCommodityPricesResponse"
+                },
+                "examples": {
+                  "partial": {
+                    "summary": "One valid symbol, one unresolved symbol",
+                    "value": {
+                      "success": true,
+                      "timestamp": 1789376193,
+                      "rates": {
+                        "XAU": 4311.88
+                      },
+                      "metadata": {
+                        "XAU": {
+                          "unit": "T.oz",
+                          "quote": "USD"
+                        }
+                      },
+                      "unresolved": {
+                        "FAKESYM": {
+                          "message": "We don't support this symbol, please visit our symbols page to see supported symbols."
+                        }
+                      }
+                    }
+                  },
+                  "partialWithSuggestions": {
+                    "summary": "Unresolved symbol with close-match suggestions",
+                    "value": {
+                      "success": true,
+                      "timestamp": 1789376644,
+                      "rates": {
+                        "XAU": 4306.06
+                      },
+                      "metadata": {
+                        "XAU": {
+                          "unit": "T.oz",
+                          "quote": "USD"
+                        }
+                      },
+                      "unresolved": {
+                        "ZW": {
+                          "message": "Did you mean ZW-SPOT (Wheat Spot) or ZW-FUT (Wheat Futures)?",
+                          "suggestions": ["ZW-SPOT", "ZW-FUT"]
                         }
                       }
                     }
@@ -133,19 +193,46 @@
                     "value": {
                       "error": "Invalid Param Exception",
                       "message": "please pass correct parameters",
-                      "path": "/v1.0/commodity/rates/latest",
+                      "path": "/v2.0/commodity/rates/latest",
                       "status": 400,
-                      "timestamp": "2026-07-27T11:36:13.312Z"
+                      "timestamp": "2026-09-14T08:43:43.964Z"
                     }
                   },
                   "invalidUpdates": {
-                    "summary": "updates is not 1m or 10m",
+                    "summary": "updates is not 10m or 1m",
                     "value": {
                       "error": "Invalid Param Exception",
                       "message": "please pass correct parameters",
-                      "path": "/v1.0/commodity/rates/latest",
+                      "path": "/v2.0/commodity/rates/latest",
                       "status": 400,
-                      "timestamp": "2026-07-27T11:36:35.755Z"
+                      "timestamp": "2026-09-14T08:43:44.440Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "402": {
+            "description": "Payment Required — Maximum symbols per request exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommodityNotFoundError"
+                },
+                "examples": {
+                  "maxSymbolsExceeded": {
+                    "summary": "Too many symbols requested",
+                    "value": {
+                      "timestamp": "2026-09-14T08:43:44.957Z",
+                      "path": "/rates/latestRates",
+                      "code": 402,
+                      "error": "PAYMENT_REQUIRED",
+                      "message": "Maximum symbols per request exceeded"
                     }
                   }
                 }
@@ -168,17 +255,38 @@
                   "symbolNotFound": {
                     "summary": "Symbol Not Found",
                     "value": {
-                      "timestamp": 1781792620618,
+                      "timestamp": "2026-09-14T08:43:44.957Z",
                       "path": "/rates/latestRates",
                       "code": 404,
                       "error": "SYMBOL_NOT_FOUND",
-                      "message": "The symbol is not supported, please visit the documentation for a list of supported symbols"
+                      "message": "The symbol is not supported, please visit the documentation for a list of supported symbols",
+                      "unresolved": {
+                        "FAKESYM": {
+                          "message": "We don't support this symbol, please visit our symbols page to see supported symbols."
+                        }
+                      }
+                    }
+                  },
+                  "symbolNotFoundWithSuggestions": {
+                    "summary": "Symbol Not Found, with close-match suggestions",
+                    "value": {
+                      "timestamp": "2026-09-14T09:04:04.878Z",
+                      "path": "/rates/latestRates",
+                      "code": 404,
+                      "error": "SYMBOL_NOT_FOUND",
+                      "message": "The symbol is not supported, please visit the documentation for a list of supported symbols",
+                      "unresolved": {
+                        "ZW": {
+                          "message": "Did you mean ZW-SPOT (Wheat Spot) or ZW-FUT (Wheat Futures)?",
+                          "suggestions": ["ZW-SPOT", "ZW-FUT"]
+                        }
+                      }
                     }
                   },
                   "quoteNotFound": {
                     "summary": "Quote Currency Not Found",
                     "value": {
-                      "timestamp": 1781792620618,
+                      "timestamp": "2026-09-14T08:43:45.461Z",
                       "path": "/rates/latestRates",
                       "code": 404,
                       "error": "QUOTE_NOT_FOUND",
@@ -231,6 +339,30 @@
           },
           "metadata": {
             "$ref": "#/components/schemas/CommodityMetadata"
+          },
+          "unresolved": {
+            "type": "object",
+            "description": "Present only on a 206 Partial Content response, when some requested symbols could not be resolved. Map of each unresolved symbol to a detail message and optional close-match suggestions.",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Detail message explaining why this symbol was not resolved."
+                },
+                "suggestions": {
+                  "type": "array",
+                  "description": "Optional list of supported symbols that closely match the unresolved symbol.",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "warning": {
+            "type": "string",
+            "description": "Present only when currency conversion for the requested `quote` is temporarily unavailable; rates are returned in each commodity's default currency instead."
           }
         },
         "description": "Live commodity prices response containing success status, timestamp, rates, and metadata."
@@ -294,12 +426,13 @@
       },
       "CommodityNotFoundError": {
         "type": "object",
-        "description": "Error envelope returned by the commodity pricing service specifically for unresolvable symbol/quote errors. Uses `code` instead of `status` and a Unix millisecond `timestamp`, unlike the standard ErrorResponse.",
+        "description": "Error envelope returned by the commodity pricing service specifically for unresolvable symbol/quote errors. Uses `code` instead of `status` and an ISO 8601 `timestamp`, unlike the standard ErrorResponse.",
         "required": ["code", "error", "message"],
         "properties": {
           "timestamp": {
-            "type": "integer",
-            "description": "Unix timestamp in milliseconds when the error occurred."
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the error occurred (ISO 8601)."
           },
           "path": {
             "type": "string",
@@ -316,6 +449,26 @@
           "message": {
             "type": "string",
             "description": "Human-readable error message describing the failure."
+          },
+          "unresolved": {
+            "type": "object",
+            "description": "Present only on SYMBOL_NOT_FOUND errors. Map of each unresolved symbol to a detail message and optional close-match suggestions.",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Detail message explaining why this symbol was not resolved."
+                },
+                "suggestions": {
+                  "type": "array",
+                  "description": "Optional list of supported symbols that closely match the unresolved symbol.",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         }
       }

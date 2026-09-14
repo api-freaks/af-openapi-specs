@@ -2,8 +2,8 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Commodities Time Series API",
-    "version": "1.0.0",
-    "description": "Retrieve daily OHLC (open, high, low, close) price data for any supported commodity over a date range of up to 365 days. Accepts one or more comma-separated commodity symbols with a start and end date in YYYY-MM-DD format. Returns a date-indexed object where each date key maps to per-symbol OHLC data. Non-trading days are automatically excluded. Returns a 400 error for invalid dates or a range exceeding 365 days, and a 404 error for unsupported symbols or a date range with no available data.",
+    "version": "2.0.0",
+    "description": "Retrieve daily OHLC (open, high, low, close) price data for any supported commodity over a date range of up to 365 days. Accepts one or more comma-separated commodity symbols with a start and end date in YYYY-MM-DD format. Returns a date-indexed object where each date key maps to per-symbol OHLC data. Non-trading days are automatically excluded, and only closing rates are available for monthly-updated commodities. A symbol is considered resolved if it appears on at least one date in the range; if some requested symbols can't be resolved at all, a 206 Partial Content response is returned with an `unresolved` object. Returns a 400 error for invalid dates or a range exceeding 365 days, and a 404 error for unsupported symbols or a date range with no available data.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "https://api.apifreaks.com/v1.0",
+      "url": "https://api.apifreaks.com/v2.0",
       "description": "Commodity Time Series API Server"
     }
   ],
@@ -115,6 +115,62 @@
               }
             }
           },
+          "206": {
+            "description": "Partial Content — Some requested symbols could not be resolved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommodityTimeSeriesResponse"
+                },
+                "examples": {
+                  "partial": {
+                    "summary": "One valid symbol, one unresolved symbol",
+                    "value": {
+                      "success": true,
+                      "startDate": "2025-01-06",
+                      "endDate": "2025-01-08",
+                      "rates": {
+                        "2025-01-06": {
+                          "XAU": {
+                            "open": 2649.01,
+                            "high": 2651.33,
+                            "low": 2645.36,
+                            "close": 2646.91
+                          }
+                        },
+                        "2025-01-07": {
+                          "XAU": {
+                            "open": 2662.45,
+                            "high": 2663.06,
+                            "low": 2655.66,
+                            "close": 2658.9
+                          }
+                        },
+                        "2025-01-08": {
+                          "XAU": {
+                            "open": 2669.69,
+                            "high": 2674.68,
+                            "low": 2668.58,
+                            "close": 2671.8
+                          }
+                        }
+                      },
+                      "unresolved": {
+                        "FAKESYM": {
+                          "message": "We don't support this symbol, please visit our symbols page to see supported symbols."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
           "400": {
             "description": "Bad Request — Missing parameters, invalid dates, or date range exceeded",
             "content": {
@@ -125,9 +181,9 @@
                     "value": {
                       "error": "Invalid Param Exception",
                       "message": "please pass correct parameters",
-                      "path": "/v1.0/commodity/time-series",
+                      "path": "/v2.0/commodity/time-series",
                       "status": 400,
-                      "timestamp": "2026-07-27T11:38:40.063Z"
+                      "timestamp": "2026-09-14T08:43:58.547Z"
                     }
                   },
                   "invalidDate": {
@@ -172,6 +228,33 @@
               }
             }
           },
+          "402": {
+            "description": "Payment Required — Maximum symbols per request exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "maxSymbolsExceeded": {
+                    "summary": "Too many symbols requested",
+                    "value": {
+                      "timestamp": "2026-09-14T08:44:00.586Z",
+                      "path": "/rates/time-series",
+                      "code": 402,
+                      "error": "PAYMENT_REQUIRED",
+                      "message": "Maximum symbols per request exceeded"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
           "404": {
             "description": "Not found - Symbol or data not available",
             "content": {
@@ -183,17 +266,22 @@
                   "symbolNotFound": {
                     "summary": "Symbol Not Found",
                     "value": {
-                      "timestamp": "2026-07-27T11:38:41.234Z",
+                      "timestamp": "2026-09-14T08:44:00.586Z",
                       "path": "/rates/time-series",
                       "code": 404,
                       "error": "SYMBOL_NOT_FOUND",
-                      "message": "The symbol is not supported, please visit the documentation for a list of supported symbols"
+                      "message": "The symbol is not supported, please visit the documentation for a list of supported symbols",
+                      "unresolved": {
+                        "FAKESYM": {
+                          "message": "We don't support this symbol, please visit our symbols page to see supported symbols."
+                        }
+                      }
                     }
                   },
                   "dataNotFound": {
                     "summary": "No data available for the given date range",
                     "value": {
-                      "timestamp": "2026-07-27T11:38:41.234Z",
+                      "timestamp": "2026-09-14T08:44:31.547Z",
                       "path": "/rates/time-series",
                       "code": 404,
                       "error": "DATA_NOT_FOUND",
@@ -247,6 +335,26 @@
           },
           "rates": {
             "$ref": "#/components/schemas/CommodityTimeSeriesRates"
+          },
+          "unresolved": {
+            "type": "object",
+            "description": "Present only on a 206 Partial Content response, when some requested symbols could not be resolved on any date in the range. Map of each unresolved symbol to a detail message and optional close-match suggestions.",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Detail message explaining why this symbol was not resolved."
+                },
+                "suggestions": {
+                  "type": "array",
+                  "description": "Optional list of supported symbols that closely match the unresolved symbol.",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         },
         "description": "Commodity time series response containing date-indexed OHLC data per symbol."
@@ -319,6 +427,26 @@
             "type": "string",
             "format": "date-time",
             "description": "Timestamp when the error occurred (ISO 8601)."
+          },
+          "unresolved": {
+            "type": "object",
+            "description": "Present only on SYMBOL_NOT_FOUND errors. Map of each unresolved symbol to a detail message and optional close-match suggestions.",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Detail message explaining why this symbol was not resolved."
+                },
+                "suggestions": {
+                  "type": "array",
+                  "description": "Optional list of supported symbols that closely match the unresolved symbol.",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         }
       }
