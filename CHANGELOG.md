@@ -3,7 +3,7 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.4.4] - 2026-09-14
 
 ### Changed — Rewrote all five commodity `info.description` fields
 
