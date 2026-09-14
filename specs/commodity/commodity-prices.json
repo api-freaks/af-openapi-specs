@@ -3,7 +3,7 @@
   "info": {
     "title": "Live Commodity Prices API - Real Time Market Insights",
     "version": "2.0.0",
-    "description": "Real-time prices for 245+ commodities in a single request, updated on a rolling ~10 minute cadence. Optionally convert prices into a target quote currency. Unresolved symbols degrade to a 206 partial response instead of failing the whole request.",
+    "description": "Real-time prices for 245+ commodities in a single request, updated on a rolling ~1 minute cadence. Optionally convert prices into a target quote currency. Unresolved symbols degrade to a 206 partial response instead of failing the whole request.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",

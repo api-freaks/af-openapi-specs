@@ -3,6 +3,12 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.5] - 2026-09-14
+
+### Fixed — corrected the post-`updates`-removal cadence claim: ~1 minute, not ~10 minutes
+
+`commodity-prices.json`'s `info.description`, and the matching Postman "Live Commodity Prices API" folder + request descriptions, said prices would be "updated on a rolling ~10 minute cadence" once the `updates` query parameter was removed (see 0.4.4). That was wrong — per product confirmation, once `updates` is gone the gateway's default cadence is **~1 minute**, not ~10 minutes. Corrected both to say "~1 minute cadence." No other change; this is a documentation-only correction of a 0.4.4 claim, published as its own patch rather than editing the 0.4.4 tag/release after the fact.
+
 ## [0.4.4] - 2026-09-14
 
 ### Changed — Rewrote all five commodity `info.description` fields
