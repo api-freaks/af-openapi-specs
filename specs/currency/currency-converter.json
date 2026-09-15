@@ -59,8 +59,9 @@
             "required": false,
             "description": "Amount to convert, as a decimal. Defaults to `1`. Must be numeric — non-numeric values return a 400 (negative values are accepted despite the error message's wording).",
             "schema": {
-              "type": "string",
-              "default": "1"
+              "type": "number",
+              "format": "float",
+              "default": 1
             }
           },
           {

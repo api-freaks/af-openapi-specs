@@ -3,6 +3,12 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.6] - 2026-09-15
+
+### Changed — currency `amount` query parameter is now `number` (was `string`)
+
+`currency-converter.json`, `historical-currency-converter.json`, and `geolocalized-currency-conversion.json`: the `amount` query parameter's schema type changed from `string` to `number` (`format: float`), and its `default` from `"1"` to `1`. It's a numeric input value — typing it as `string` produced wrong client codegen (fields/validation as text instead of numeric). Query parameters are always transmitted as strings on the wire regardless of this schema type, so this is a documentation/codegen-correctness fix, not a wire-format change. Verified live against all three endpoints with integer, decimal, default (omitted), and negative amounts before and after — behavior unchanged, all still accept decimals and reject non-numeric values with a 400.
+
 ## [0.4.5] - 2026-09-14
 
 ### Fixed — corrected the post-`updates`-removal cadence claim: ~1 minute, not ~10 minutes
