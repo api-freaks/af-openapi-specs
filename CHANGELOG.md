@@ -3,6 +3,12 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.7] - 2026-09-15
+
+### Fixed — `bulk-user-agent-parser` max batch size was wrong by 500x: 100, not 50,000
+
+`uaStrings`' `maxItems` said `50000` (and the description/summary text said "up to 50,000 User-Agent strings"). Verified live: a batch of exactly 100 strings succeeds (`200`); 101 fails with **`413 Payload too large Exception` / "Maximum request body size limit exceeded"** — a status code that wasn't documented at all before this (only `400` was). Fixed `maxItems` to `100`, updated all three "50,000" mentions (`info.description`, operation `description`, schema property `description`), and added the missing `413` response with a live-captured example. No `X-AF-Credits-Cost` header on the `413` — verified live, request is rejected before billing logic runs (same pattern as other gateway-level errors).
+
 ## [0.4.6] - 2026-09-15
 
 ### Changed — currency `amount` query parameter is now `number` (was `string`)
