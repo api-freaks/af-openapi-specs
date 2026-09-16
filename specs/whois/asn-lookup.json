@@ -462,8 +462,7 @@
           },
           "query_time": {
             "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the WHOIS query was executed."
+            "description": "Timestamp when the WHOIS query was executed, in `YYYY-MM-DD HH:mm:ss` format — not ISO 8601 (no `T` separator, no milliseconds, no `Z`)."
           }
         }
       },

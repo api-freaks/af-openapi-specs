@@ -826,8 +826,7 @@
         "properties": {
           "timestamp": {
             "type": "string",
-            "format": "date-time",
-            "description": "Local timestamp for this hourly reading (YYYY-MM-DDTHH:MM)."
+            "description": "Local timestamp for this hourly reading, in `YYYY-MM-DDTHH:mm` format — not full ISO 8601 (no seconds, no timezone offset/`Z`)."
           },
           "temperature_2m": {
             "type": "number",

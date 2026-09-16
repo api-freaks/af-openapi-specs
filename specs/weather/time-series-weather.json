@@ -633,8 +633,8 @@
         "properties": {
           "timestamp": {
             "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 formatted timestamp"
+            "format": "date",
+            "description": "Date of this daily entry, `YYYY-MM-DD`."
           },
           "weather_code": {
             "type": "integer",
@@ -787,8 +787,7 @@
         "properties": {
           "timestamp": {
             "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 formatted timestamp"
+            "description": "Local timestamp of this hourly reading, in `YYYY-MM-DDTHH:mm` format — not full ISO 8601 (no seconds, no timezone offset/`Z`)."
           },
           "temperature_2m": {
             "type": "number",

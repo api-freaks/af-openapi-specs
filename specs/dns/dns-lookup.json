@@ -307,8 +307,7 @@
           },
           "queryTime": {
             "type": "string",
-            "format": "date-time",
-            "description": "Time at which the query was made (Format:YYYY-MM-DD HH:mm:ss)."
+            "description": "Time at which the query was made, in `YYYY-MM-DD HH:mm:ss` format — not ISO 8601 (no `T` separator, no milliseconds, no `Z`)."
           },
           "domainName": {
             "type": "string",

@@ -613,8 +613,7 @@
         "properties": {
           "timestamp": {
             "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 formatted timestamp of the current observation."
+            "description": "Local timestamp of the current observation, in `YYYY-MM-DDTHH:mm` format — not full ISO 8601 (no seconds, no timezone offset/`Z`)."
           },
           "wave_height": {
             "type": ["number", "null"],
@@ -771,8 +770,7 @@
         "properties": {
           "timestamp": {
             "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 formatted timestamp of this hourly entry."
+            "description": "Local timestamp of this hourly entry, in `YYYY-MM-DDTHH:mm` format — not full ISO 8601 (no seconds, no timezone offset/`Z`)."
           },
           "wave_height": {
             "type": ["number", "null"],
@@ -848,8 +846,7 @@
         "properties": {
           "timestamp": {
             "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 formatted timestamp of this minute-level entry."
+            "description": "Local timestamp of this minute-level entry, in `YYYY-MM-DDTHH:mm` format — not full ISO 8601 (no seconds, no timezone offset/`Z`)."
           },
           "ocean_current_velocity": {
             "type": ["number", "null"],

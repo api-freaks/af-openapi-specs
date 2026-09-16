@@ -581,8 +581,7 @@
         "properties": {
           "timestamp": {
             "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 formatted timestamp (iso8601)."
+            "description": "Local timestamp of the observation, in `YYYY-MM-DDTHH:mm` format — not full ISO 8601 (no seconds, no timezone offset/`Z`)."
           },
           "european_aqi": {
             "type": "integer",
@@ -650,8 +649,7 @@
         "properties": {
           "timestamp": {
             "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 formatted timestamp"
+            "description": "Local timestamp of this hourly reading, in `YYYY-MM-DDTHH:mm` format — not full ISO 8601 (no seconds, no timezone offset/`Z`)."
           },
           "pm10": {
             "type": "number",

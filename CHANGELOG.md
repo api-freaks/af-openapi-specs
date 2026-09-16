@@ -3,6 +3,19 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.8] - 2026-09-16
+
+### Fixed — `format: date-time` incorrectly set on non-ISO timestamp fields (13 files, WHOIS/DNS/SSL/Weather)
+
+Several timestamp fields were typed `format: date-time`, which per JSON Schema means strict RFC3339/ISO 8601 (`YYYY-MM-DDTHH:mm:ss.sssZ`). Strict SDK codegen (Go, Java, Rust, etc.) generates real `Date`/`Instant`/`DateTime` types for `format: date-time` fields and fails to parse the actual live values, which are not ISO 8601. Verified live before and after every change.
+
+- **WHOIS** (`asn-lookup`, `whois-domain-lookup`, `bulk-whois-lookup`, `domain-whois-history-lookup`) — `query_time` (top-level and nested `registry_data.query_time`) is `YYYY-MM-DD HH:mm:ss`, space-separated, no `T`/`Z`/milliseconds. Removed `format: date-time`, description now states the real shape. (`whois-ip-lookup` and `reverse-whois` already had this typed correctly as plain `string` — not touched.)
+- **DNS** (`dns-lookup`) — `queryTime` same space-separated shape, same fix. (`reverse-dns-lookup`, `dns-history-lookup`, `bulk-dns-lookup` were already correct — two already use `format: date` correctly for date-only fields, one is already a plain string.)
+- **SSL** (`ssl-certificate-lookup`, `ssl-certificate-chain-lookup`) — `queryTime` same space-separated shape; `validityStartDate`/`validityEndDate` are `YYYY-MM-DD HH:mm:ss UTC` — space-separated **and** a literal `UTC` suffix instead of a `Z`/offset. All three fixed in both files.
+- **Weather** (`air-quality`, `bulk-live-weather`, `historical-weather`, `live-weather`, `marine-weather`, `time-series-weather`) — hourly/current/minutely `timestamp` fields are `YYYY-MM-DDTHH:mm` — has the `T` separator but is missing seconds **and** the timezone offset, so it's a different broken variant from the WHOIS/DNS/SSL one, but still fails a strict `format: date-time` parser. Fixed 11 fields across 6 files. One field, `time-series-weather`'s `HistoricalDaily.timestamp`, is actually plain `YYYY-MM-DD` (daily granularity) — changed to `format: date` (correct format, not removed) rather than treated the same as the hourly fields.
+
+**Not changed:** `ErrorResponse.timestamp` (gateway-level error envelope) across all specs — verified live, this one actually is full ISO 8601 with milliseconds and `Z`, `format: date-time` is correct there. Also did not touch `timezone-converter`'s `original_time`/`converted_time` — inspected the spec directly and neither has `format: date-time` set already (already plain `string`); if an SDK audit still flags these, the mismatch isn't in this repo's schema. Also flagged but not fixed (out of scope of this pass, no live verification done): `commodity-prices`' `CommodityNotFoundError.timestamp`, and `format: date-time` on PDF (`pdf-file-status`, `pdf-generator`, `pdf-generator-bulk`) and screenshot (`bulk-screenshot`, `website-screenshot`) `created_at`/`expiration_time`/`fileCreationTime` fields — same class of bug may exist there, needs its own live-verification pass.
+
 ## [0.4.7] - 2026-09-15
 
 ### Fixed — `bulk-user-agent-parser` max batch size was wrong by 500x: 100, not 50,000

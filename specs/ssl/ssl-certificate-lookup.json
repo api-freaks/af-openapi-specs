@@ -239,8 +239,7 @@
           },
           "queryTime": {
             "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the query was executed."
+            "description": "Timestamp when the query was executed, in `YYYY-MM-DD HH:mm:ss` format — not ISO 8601 (no `T` separator, no milliseconds, no `Z`)."
           },
           "sslCertificates": {
             "type": "array",
@@ -283,13 +282,11 @@
           },
           "validityStartDate": {
             "type": "string",
-            "format": "date-time",
-            "description": "Certificate validity start date."
+            "description": "Certificate validity start date, in `YYYY-MM-DD HH:mm:ss UTC` format — not ISO 8601 (space-separated, literal `UTC` suffix instead of `Z`)."
           },
           "validityEndDate": {
             "type": "string",
-            "format": "date-time",
-            "description": "Certificate validity end date."
+            "description": "Certificate validity end date, in `YYYY-MM-DD HH:mm:ss UTC` format — not ISO 8601 (space-separated, literal `UTC` suffix instead of `Z`)."
           },
           "serialNumber": {
             "type": "string",

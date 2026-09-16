@@ -489,8 +489,7 @@
           },
           "query_time": {
             "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the registry-level record was queried."
+            "description": "Timestamp when the registry-level record was queried, in `YYYY-MM-DD HH:mm:ss` format — not ISO 8601 (no `T` separator, no milliseconds, no `Z`)."
           },
           "whois_server": {
             "type": "string",
