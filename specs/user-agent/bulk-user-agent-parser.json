@@ -3,7 +3,7 @@
   "info": {
     "title": "Bulk User Agent Parser - Multi User Agent Parsing",
     "version": "1.0.0",
-    "description": "Parse multiple User-Agent strings in a single POST request to obtain detailed browser, device, operating system, and rendering engine information for each string. Supports up to 100 User-Agent strings per request; exceeding that returns a 413, not a 400. Each entry in the response array mirrors the shape of a single User Agent Parser result --- including browser/app name and version, device hardware (name, type, brand, CPU), layout engine data, and operating system metadata --- in the same order as the request. A malformed/unparsable (but non-empty) string does not fail the batch; it simply comes back with every classification field set to `Hacker`, just like the single-lookup endpoint. An empty string or `null` anywhere in the array does fail the whole request with a `400`, not a per-item error --- there is no partial-failure array shape for this endpoint.",
+    "description": "Parse multiple User-Agent strings in a single POST request to obtain detailed browser, device, operating system, and rendering engine information for each string. Supports up to 20,000 User-Agent strings per request; exceeding that returns a 413, not a 400. Each entry in the response array mirrors the shape of a single User Agent Parser result --- including browser/app name and version, device hardware (name, type, brand, CPU), layout engine data, and operating system metadata --- in the same order as the request. A malformed/unparsable (but non-empty) string does not fail the batch; it simply comes back with every classification field set to `Hacker`, just like the single-lookup endpoint. An empty string or `null` anywhere in the array does fail the whole request with a `400`, not a per-item error --- there is no partial-failure array shape for this endpoint.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -21,7 +21,7 @@
       "post": {
         "tags": ["User Agent APIs"],
         "summary": "Parse multiple User-Agent strings in a single request to obtain browser, device, and operating system details",
-        "description": "Parse up to 100 User-Agent strings simultaneously in a single request. Returns structured details about the browser, device, layout engine, and operating system for each string.",
+        "description": "Parse up to 20,000 User-Agent strings simultaneously in a single request. Returns structured details about the browser, device, layout engine, and operating system for each string.",
         "operationId": "bulkParseUserAgent",
         "parameters": [
           {
@@ -250,7 +250,7 @@
             }
           },
           "413": {
-            "description": "Payload Too Large — More than 100 strings in uaStrings",
+            "description": "Payload Too Large — More than 20,000 strings in uaStrings",
             "content": {
               "application/json": {
                 "schema": {
@@ -258,7 +258,7 @@
                 },
                 "examples": {
                   "tooManyStrings": {
-                    "summary": "uaStrings array exceeds the 100-item limit",
+                    "summary": "uaStrings array exceeds the 20,000-item limit",
                     "value": {
                       "error": "Payload too large Exception",
                       "message": "Maximum request body size limit exceeded",
@@ -298,8 +298,8 @@
         "properties": {
           "uaStrings": {
             "type": "array",
-            "description": "Array of User-Agent strings to parse. Maximum 100 strings per request — exceeding that returns a 413.",
-            "maxItems": 100,
+            "description": "Array of User-Agent strings to parse. Maximum 20,000 strings per request — exceeding that returns a 413.",
+            "maxItems": 20000,
             "items": {
               "type": "string"
             }
