@@ -4,7 +4,7 @@ OpenAPI 3.1 documents for [APIFreaks](https://apifreaks.com) API products. Each 
 
 This folder is the source of truth. JSON only. YAML is produced when the npm package is built, not checked in here.
 
-To install the specs as a package (`getSpec`, `SpecSlug`, JSON imports), see the [repository README](../README.md).
+To install the specs as a package (`getSpecJson`, `SpecSlug`, JSON imports), see the [repository README](../README.md).
 
 ## Open a spec
 
@@ -24,7 +24,7 @@ https://raw.githubusercontent.com/api-freaks/af-openapi-specs/main/specs/ip-inte
 npx openapi-typescript https://raw.githubusercontent.com/api-freaks/af-openapi-specs/main/specs/ip-intelligence/ip-locator.json -o ip-locator.ts
 ```
 
-The slug is the filename without `.json`. It is the identifier the npm package uses (`getSpec("ip-locator")`).
+The slug is the filename without `.json`. It is the identifier the npm package uses (`getSpecJson("ip-locator")`).
 
 ## Authentication
 

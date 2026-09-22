@@ -37,8 +37,6 @@ const ipSlugs = getSpecsByCategory(SpecCategory.IP_INTELLIGENCE);
 
 `SpecSlug` and `SpecCategory` are generated from `specs/`. If you write `SpecSlug.IP_LOCATOR` and that file is later renamed or removed, TypeScript fails at compile time. Raw strings (`getSpecJson("ip-locator")`) still typecheck; unknown slugs return `undefined` at runtime. Unknown categories return `[]`.
 
-`getSpec` is a deprecated alias for `getSpecJson` and will be removed in the next major version.
-
 ### Single spec
 
 JSON is published from `specs/`. TypeScript JSON imports need `"resolveJsonModule": true`.
@@ -63,7 +61,6 @@ Importing any of these from `@apifreaks/openapi-specs` loads every spec.
 | ------ | ---- | ----------- |
 | `getSpecJson(slug)` | `(string) => OpenAPISpec \| undefined` | Spec object for a slug |
 | `getSpecYaml(slug)` | `(string) => string \| undefined` | Pre-rendered YAML text for a slug |
-| `getSpec(slug)` | `(string) => OpenAPISpec \| undefined` | **Deprecated.** Alias for `getSpecJson`, removed in the next major version |
 | `getSpecsByCategory(category)` | `(string) => string[]` | Slugs in a category, or `[]` |
 | `SpecSlug` | `{ IP_LOCATOR: "ip-locator", … }` | Enumerated slugs |
 | `SpecCategory` | `{ IP_INTELLIGENCE: "ip-intelligence", … }` | Enumerated categories |
