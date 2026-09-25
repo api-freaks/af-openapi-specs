@@ -109,8 +109,7 @@
                         "disposable": false,
                         "spam": false,
                         "free": false,
-                        "validDomain": false,
-                        "catchAll": false
+                        "validDomain": false
                       },
                       "account": {
                         "role": false
@@ -118,18 +117,18 @@
                     }
                   },
                   "acceptAll": {
-                    "summary": "Catch-all domain accepted the recipient — mailbox unconfirmed",
+                    "summary": "Catch-all domain accepted the recipient, mailbox unconfirmed",
                     "value": {
                       "success": true,
-                      "email": "random12345@yahoo.com",
+                      "email": "someone@mailinator.com",
                       "validEmail": "accept_all",
                       "validSyntax": true,
                       "reason": "domain accepts all addresses.",
                       "domain": {
-                        "name": "yahoo.com",
-                        "disposable": false,
+                        "name": "mailinator.com",
+                        "disposable": true,
                         "spam": false,
-                        "free": true,
+                        "free": false,
                         "validDomain": true,
                         "catchAll": true
                       },
@@ -139,15 +138,14 @@
                       },
                       "dns": {
                         "mxRecord": [
-                          "mta5.am0.yahoodns.net.",
-                          "mta6.am0.yahoodns.net.",
-                          "mta7.am0.yahoodns.net."
+                          "mail.mailinator.com.",
+                          "mail2.mailinator.com."
                         ]
                       }
                     }
                   },
                   "nullMxDomain": {
-                    "summary": "Domain publishes a null MX (single \".\") — accepts no mail at all",
+                    "summary": "Domain publishes a null MX (single \".\"), accepts no mail at all",
                     "value": {
                       "success": true,
                       "email": "test@example.com",
@@ -159,8 +157,7 @@
                         "disposable": true,
                         "spam": false,
                         "free": false,
-                        "validDomain": true,
-                        "catchAll": false
+                        "validDomain": true
                       },
                       "account": {
                         "role": false
@@ -171,7 +168,7 @@
                     }
                   },
                   "noMxAddressOnly": {
-                    "summary": "Domain has no MX record but a working A record — gets a real SMTP probe",
+                    "summary": "Domain has no MX record but a working A record, gets a real SMTP probe",
                     "value": {
                       "success": true,
                       "email": "test@neverssl.com",
@@ -183,8 +180,7 @@
                         "disposable": false,
                         "spam": false,
                         "free": false,
-                        "validDomain": true,
-                        "catchAll": false
+                        "validDomain": true
                       },
                       "account": {
                         "role": false
@@ -228,7 +224,6 @@
                         "location": {
                           "city": "Mountain View",
                           "district": "Santa Clara",
-                          "confidence": "low",
                           "zipcode": "94043-1351",
                           "state_prov": "California",
                           "country_name": "United States",
@@ -237,15 +232,12 @@
                           "country_code2": "US",
                           "country_code3": "USA",
                           "country_name_official": "United States of America",
-                          "accuracy_radius": "27.42",
                           "is_eu": false
                         },
                         "security": {
                           "threat_score": 5,
                           "is_tor": false,
                           "is_proxy": false,
-                          "proxy_type": "",
-                          "proxy_provider": "",
                           "is_anonymous": false,
                           "is_known_attacker": false,
                           "is_spam": false,
@@ -269,8 +261,7 @@
                         "disposable": false,
                         "spam": false,
                         "free": true,
-                        "validDomain": true,
-                        "catchAll": false
+                        "validDomain": true
                       },
                       "account": {
                         "role": false
@@ -521,7 +512,7 @@
           },
           "catchAll": {
             "type": "boolean",
-            "description": "Detection flag for domains configured to accept mail for any recipient address. true always corresponds to a top-level validEmail of accept_all."
+            "description": "Whether the domain is catch-all, meaning its mail server accepts email for any address. true: the domain accepts all addresses, and validEmail is accept_all. false: the check ran and the domain is not catch-all. This field is omitted when the check could not complete."
           }
         },
         "description": "Domain validation details for the email address."
@@ -625,11 +616,11 @@
           },
           "accuracy_radius": {
             "type": "string",
-            "description": "Geolocation precision radius."
+            "description": "Geolocation precision radius. Not included for every IP."
           },
           "confidence": {
             "type": "string",
-            "description": "Confidence score for geolocation accuracy."
+            "description": "Confidence score for geolocation accuracy. Not included for every IP."
           },
           "is_eu": {
             "type": "boolean",
@@ -645,8 +636,6 @@
           "threat_score",
           "is_tor",
           "is_proxy",
-          "proxy_type",
-          "proxy_provider",
           "is_anonymous",
           "is_known_attacker",
           "is_spam",
@@ -669,11 +658,11 @@
           },
           "proxy_type": {
             "type": "string",
-            "description": "Classification of detected proxy infrastructure type (e.g. VPN, HTTP, SOCKS)."
+            "description": "Classification of detected proxy infrastructure type (e.g. VPN, HTTP, SOCKS). Included only when is_proxy is true."
           },
           "proxy_provider": {
             "type": "string",
-            "description": "Identified service provider operating the proxy infrastructure."
+            "description": "Identified service provider operating the proxy infrastructure. Included only when is_proxy is true."
           },
           "is_anonymous": {
             "type": "boolean",
