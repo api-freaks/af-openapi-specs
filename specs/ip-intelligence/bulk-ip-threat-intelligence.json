@@ -453,11 +453,11 @@
           },
           "is_cloud_provider": {
             "type": "boolean",
-            "description": "Indicates whether the IP belongs to a cloud provider."
+            "description": "Indicates whether the IP belongs to a cloud or hosting provider."
           },
           "cloud_provider_name": {
             "type": "string",
-            "description": "Name of the cloud provider, if the IP address belongs to a cloud provider."
+            "description": "Name of the cloud or hosting provider, if the IP address belongs to one."
           },
           "is_corporate_gateway": {
             "type": "boolean",
