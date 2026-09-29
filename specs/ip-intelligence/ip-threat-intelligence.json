@@ -3,7 +3,7 @@
   "info": {
     "title": "IP Threat Intelligence API - VPN, Proxy & Tor Detection with Threat Scoring",
     "version": "1.0.0",
-    "description": "Retrieve real-time threat intelligence and security signals for a single IPv4 or IPv6 address. Returns an aggregate `threat_score` (0-100) plus detection flags and provider names for VPNs, proxies (including residential proxies), Tor exit nodes, relays, known attackers, bots, spam sources, and cloud-provider ranges. Use `fields`/`excludes` with dot notation (e.g. `security.threat_score`) to trim the response to only the modules you need. If `ip` is omitted, the API returns threat data for the public IP of the requesting client. Bogon and reserved IP addresses return a `423` error, and malformed IP input returns a `400` error, instead of partial data.",
+    "description": "Retrieve real-time threat intelligence and security signals for a single IPv4 or IPv6 address. Returns an aggregate `threat_score` (0-100) plus detection flags and provider names for VPNs, proxies (including residential proxies), Tor exit nodes, relays, known attackers, bots (with bot type and whether it is a declared, known-good bot), spam sources, cloud-provider ranges, and corporate security gateways. Use `fields`/`excludes` with dot notation (e.g. `security.threat_score`) to trim the response to only the modules you need. If `ip` is omitted, the API returns threat data for the public IP of the requesting client. Bogon and reserved IP addresses return a `423` error, and malformed IP input returns a `400` error, instead of partial data.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -93,9 +93,17 @@
                         "is_anonymous": false,
                         "is_known_attacker": false,
                         "is_bot": false,
+                        "bot_confidence_score": 0,
+                        "bot_operator_name": "",
+                        "bot_type": "",
+                        "is_known_good_bot": false,
+                        "bot_last_seen": "",
                         "is_spam": false,
                         "is_cloud_provider": true,
-                        "cloud_provider_name": "Google LLC"
+                        "cloud_provider_name": "Google LLC",
+                        "is_corporate_gateway": false,
+                        "corporate_gateway_type": "",
+                        "corporate_gateway_provider_name": ""
                       }
                     }
                   }
@@ -230,8 +238,11 @@
           "is_anonymous",
           "is_known_attacker",
           "is_bot",
+          "bot_confidence_score",
+          "is_known_good_bot",
           "is_spam",
-          "is_cloud_provider"
+          "is_cloud_provider",
+          "is_corporate_gateway"
         ],
         "properties": {
           "threat_score": {
@@ -304,6 +315,26 @@
             "type": "boolean",
             "description": "true if the IP is associated with bot activity."
           },
+          "bot_confidence_score": {
+            "type": "number",
+            "description": "Bot detection confidence from 0 to 100. 0 unless is_bot is true."
+          },
+          "bot_operator_name": {
+            "type": "string",
+            "description": "Organization running the bot, when known (mostly declared bots)."
+          },
+          "bot_type": {
+            "type": "string",
+            "description": "Kind of bot activity, when known. Declared bots (is_known_good_bot true): search_engine, ai_crawler, ai_assistant, seo_crawler, site_monitor, link_preview, feed_fetcher, archiver, ad_verification, scanner. Undeclared bots (is_known_good_bot false): scanner, scraper, exploit, credential_stuffing, brute_force, worm. New values can be added over time, so treat it as a plain string."
+          },
+          "is_known_good_bot": {
+            "type": "boolean",
+            "description": "true if the bot is a declared bot with a verifiable operator (e.g. a search engine crawler or uptime monitor)."
+          },
+          "bot_last_seen": {
+            "type": "string",
+            "description": "Last observed bot activity date in YYYY-MM-DD, when available."
+          },
           "is_spam": {
             "type": "boolean",
             "description": "true if the IP is associated with spam activity."
@@ -315,6 +346,18 @@
           "cloud_provider_name": {
             "type": "string",
             "description": "Cloud provider name."
+          },
+          "is_corporate_gateway": {
+            "type": "boolean",
+            "description": "true if the IP is an outbound address of a corporate security gateway (SWG, SSE, or SASE)."
+          },
+          "corporate_gateway_type": {
+            "type": "string",
+            "description": "Kind of corporate gateway, when known. Known values: secure_web_gateway, browser_isolation."
+          },
+          "corporate_gateway_provider_name": {
+            "type": "string",
+            "description": "Corporate gateway provider name, when known."
           }
         }
       }

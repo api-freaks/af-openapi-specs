@@ -3,7 +3,7 @@
   "info": {
     "title": "Bulk IP Threat Intelligence API Reference",
     "version": "1.0.0",
-    "description": "Retrieve threat intelligence and security profiles for up to 50,000 IP addresses in a single request. Each entry in the response array includes a composite 0-100 threat score plus per-signal flags for VPN, proxy, residential proxy, Tor exit node, bot, spam, and known-attacker activity, along with confidence scores and provider names where available. Use the `fields` and `excludes` query parameters to control which security signals are returned, reducing payload size for bulk workflows. A bad or bogon IP in the batch returns a per-item error object instead of failing the entire request, so you can process mixed-validity inputs in one call.",
+    "description": "Retrieve threat intelligence and security profiles for up to 50,000 IP addresses in a single request. Each entry in the response array includes a composite 0-100 threat score plus per-signal flags for VPN, proxy, residential proxy, Tor exit node, bot, spam, known-attacker, and corporate-gateway activity, along with confidence scores and provider names where available. Use the `fields` and `excludes` query parameters to control which security signals are returned, reducing payload size for bulk workflows. A bad or bogon IP in the batch returns a per-item error object instead of failing the entire request, so you can process mixed-validity inputs in one call.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -103,9 +103,17 @@
                           "is_anonymous": false,
                           "is_known_attacker": false,
                           "is_bot": false,
+                          "bot_confidence_score": 0,
+                          "bot_operator_name": "",
+                          "bot_type": "",
+                          "is_known_good_bot": false,
+                          "bot_last_seen": "",
                           "is_spam": false,
                           "is_cloud_provider": true,
-                          "cloud_provider_name": "Google LLC"
+                          "cloud_provider_name": "Google LLC",
+                          "is_corporate_gateway": false,
+                          "corporate_gateway_type": "",
+                          "corporate_gateway_provider_name": ""
                         }
                       },
                       {
@@ -127,9 +135,17 @@
                           "is_anonymous": false,
                           "is_known_attacker": false,
                           "is_bot": false,
+                          "bot_confidence_score": 0,
+                          "bot_operator_name": "",
+                          "bot_type": "",
+                          "is_known_good_bot": false,
+                          "bot_last_seen": "",
                           "is_spam": false,
                           "is_cloud_provider": true,
-                          "cloud_provider_name": "Cloudflare, Inc."
+                          "cloud_provider_name": "Cloudflare, Inc.",
+                          "is_corporate_gateway": false,
+                          "corporate_gateway_type": "",
+                          "corporate_gateway_provider_name": ""
                         }
                       }
                     ]
@@ -159,9 +175,17 @@
                           "is_anonymous": false,
                           "is_known_attacker": false,
                           "is_bot": false,
+                          "bot_confidence_score": 0,
+                          "bot_operator_name": "",
+                          "bot_type": "",
+                          "is_known_good_bot": false,
+                          "bot_last_seen": "",
                           "is_spam": false,
                           "is_cloud_provider": true,
-                          "cloud_provider_name": "Google LLC"
+                          "cloud_provider_name": "Google LLC",
+                          "is_corporate_gateway": false,
+                          "corporate_gateway_type": "",
+                          "corporate_gateway_provider_name": ""
                         }
                       }
                     ]
@@ -326,8 +350,11 @@
           "is_anonymous",
           "is_known_attacker",
           "is_bot",
+          "bot_confidence_score",
+          "is_known_good_bot",
           "is_spam",
-          "is_cloud_provider"
+          "is_cloud_provider",
+          "is_corporate_gateway"
         ],
         "properties": {
           "threat_score": {
@@ -400,6 +427,26 @@
             "type": "boolean",
             "description": "Indicates whether the IP is associated with bot activity."
           },
+          "bot_confidence_score": {
+            "type": "number",
+            "description": "Confidence score (0-100) that the IP is used for bot activity. Set only when is_bot is true; otherwise 0."
+          },
+          "bot_operator_name": {
+            "type": "string",
+            "description": "Organization that runs the bot, when known. Usually present only for declared bots such as search engine crawlers."
+          },
+          "bot_type": {
+            "type": "string",
+            "description": "Kind of automated activity detected, when known. Declared bots (is_known_good_bot true): search_engine, ai_crawler, ai_assistant, seo_crawler, site_monitor, link_preview, feed_fetcher, archiver, ad_verification, scanner. Undeclared bots (is_known_good_bot false): scanner, scraper, exploit, credential_stuffing, brute_force, worm. New values can be added over time, so treat it as a plain string."
+          },
+          "is_known_good_bot": {
+            "type": "boolean",
+            "description": "Indicates whether the bot is a declared bot with a verifiable operator, such as a search engine crawler, uptime monitor, or security scanner."
+          },
+          "bot_last_seen": {
+            "type": "string",
+            "description": "Date (YYYY-MM-DD) the bot activity was last observed, when available."
+          },
           "is_spam": {
             "type": "boolean",
             "description": "Indicates whether the IP is associated with spam activity."
@@ -411,6 +458,18 @@
           "cloud_provider_name": {
             "type": "string",
             "description": "Name of the cloud provider, if the IP address belongs to a cloud provider."
+          },
+          "is_corporate_gateway": {
+            "type": "boolean",
+            "description": "Indicates whether the IP is an outbound address of a corporate security gateway (SWG, SSE, or SASE), meaning traffic from a company network is routed through it."
+          },
+          "corporate_gateway_type": {
+            "type": "string",
+            "description": "Kind of corporate gateway, when known. Known values: secure_web_gateway, browser_isolation."
+          },
+          "corporate_gateway_provider_name": {
+            "type": "string",
+            "description": "Name of the company that operates the gateway, such as Zscaler, when known."
           }
         }
       }

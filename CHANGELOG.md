@@ -3,6 +3,17 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added — new `network` and `security` fields in the IP Intelligence specs (4 files)
+
+The live API now returns fields that weren't in any IP Intelligence schema. Verified live against `/v2.0/geolocation/lookup` (with and without `include=security`, single and bulk) and `/v1.0/ip/security` (single and bulk): the `security` object is identical across all four endpoints (27 fields, same order and types).
+
+- **`Network`** (`ip-locator`, `bulk-ip-lookup`) — `is_cdn` (boolean) and `cdn_provider_name` (string, empty unless `is_cdn` is true). Live-checked with Cloudflare, Fastly, Akamai and Amazon CloudFront IPs.
+- **`Security`** (`ip-locator`, `bulk-ip-lookup`, `ip-threat-intelligence`, `bulk-ip-threat-intelligence`) — `bot_confidence_score`, `bot_operator_name`, `bot_type`, `is_known_good_bot`, `bot_last_seen` (after `is_bot`), and `is_corporate_gateway`, `corporate_gateway_type`, `corporate_gateway_provider_name` (after `cloud_provider_name`). `bot_confidence_score`, `is_known_good_bot` and `is_corporate_gateway` added to `required` (always present, like the existing flags and confidence scores). `bot_type` and `corporate_gateway_type` descriptions list the known values; they are left as plain `string` (no `enum`) because new values can be added. Live-checked with a Bing crawler IP (`search_engine`, known good bot) and Zscaler gateway IPs (`secure_web_gateway`).
+- **Examples** — every 200 example now includes the new fields with the live values for its IP (all empty/false for `8.8.8.8` and `1.1.1.1`).
+- **`info.description`** of both IP Threat specs now mentions bot type / known-good-bot detection and corporate gateways.
+
 ## [0.4.8] - 2026-09-16
 
 ### Fixed — `format: date-time` incorrectly set on non-ISO timestamp fields (13 files, WHOIS/DNS/SSL/Weather)
