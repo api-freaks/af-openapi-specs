@@ -932,11 +932,11 @@
           },
           "is_cloud_provider": {
             "type": "boolean",
-            "description": "true if the IP belongs to a cloud provider range."
+            "description": "true if the IP belongs to a cloud or hosting provider range."
           },
           "cloud_provider_name": {
             "type": "string",
-            "description": "Cloud provider name."
+            "description": "Cloud or hosting provider name."
           },
           "is_corporate_gateway": {
             "type": "boolean",
