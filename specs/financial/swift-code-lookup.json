@@ -3,7 +3,7 @@
   "info": {
     "title": "SWIFT/BIC Code API - Look Up Bank Details or Find Codes by Country, Bank & City",
     "version": "1.0.0",
-    "description": "Look up a SWIFT/BIC code to retrieve bank details. Returns the bank name, address, city, country, country code, and bank code for any valid 8 or 11 character SWIFT/BIC code. Supports both headquarters and branch-level SWIFT codes.",
+    "description": "Look up a SWIFT/BIC code to retrieve bank details. Returns the bank name, institution type, branch name, address, postal code, city, country, country code, and bank code for any valid 8 or 11 character SWIFT/BIC code. Supports both headquarters and branch-level SWIFT codes.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -58,11 +58,29 @@
                     "value": {
                       "swiftCode": "NWBKGB2LXXX",
                       "countryCode": "GB",
-                      "bankAddress": "250 BISHOPSGATE",
+                      "bankAddress": "250 BISHOPSGATE, GREATER LONDON",
                       "bankCode": "NWBK",
                       "bankName": "NATIONAL WESTMINSTER BANK PLC",
+                      "institType": "FIIN",
+                      "branchName": "NATIONAL WESTMINSTER BANK PLC",
                       "city": "LONDON",
-                      "country": "United Kingdom"
+                      "country": "United Kingdom",
+                      "postalCode": "EC2M 4AA"
+                    }
+                  },
+                  "nullablePostalCode": {
+                    "summary": "branchName/postalCode can be null when not resolvable",
+                    "value": {
+                      "swiftCode": "HSBCHKHHXXX",
+                      "countryCode": "HK",
+                      "bankAddress": "HSBC MAIN BUILDING",
+                      "bankCode": "HSBC",
+                      "bankName": "THE HONGKONG AND SHANGHAI BANKING CORPORATION LIMITED",
+                      "institType": "FIIN",
+                      "branchName": "HONGKONG AND SHANGHAI BANKING CORPORATION LIMITED, THE",
+                      "city": "CENTRAL",
+                      "country": "Hong Kong",
+                      "postalCode": null
                     }
                   }
                 }
@@ -174,6 +192,14 @@
             "type": "string",
             "description": "Full name of the bank or financial institution."
           },
+          "institType": {
+            "type": "string",
+            "description": "Type of institution: \"FIIN\" (financial institution) or \"NFIN\" (non-financial institution)."
+          },
+          "branchName": {
+            "type": ["string", "null"],
+            "description": "Name of the branch or office. Null when not resolvable."
+          },
           "city": {
             "type": "string",
             "description": "City where the bank branch is located."
@@ -181,6 +207,10 @@
           "country": {
             "type": "string",
             "description": "Full country name where the bank is registered."
+          },
+          "postalCode": {
+            "type": ["string", "null"],
+            "description": "Postal/ZIP code of the bank branch. Null when not resolvable."
           }
         },
         "required": [
@@ -189,6 +219,7 @@
           "bankAddress",
           "bankCode",
           "bankName",
+          "institType",
           "city",
           "country"
         ],

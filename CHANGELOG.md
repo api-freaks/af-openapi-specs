@@ -3,6 +3,15 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.10] - 2026-10-09
+
+### Added — new bank-data fields on SWIFT lookup and IBAN validation
+
+Verified live against both endpoints with multiple real SWIFT codes and IBANs before writing anything:
+
+- **`swift-code-lookup`**: `SwiftCodeLookup` gained `institType` (always present, `"FIIN"`/`"NFIN"`), `branchName` (nullable — confirmed null live for at least one bank), and `postalCode` (nullable — confirmed null live for two of eight tested banks, e.g. HSBC Hong Kong). Added a second example (`nullablePostalCode`) showing the null case.
+- **`iban-validation`**: `IbanBankData` gained `instit_type`, `branch_name`, and `postal_code` — all nullable, all three confirmed `null` live whenever `bank_data` already nulls out the rest of the record (invalid structure, unsupported country, or a bank the registry doesn't have institution/branch detail for). All three existing examples (`validIban`, `invalidIban`, `unsupportedCountry`) updated to include them.
+
 ## [0.4.8] - 2026-09-16
 
 ### Fixed — `format: date-time` incorrectly set on non-ISO timestamp fields (13 files, WHOIS/DNS/SSL/Weather)

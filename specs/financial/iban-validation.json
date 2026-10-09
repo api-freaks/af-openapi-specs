@@ -3,7 +3,7 @@
   "info": {
     "title": "IBAN Validation API - Validate Format, Check SEPA & Return Bank Details",
     "version": "1.0.0",
-    "description": "Validate an IBAN number against country-specific format, length, and checksum rules. Supports IBANs from all SEPA and IBAN-compliant countries. Returns detailed validation results for each check — alphanumeric, supported country, length, structure, and check digit. Includes bank data such as BIC/SWIFT code, bank name, branch details, and SEPA eligibility when available.",
+    "description": "Validate an IBAN number against country-specific format, length, and checksum rules. Supports IBANs from all SEPA and IBAN-compliant countries. Returns detailed validation results for each check — alphanumeric, supported country, length, structure, and check digit. Includes bank data such as BIC/SWIFT code, bank name, institution type, branch name, postal code, and SEPA eligibility when available.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -67,14 +67,17 @@
                         "bban": "valid"
                       },
                       "bank_data": {
-                        "bic": "NWBKGB2LBHM",
+                        "bic": "NWBKGB2104T",
                         "bank": "NATIONAL WESTMINSTER BANK PLC",
+                        "instit_type": "FIIN",
+                        "branch_name": "NATIONAL WESTMINSTER BANK PLC",
                         "bank_code": "NWBK",
                         "branch_code": "601613",
                         "country": "United Kingdom",
                         "country_iso2": "GB",
-                        "city": "BIRMINGHAM",
-                        "address": "6 BRINDLEY PLACE - BIRMINGHAM, B1",
+                        "city": "ALTRINCHAM",
+                        "address": "23 STAMFORD NEW ROAD, GREATER",
+                        "postal_code": "WA141DB",
                         "account": "31926819",
                         "sepa": true
                       }
@@ -96,12 +99,15 @@
                       "bank_data": {
                         "bic": null,
                         "bank": null,
+                        "instit_type": null,
+                        "branch_name": null,
                         "bank_code": null,
                         "branch_code": "",
                         "country": "Norway",
                         "country_iso2": "NO",
                         "city": null,
                         "address": null,
+                        "postal_code": null,
                         "account": "N123",
                         "sepa": true
                       }
@@ -123,12 +129,15 @@
                       "bank_data": {
                         "bic": null,
                         "bank": null,
+                        "instit_type": null,
+                        "branch_name": null,
                         "bank_code": null,
                         "branch_code": "",
                         "country": null,
                         "country_iso2": "US",
                         "city": null,
                         "address": null,
+                        "postal_code": null,
                         "account": null,
                         "sepa": null
                       }
@@ -263,6 +272,14 @@
             "type": ["string", "null"],
             "description": "Bank name extracted from the IBAN. Null when not resolvable."
           },
+          "instit_type": {
+            "type": ["string", "null"],
+            "description": "Type of institution: \"FIIN\" (financial institution) or \"NFIN\" (non-financial institution). Null when not resolvable."
+          },
+          "branch_name": {
+            "type": ["string", "null"],
+            "description": "Name of the branch or office. Null when not resolvable."
+          },
           "bank_code": {
             "type": ["string", "null"],
             "description": "Bank code extracted from the IBAN. Null when not resolvable."
@@ -286,6 +303,10 @@
           "address": {
             "type": ["string", "null"],
             "description": "Bank branch address. Null when not resolvable."
+          },
+          "postal_code": {
+            "type": ["string", "null"],
+            "description": "Postal/ZIP code of the bank branch. Null when not resolvable."
           },
           "account": {
             "type": ["string", "null"],
