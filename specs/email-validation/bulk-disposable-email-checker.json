@@ -22,6 +22,19 @@
         "tags": ["Email Validation APIs"],
         "summary": "Check multiple emails for disposable/temporary domains",
         "description": "Checks a bulk of email addresses and returns a disposable email check result for each, in the same order as the request. Maximum `100` email addresses per request.",
+        "parameters": [
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["json", "xml"],
+              "default": "json"
+            },
+            "description": "Format of the response."
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {

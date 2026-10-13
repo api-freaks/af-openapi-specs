@@ -32,6 +32,17 @@
               "format": "email"
             },
             "description": "Email address to check."
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["json", "xml"],
+              "default": "json"
+            },
+            "description": "Format of the response."
           }
         ],
         "responses": {

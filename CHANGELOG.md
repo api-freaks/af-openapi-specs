@@ -3,6 +3,12 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.12] - 2026-10-13
+
+### Added — missing `format` query parameter on Disposable Email Checker (single + bulk)
+
+Found while building the Postman collection for 0.4.11: both `disposable-email-checker.json` and `bulk-disposable-email-checker.json` were missing the `format` query parameter, even though the live API actually supports it. Verified live — `format=xml` on both `GET /email/disposable` and `POST /email/disposable/bulk` returns real XML (`<DisposableEmailResponse>`/`<BulkDisposableEmailResponse>` wrappers). Added `format` (optional, `json`/`xml`, default `json`) to both specs' parameters, matching the convention already used by every other product in this repo.
+
 ## [0.4.11] - 2026-10-13
 
 ### Added — new Disposable Email Checker API (single + bulk)
