@@ -3,6 +3,12 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.13] - 2026-10-13
+
+### Changed — Bulk Email Validation API limit raised from 10 to 100
+
+Verified live: `POST /email-validation/bulk` now accepts up to 100 `emailData` entries in one request (`200`), 101 entries fails `413 Payload too large Exception` / "Maximum request body size limit exceeded" (unchanged error shape, same `maxItems` boundary pattern as the Disposable Email Checker bulk endpoint). Updated `bulk-email-validation.json`: `info.description`, the operation `description`, the `413` response description, and `BulkEmailRequest.emailData.maxItems` (10 → 100).
+
 ## [0.4.12] - 2026-10-13
 
 ### Added — missing `format` query parameter on Disposable Email Checker (single + bulk)
