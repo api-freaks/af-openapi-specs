@@ -1,0 +1,441 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Disposable Email Checker API - Detect Temporary & Throwaway Email Addresses",
+    "version": "1.0.0",
+    "description": "Check a single email address for disposable/temporary domains, free webmail providers, spam-listed domains, and role-based accounts, with syntax validation and DNS record lookup (MX/A). Returns a minimal shape for syntactically invalid addresses and omits the domain/account/dns detail blocks when the domain cannot be resolved.",
+    "contact": {
+      "name": "APIFreaks Support",
+      "url": "https://apifreaks.com/contact",
+      "email": "support@apifreaks.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.apifreaks.com/v1.0",
+      "description": "Disposable Email Checker API Server"
+    }
+  ],
+  "paths": {
+    "/email/disposable": {
+      "get": {
+        "tags": ["Email Validation APIs"],
+        "summary": "Check a single email for disposable/temporary domain",
+        "description": "Validates email syntax and checks the domain for disposable, free, spam, and role-account signals, plus MX/A DNS records.",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "email"
+            },
+            "description": "Email address to check."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with disposable email check result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisposableEmailCheckResponse"
+                },
+                "examples": {
+                  "disposableDomain": {
+                    "summary": "Disposable domain, MX present",
+                    "value": {
+                      "email": "test@sogetthis.com",
+                      "validSyntax": true,
+                      "domain": {
+                        "disposable": true,
+                        "free": false,
+                        "name": "sogetthis.com",
+                        "spam": false,
+                        "validDomain": true
+                      },
+                      "account": {
+                        "role": false
+                      },
+                      "dns": {
+                        "mxRecord": ["mail.mailinator.com."]
+                      }
+                    }
+                  },
+                  "freeWebmail": {
+                    "summary": "Free consumer webmail, not disposable",
+                    "value": {
+                      "email": "someone@gmail.com",
+                      "validSyntax": true,
+                      "domain": {
+                        "disposable": false,
+                        "free": true,
+                        "name": "gmail.com",
+                        "spam": false,
+                        "validDomain": true
+                      },
+                      "account": {
+                        "role": false
+                      },
+                      "dns": {
+                        "mxRecord": [
+                          "gmail-smtp-in.l.google.com.",
+                          "alt1.gmail-smtp-in.l.google.com.",
+                          "alt2.gmail-smtp-in.l.google.com.",
+                          "alt3.gmail-smtp-in.l.google.com.",
+                          "alt4.gmail-smtp-in.l.google.com."
+                        ]
+                      }
+                    }
+                  },
+                  "roleAccount": {
+                    "summary": "Role-based mailbox (support@)",
+                    "value": {
+                      "email": "support@microsoft.com",
+                      "validSyntax": true,
+                      "domain": {
+                        "disposable": false,
+                        "free": false,
+                        "name": "microsoft.com",
+                        "spam": false,
+                        "validDomain": true
+                      },
+                      "account": {
+                        "role": true
+                      },
+                      "dns": {
+                        "mxRecord": ["microsoft-com.mail.protection.outlook.com."]
+                      }
+                    }
+                  },
+                  "addressRecordOnly": {
+                    "summary": "No MX record, domain resolves via A record only",
+                    "value": {
+                      "email": "test@rotodirect.com",
+                      "validSyntax": true,
+                      "domain": {
+                        "disposable": false,
+                        "free": false,
+                        "name": "rotodirect.com",
+                        "spam": false,
+                        "validDomain": true
+                      },
+                      "account": {
+                        "role": false
+                      },
+                      "dns": {
+                        "aRecord": ["166.78.44.241"]
+                      }
+                    }
+                  },
+                  "nullMxDomain": {
+                    "summary": "Domain publishes a null MX (single \".\"), accepts no mail at all",
+                    "value": {
+                      "email": "test@mailblacklist.com",
+                      "validSyntax": true,
+                      "domain": {
+                        "disposable": false,
+                        "free": false,
+                        "name": "mailblacklist.com",
+                        "spam": false,
+                        "validDomain": true
+                      },
+                      "account": {
+                        "role": false
+                      },
+                      "dns": {
+                        "mxRecord": ["."]
+                      }
+                    }
+                  },
+                  "invalidSyntax": {
+                    "summary": "Syntactically invalid email — minimal shape, no domain/account/dns detail",
+                    "value": {
+                      "email": "abc",
+                      "validSyntax": false,
+                      "domain": {
+                        "name": "abc",
+                        "validDomain": false
+                      }
+                    }
+                  },
+                  "nonexistentDomain": {
+                    "summary": "Valid syntax, domain does not exist — account block present, no dns block",
+                    "value": {
+                      "email": "test@xxxxxyyyyy123spam.com",
+                      "validSyntax": true,
+                      "domain": {
+                        "disposable": false,
+                        "free": false,
+                        "name": "xxxxxyyyyy123spam.com",
+                        "spam": false,
+                        "validDomain": false
+                      },
+                      "account": {
+                        "role": false
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              },
+              "X-Concurrent-Threads": {
+                "$ref": "#/components/headers/X-Concurrent-Threads"
+              },
+              "X-Concurrent-Threads-Active": {
+                "$ref": "#/components/headers/X-Concurrent-Threads-Active"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request – Invalid or missing parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingEmail": {
+                    "summary": "email parameter missing or empty",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "please pass correct parameters",
+                      "path": "/v1.0/email/disposable",
+                      "status": 400,
+                      "timestamp": "2026-10-13T10:40:11.892Z"
+                    }
+                  },
+                  "missingApiKey": {
+                    "summary": "apiKey not supplied",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/email/disposable",
+                      "status": 400,
+                      "timestamp": "2026-10-13T10:40:12.475Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized – Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/email/disposable",
+                      "status": 401,
+                      "timestamp": "2026-10-13T10:40:13.056Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found – The requested resource could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Resource Not Found": {
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/email/disposablex",
+                      "status": 404,
+                      "timestamp": "2026-10-13T11:00:07.798Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          }
+        },
+        "operationId": "checkDisposableEmail"
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuthHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-apiKey",
+        "description": "Pass your API key via the X-apiKey request header."
+      },
+      "ApiKeyAuthQuery": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "Pass your API key via the apiKey query parameter."
+      }
+    },
+    "schemas": {
+      "DisposableEmailCheckResponse": {
+        "type": "object",
+        "required": ["email", "validSyntax", "domain"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "The email address submitted for the check."
+          },
+          "validSyntax": {
+            "type": "boolean",
+            "description": "Validates email address format compliance with RFC 5322 standards. When false, domain only contains name/validDomain and account/dns are omitted entirely."
+          },
+          "domain": {
+            "$ref": "#/components/schemas/DisposableDomainObject"
+          },
+          "account": {
+            "$ref": "#/components/schemas/DisposableAccountObject"
+          },
+          "dns": {
+            "$ref": "#/components/schemas/DisposableDnsObject"
+          }
+        },
+        "description": "Disposable email check response."
+      },
+      "DisposableDomainObject": {
+        "type": "object",
+        "required": ["name", "validDomain"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Extracted domain component from the email address."
+          },
+          "validDomain": {
+            "type": "boolean",
+            "description": "Domain validation status confirming DNS resolution capability."
+          },
+          "disposable": {
+            "type": "boolean",
+            "description": "Classification flag identifying domains from temporary/throwaway email service providers. Omitted when validSyntax is false or the domain could not be resolved."
+          },
+          "free": {
+            "type": "boolean",
+            "description": "Classification indicating free or consumer-grade email service providers. Omitted when validSyntax is false or the domain could not be resolved."
+          },
+          "spam": {
+            "type": "boolean",
+            "description": "Reputation indicator flagging domains on spam databases. Omitted when validSyntax is false or the domain could not be resolved."
+          }
+        },
+        "description": "Domain-level disposable/spam/free classification for the email address."
+      },
+      "DisposableAccountObject": {
+        "type": "object",
+        "required": ["role"],
+        "properties": {
+          "role": {
+            "type": "boolean",
+            "description": "Detection flag identifying role-based email addresses (e.g., admin@, support@)."
+          }
+        },
+        "description": "Account-level detection details. Omitted entirely when validSyntax is false."
+      },
+      "DisposableDnsObject": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "mxRecord": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Every MX hostname at the domain's lowest preference (not just one). [\".\"]  means the domain publishes a null MX and accepts no mail at all. Absent entirely when the domain has no MX record of any kind — check aRecord in that case."
+          },
+          "aRecord": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Collection of A (Address) records for the domain. Present when the domain has no MX record but does resolve to a web server or other host."
+          }
+        },
+        "description": "DNS records for the email domain. Omitted entirely when validSyntax is false or the domain does not exist (NXDOMAIN)."
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error envelope returned by the API on failed requests.",
+        "required": ["message"],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Short error category or exception type."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message describing the failure."
+          },
+          "path": {
+            "type": "string",
+            "description": "API endpoint path that produced the error."
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code returned with the error."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the error occurred (ISO 8601)."
+          }
+        }
+      }
+    },
+    "headers": {
+      "X-AF-Credits-Cost": {
+        "description": "Specifies the number of credits consumed by the current request. 15 credits per checked record.",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "X-Concurrent-Threads": {
+        "description": "Specifies the maximum number of concurrent requests allowed.",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "X-Concurrent-Threads-Active": {
+        "description": "Indicates the number of active concurrent requests being processed.",
+        "schema": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuthHeader": []
+    },
+    {
+      "ApiKeyAuthQuery": []
+    }
+  ]
+}

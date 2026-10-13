@@ -3,6 +3,17 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.11] - 2026-10-13
+
+### Added — new Disposable Email Checker API (single + bulk)
+
+Two new spec files, `disposable-email-checker.json` (`GET /email/disposable`) and `bulk-disposable-email-checker.json` (`POST /email/disposable/bulk`), both base `https://api.apifreaks.com/v1.0`. Every shape below was captured from live responses before writing any schema, following the same no-shortcuts verification used for every other entry in this changelog.
+
+- **Single** (`GET /email/disposable?email=...`): returns `email`, `validSyntax`, `domain` (`name`, `validDomain`, and — only when the domain resolves and syntax is valid — `disposable`, `free`, `spam`), `account.role`, and `dns` (`mxRecord` and/or `aRecord`). Confirmed live: disposable domains (`sogetthis.com`, `mailinator.com`, `yopmail.com`, `guerrillamail.com`), free webmail (`gmail.com`), role accounts (`support@`), domains with only an `aRecord` and no MX (`000.pl`, `rotodirect.com`), a null-MX domain (`mxRecord: ["."]`), syntactically invalid input (minimal shape — no `account`/`dns`, `domain` only has `name`/`validDomain`), and a nonexistent domain (`validDomain: false`, `account` present, `dns` entirely absent). `domain.spam` stayed `false` on every real and spam-sounding domain tried (spamhaus.org, uceprotect.net, spamcop.net, mailblacklist.com, etc.) — documented as a boolean with no live positive example available, consistent with how `email-checker`'s `catchAll`/`warning`-style flags are handled elsewhere in this repo.
+- **Bulk** (`POST /email/disposable/bulk`, body `{"emails": [...]}`): returns `{"disposableEmailResponse": [...]}`, one result per input in the same order, same per-item shape as the single endpoint. Verified live: 100 emails succeeds (`200`), 101 fails `413 Payload too large Exception` / "Maximum request body size limit exceeded" (`maxItems: 100`). An empty or missing `emails` array fails `400 Invalid request body Exception` / "Please provide data in required format in request body". A null, empty-string, or whitespace-only entry anywhere in the array rejects the *whole* request with `400 Missing or Invalid Parameters` / "'emails' must not contain null or blank entries." — no partial success.
+- **Credits**: confirmed live via `X-AF-Credits-Cost` — 15 credits per record on both endpoints (single: 15; bulk of 3: 45). No cost header on error responses (request rejected before billing).
+- **Errors**: both endpoints share the standard `ErrorResponse` envelope (`error`/`message`/`path`/`status`/`timestamp`) used throughout this repo — `400` (missing/invalid params, missing apiKey, bad bulk body), `401` (invalid apiKey), `404`, `413` (bulk only). Deliberately did not document `408`/`429`: every other spec in this repo just copies the same generic boilerplate example for those since they can't be triggered live, and here there's no live source for them at all — left out rather than invented.
+
 ## [0.4.10] - 2026-10-09
 
 ### Added — new bank-data fields on SWIFT lookup and IBAN validation

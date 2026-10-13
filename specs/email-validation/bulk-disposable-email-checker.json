@@ -1,0 +1,430 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Bulk Disposable Email Checker API - Check Multiple Emails for Disposable Domains",
+    "version": "1.0.0",
+    "description": "Check up to 100 email addresses in a single POST request for disposable/temporary domains, free webmail providers, spam-listed domains, and role-based accounts. Each email is processed independently and returned in the same order as the request. The whole request is rejected with a 400 if the emails array is empty/missing or contains a null/blank entry. Maximum 100 email addresses per request.",
+    "contact": {
+      "name": "APIFreaks Support",
+      "url": "https://apifreaks.com/contact",
+      "email": "support@apifreaks.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.apifreaks.com/v1.0",
+      "description": "Bulk Disposable Email Checker API Server"
+    }
+  ],
+  "paths": {
+    "/email/disposable/bulk": {
+      "post": {
+        "tags": ["Email Validation APIs"],
+        "summary": "Check multiple emails for disposable/temporary domains",
+        "description": "Checks a bulk of email addresses and returns a disposable email check result for each, in the same order as the request. Maximum `100` email addresses per request.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkDisposableEmailRequest"
+              },
+              "examples": {
+                "bulkRequest": {
+                  "value": {
+                    "emails": ["abc", "john@microsoft.com", "test@mailinator.com"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response. Each item corresponds to one requested email, in the same order as the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkDisposableEmailCheckResponse"
+                },
+                "examples": {
+                  "mixedResults": {
+                    "summary": "Mix of syntactically invalid, clean, and disposable results",
+                    "value": {
+                      "disposableEmailResponse": [
+                        {
+                          "email": "abc",
+                          "validSyntax": false,
+                          "domain": {
+                            "name": "abc",
+                            "validDomain": false
+                          }
+                        },
+                        {
+                          "email": "john@microsoft.com",
+                          "validSyntax": true,
+                          "domain": {
+                            "disposable": false,
+                            "free": false,
+                            "name": "microsoft.com",
+                            "spam": false,
+                            "validDomain": true
+                          },
+                          "account": {
+                            "role": false
+                          },
+                          "dns": {
+                            "mxRecord": ["microsoft-com.mail.protection.outlook.com."]
+                          }
+                        },
+                        {
+                          "email": "test@mailinator.com",
+                          "validSyntax": true,
+                          "domain": {
+                            "disposable": true,
+                            "free": false,
+                            "name": "mailinator.com",
+                            "spam": false,
+                            "validDomain": true
+                          },
+                          "account": {
+                            "role": false
+                          },
+                          "dns": {
+                            "mxRecord": [
+                              "mail.mailinator.com.",
+                              "mail2.mailinator.com."
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              },
+              "X-Concurrent-Threads": {
+                "$ref": "#/components/headers/X-Concurrent-Threads"
+              },
+              "X-Concurrent-Threads-Active": {
+                "$ref": "#/components/headers/X-Concurrent-Threads-Active"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request – Invalid request body, empty/missing emails array, or a null/blank entry in emails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidBody": {
+                    "summary": "emails field missing, empty, or malformed",
+                    "value": {
+                      "error": "Invalid request body Exception",
+                      "message": "Please provide data in required format in request body",
+                      "path": "/v1.0/email/disposable/bulk",
+                      "status": 400,
+                      "timestamp": "2026-10-13T10:39:42.887Z"
+                    }
+                  },
+                  "nullOrBlankEntry": {
+                    "summary": "emails array contains a null/blank/whitespace-only entry — whole request rejected",
+                    "value": {
+                      "error": "Missing or Invalid Parameters",
+                      "message": "'emails' must not contain null or blank entries.",
+                      "path": "/v2/email/disposable/bulk",
+                      "status": 400,
+                      "timestamp": "2026-10-13T10:39:44.002Z"
+                    }
+                  },
+                  "missingApiKey": {
+                    "summary": "apiKey not supplied",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/email/disposable/bulk",
+                      "status": 400,
+                      "timestamp": "2026-10-13T10:40:02.684Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized – Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/email/disposable/bulk",
+                      "status": 401,
+                      "timestamp": "2026-10-13T10:40:03.166Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found – The requested resource could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Resource Not Found": {
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/email/disposable/bulkx",
+                      "status": 404,
+                      "timestamp": "2026-10-13T11:00:08.337Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large – emails exceeds the maximum of 100 entries per request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Payload Too Large": {
+                    "value": {
+                      "error": "Payload too large Exception",
+                      "message": "Maximum request body size limit exceeded",
+                      "path": "/v1.0/email/disposable/bulk",
+                      "status": 413,
+                      "timestamp": "2026-10-13T10:39:58.052Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          }
+        },
+        "operationId": "bulkCheckDisposableEmail"
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuthHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-apiKey",
+        "description": "Pass your API key via the X-apiKey request header."
+      },
+      "ApiKeyAuthQuery": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "Pass your API key via the apiKey query parameter."
+      }
+    },
+    "schemas": {
+      "BulkDisposableEmailCheckResponse": {
+        "type": "object",
+        "description": "Wrapper containing the per-email results array.",
+        "required": ["disposableEmailResponse"],
+        "properties": {
+          "disposableEmailResponse": {
+            "type": "array",
+            "description": "Array of per-email results, one entry per requested email, in the same order as the request.",
+            "items": {
+              "$ref": "#/components/schemas/DisposableEmailCheckResult"
+            }
+          }
+        }
+      },
+      "DisposableEmailCheckResult": {
+        "type": "object",
+        "required": ["email", "validSyntax", "domain"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "The email address submitted for the check."
+          },
+          "validSyntax": {
+            "type": "boolean",
+            "description": "Validates email address format compliance with RFC 5322 standards. When false, domain only contains name/validDomain and account/dns are omitted entirely."
+          },
+          "domain": {
+            "$ref": "#/components/schemas/DisposableDomainObject"
+          },
+          "account": {
+            "$ref": "#/components/schemas/DisposableAccountObject"
+          },
+          "dns": {
+            "$ref": "#/components/schemas/DisposableDnsObject"
+          }
+        },
+        "description": "Disposable email check result for a single item in the bulk request."
+      },
+      "DisposableDomainObject": {
+        "type": "object",
+        "required": ["name", "validDomain"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Extracted domain component from the email address."
+          },
+          "validDomain": {
+            "type": "boolean",
+            "description": "Domain validation status confirming DNS resolution capability."
+          },
+          "disposable": {
+            "type": "boolean",
+            "description": "Classification flag identifying domains from temporary/throwaway email service providers. Omitted when validSyntax is false or the domain could not be resolved."
+          },
+          "free": {
+            "type": "boolean",
+            "description": "Classification indicating free or consumer-grade email service providers. Omitted when validSyntax is false or the domain could not be resolved."
+          },
+          "spam": {
+            "type": "boolean",
+            "description": "Reputation indicator flagging domains on spam databases. Omitted when validSyntax is false or the domain could not be resolved."
+          }
+        },
+        "description": "Domain-level disposable/spam/free classification for the email address."
+      },
+      "DisposableAccountObject": {
+        "type": "object",
+        "required": ["role"],
+        "properties": {
+          "role": {
+            "type": "boolean",
+            "description": "Detection flag identifying role-based email addresses (e.g., admin@, support@)."
+          }
+        },
+        "description": "Account-level detection details. Omitted entirely when validSyntax is false."
+      },
+      "DisposableDnsObject": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "mxRecord": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Every MX hostname at the domain's lowest preference (not just one). [\".\"]  means the domain publishes a null MX and accepts no mail at all. Absent entirely when the domain has no MX record of any kind — check aRecord in that case."
+          },
+          "aRecord": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Collection of A (Address) records for the domain. Present when the domain has no MX record but does resolve to a web server or other host."
+          }
+        },
+        "description": "DNS records for the email domain. Omitted entirely when validSyntax is false or the domain does not exist (NXDOMAIN)."
+      },
+      "BulkDisposableEmailRequest": {
+        "type": "object",
+        "description": "Request body for bulk disposable email check.",
+        "required": ["emails"],
+        "properties": {
+          "emails": {
+            "type": "array",
+            "description": "Array of email addresses to check. Maximum 100 per request. Must not be empty, and must not contain null/blank entries — either condition rejects the whole request with a 400.",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error envelope returned by the API on failed requests.",
+        "required": ["message"],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Short error category or exception type."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message describing the failure."
+          },
+          "path": {
+            "type": "string",
+            "description": "API endpoint path that produced the error."
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code returned with the error."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the error occurred (ISO 8601)."
+          }
+        }
+      }
+    },
+    "headers": {
+      "X-AF-Credits-Cost": {
+        "description": "Specifies the number of credits consumed by the current request. 15 credits per checked record (e.g. 3 emails = 45 credits).",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "X-Concurrent-Threads": {
+        "description": "Specifies the maximum number of concurrent requests allowed.",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "X-Concurrent-Threads-Active": {
+        "description": "Indicates the number of active concurrent requests being processed.",
+        "schema": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuthHeader": []
+    },
+    {
+      "ApiKeyAuthQuery": []
+    }
+  ]
+}
