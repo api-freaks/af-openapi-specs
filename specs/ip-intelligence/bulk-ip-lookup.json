@@ -147,7 +147,9 @@
                         "network": {
                           "connection_type": "",
                           "route": "8.8.8.0/24",
-                          "is_anycast": true
+                          "is_anycast": true,
+                          "is_cdn": false,
+                          "cdn_provider_name": ""
                         },
                         "currency": {
                           "code": "USD",
@@ -231,7 +233,9 @@
                         "network": {
                           "connection_type": "",
                           "route": "1.1.1.0/24",
-                          "is_anycast": true
+                          "is_anycast": true,
+                          "is_cdn": false,
+                          "cdn_provider_name": ""
                         },
                         "currency": {
                           "code": "AUD",
@@ -309,7 +313,9 @@
                         "network": {
                           "connection_type": "",
                           "route": "8.8.8.0/24",
-                          "is_anycast": true
+                          "is_anycast": true,
+                          "is_cdn": false,
+                          "cdn_provider_name": ""
                         },
                         "currency": {
                           "code": "USD",
@@ -727,6 +733,14 @@
           "is_anycast": {
             "type": "boolean",
             "description": "true if the IP is anycast (same IP announced from multiple locations)."
+          },
+          "is_cdn": {
+            "type": "boolean",
+            "description": "true if the IP belongs to a content delivery network (CDN) or a cloud provider's network."
+          },
+          "cdn_provider_name": {
+            "type": "string",
+            "description": "CDN provider name (e.g. Cloudflare) when is_cdn is true; empty otherwise."
           }
         }
       },
@@ -815,8 +829,11 @@
           "is_anonymous",
           "is_known_attacker",
           "is_bot",
+          "bot_confidence_score",
+          "is_known_good_bot",
           "is_spam",
-          "is_cloud_provider"
+          "is_cloud_provider",
+          "is_corporate_gateway"
         ],
         "properties": {
           "threat_score": {
@@ -889,17 +906,49 @@
             "type": "boolean",
             "description": "true if the IP is associated with bot activity."
           },
+          "bot_confidence_score": {
+            "type": "number",
+            "description": "Bot detection confidence from 0 to 100. 0 unless is_bot is true."
+          },
+          "bot_operator_name": {
+            "type": "string",
+            "description": "Organization running the bot, when known (mostly declared bots)."
+          },
+          "bot_type": {
+            "type": "string",
+            "description": "Kind of bot activity, when known. Declared bots (is_known_good_bot true): search_engine, ai_crawler, ai_assistant, seo_crawler, site_monitor, link_preview, feed_fetcher, archiver, ad_verification, scanner. Undeclared bots (is_known_good_bot false): scanner, scraper, exploit, credential_stuffing, brute_force, worm. New values can be added over time, so treat it as a plain string."
+          },
+          "is_known_good_bot": {
+            "type": "boolean",
+            "description": "true if the bot is a declared bot with a verifiable operator (e.g. a search engine crawler or uptime monitor)."
+          },
+          "bot_last_seen": {
+            "type": "string",
+            "description": "Last observed bot activity date in YYYY-MM-DD, when available."
+          },
           "is_spam": {
             "type": "boolean",
             "description": "true if the IP is associated with spam activity."
           },
           "is_cloud_provider": {
             "type": "boolean",
-            "description": "true if the IP belongs to a cloud provider range."
+            "description": "true if the IP belongs to a cloud or hosting provider range."
           },
           "cloud_provider_name": {
             "type": "string",
-            "description": "Cloud provider name."
+            "description": "Cloud or hosting provider name."
+          },
+          "is_corporate_gateway": {
+            "type": "boolean",
+            "description": "true if the IP is an outbound address of a corporate security gateway (SWG, SSE, or SASE)."
+          },
+          "corporate_gateway_type": {
+            "type": "string",
+            "description": "Kind of corporate gateway, when known. Known values: secure_web_gateway, browser_isolation."
+          },
+          "corporate_gateway_provider_name": {
+            "type": "string",
+            "description": "Corporate gateway provider name, when known."
           }
         }
       },
