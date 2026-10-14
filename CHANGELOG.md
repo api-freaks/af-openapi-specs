@@ -3,6 +3,12 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.14] - 2026-10-14
+
+### Added — full error catalog for Website Screenshot API (single + bulk)
+
+Documented every per-capture error the underlying rendering service can return, sourced from the service's own public error docs (not independently curled, per request). `website-screenshot.json`: added `310` (too_many_redirects), expanded `400` with 14 new examples (url_required, invalid_file_type, invalid_proxy, Invalid_geolocation_parameter, invalid_css_url, invalid_js_url, invalid_js_code, invalid_clipped_area, invalid_input_syntax, ERR_SSL_PROTOCOL_ERROR, ERR_SSL_UNRECOGNIZED_NAME_ALERT, feature_not_supported, invalid_scrolling_file_type, request_aborted) alongside the existing invalid_url and missing-url examples, added `407` (network_connection_failed, ERR_TUNNEL_CONNECTION_FAILED), `444` (ERR_CONNECTION_CLOSED, ERR_EMPTY_RESPONSE), `495` (ssl_version_or_cipher_mismatch), and `503` (temporary_unavailable, ERR_SOCKET_NOT_CONNECTED). Deliberately excluded billing/account errors (401 token_required/subscription_inactive, 402, 403, 404 team_not_found, 429) since this spec does not document account-level failures. `bulk-screenshot.json`: added a second `200` example (`perUrlCaptureErrors`) showing all 22 of the same per-URL capture error codes embedded in `results[].url`, matching how the bulk endpoint already reports individual URL failures while the overall response stays 200/success; no changes to the bulk endpoint's own request-level `400`/`413` responses.
+
 ## [0.4.13] - 2026-10-13
 
 ### Changed — Bulk Email Validation API limit raised from 10 to 100

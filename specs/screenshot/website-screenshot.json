@@ -754,8 +754,41 @@
               }
             }
           },
+          "310": {
+            "description": "Too Many Redirects. The target URL redirected too many times for a final page to be reached.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "tooManyRedirects": {
+                    "summary": "Redirect loop",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:12.100Z",
+                      "status": 310,
+                      "error": "too_many_redirects",
+                      "message": "The target URL redirected too many times (redirect loop), so a final page could not be reached.",
+                      "path": "/v3/screenshot"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              },
+              "X-Concurrent-Threads": {
+                "$ref": "#/components/headers/X-Concurrent-Threads"
+              },
+              "X-Concurrent-Threads-Active": {
+                "$ref": "#/components/headers/X-Concurrent-Threads-Active"
+              }
+            }
+          },
           "400": {
-            "description": "Bad Request — Invalid or missing parameters",
+            "description": "Bad Request. Missing, invalid, or malformed request parameters, SSL certificate problems on the target site, unsupported output or extraction options, or a request that was aborted before completion.",
             "content": {
               "application/json": {
                 "examples": {
@@ -777,6 +810,189 @@
                       "path": "/v1.0/screenshot",
                       "status": 400,
                       "timestamp": "2026-07-27T10:19:11.922Z"
+                    }
+                  },
+                  "urlRequired": {
+                    "summary": "url parameter not provided",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:12.200Z",
+                      "status": 400,
+                      "error": "url_required",
+                      "message": "The url parameter is required but was not provided.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "invalidFileType": {
+                    "summary": "Unsupported file_type value",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:12.300Z",
+                      "status": 400,
+                      "error": "invalid_file_type",
+                      "message": "The file_type value is not a supported output format.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "invalidProxy": {
+                    "summary": "Malformed proxy value",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:12.400Z",
+                      "status": 400,
+                      "error": "invalid_proxy",
+                      "message": "The proxy value is malformed or invalid.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "invalidGeolocationParameter": {
+                    "summary": "Latitude or longitude out of range",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:12.500Z",
+                      "status": 400,
+                      "error": "Invalid_geolocation_parameter",
+                      "message": "The latitude or longitude value is outside the allowed range.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "invalidCssUrl": {
+                    "summary": "css_url is not a valid URL",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:12.600Z",
+                      "status": 400,
+                      "error": "invalid_css_url",
+                      "message": "The css_url value is not a valid URL.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "invalidJsUrl": {
+                    "summary": "js_url is not a valid URL",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:12.700Z",
+                      "status": 400,
+                      "error": "invalid_js_url",
+                      "message": "The js_url value is not a valid URL.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "invalidJsCode": {
+                    "summary": "js code is invalid",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:12.800Z",
+                      "status": 400,
+                      "error": "invalid_js_code",
+                      "message": "The JavaScript passed in js is invalid and could not be executed.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "invalidClippedArea": {
+                    "summary": "Invalid clip dimensions",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:12.900Z",
+                      "status": 400,
+                      "error": "invalid_clipped_area",
+                      "message": "The clip[x], clip[y], clip[width] or clip[height] values are invalid.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "invalidInputSyntax": {
+                    "summary": "Non-integer value for an integer parameter",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:13.000Z",
+                      "status": 400,
+                      "error": "invalid_input_syntax",
+                      "message": "A parameter that expects an integer received an invalid value.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "errSslProtocolError": {
+                    "summary": "SSL certificate problem on the target site",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:13.100Z",
+                      "status": 400,
+                      "error": "ERR_SSL_PROTOCOL_ERROR",
+                      "message": "A secure connection could not be established because of an SSL certificate problem on the target site.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "errSslUnrecognizedNameAlert": {
+                    "summary": "SSL certificate does not match the domain",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:13.200Z",
+                      "status": 400,
+                      "error": "ERR_SSL_UNRECOGNIZED_NAME_ALERT",
+                      "message": "The SSL certificate does not match the domain. The site may be down or may have moved.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "featureNotSupported": {
+                    "summary": "Extraction feature not supported",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:13.300Z",
+                      "status": 400,
+                      "error": "feature_not_supported",
+                      "message": "HTML, Markdown or text extraction is not supported.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "invalidScrollingFileType": {
+                    "summary": "Unsupported file type for scrolling capture",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:13.400Z",
+                      "status": 400,
+                      "error": "invalid_scrolling_file_type",
+                      "message": "PNG, JPG and WEBP are not supported for scrolling capture. Use a video format such as MP4, WEBM or GIF.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "requestAborted": {
+                    "summary": "Request aborted before completion",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:13.500Z",
+                      "status": 400,
+                      "error": "request_aborted",
+                      "message": "The request was aborted before it completed, for example due to a timeout or cancellation.",
+                      "path": "/v3/screenshot"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              },
+              "X-Concurrent-Threads": {
+                "$ref": "#/components/headers/X-Concurrent-Threads"
+              },
+              "X-Concurrent-Threads-Active": {
+                "$ref": "#/components/headers/X-Concurrent-Threads-Active"
+              }
+            }
+          },
+          "407": {
+            "description": "Proxy Authentication Required. A tunnel connection to the target could not be established.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "networkConnectionFailed": {
+                    "summary": "Tunnel connection could not be established",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:20.100Z",
+                      "status": 407,
+                      "error": "network_connection_failed",
+                      "message": "A tunnel connection to the target could not be established. Check the URL and proxy setting.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "errTunnelConnectionFailed": {
+                    "summary": "Tunnel connection failed",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:20.200Z",
+                      "status": 407,
+                      "error": "ERR_TUNNEL_CONNECTION_FAILED",
+                      "message": "A tunnel to the target failed. Verify the URL and proxy settings.",
+                      "path": "/v3/screenshot"
                     }
                   }
                 },
@@ -809,6 +1025,125 @@
                       "status": 408,
                       "error": "timeout_error",
                       "message": "The request took too long to complete. Please try again later.",
+                      "path": "/v3/screenshot"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              },
+              "X-Concurrent-Threads": {
+                "$ref": "#/components/headers/X-Concurrent-Threads"
+              },
+              "X-Concurrent-Threads-Active": {
+                "$ref": "#/components/headers/X-Concurrent-Threads-Active"
+              }
+            }
+          },
+          "444": {
+            "description": "Connection Closed Without Response. The target site closed the connection unexpectedly or returned no data.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "errConnectionClosed": {
+                    "summary": "Target site closed the connection",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:30.100Z",
+                      "status": 444,
+                      "error": "ERR_CONNECTION_CLOSED",
+                      "message": "The target site unexpectedly closed the connection.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "errEmptyResponse": {
+                    "summary": "Target server returned no data",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:30.200Z",
+                      "status": 444,
+                      "error": "ERR_EMPTY_RESPONSE",
+                      "message": "The target server closed the connection without returning any data.",
+                      "path": "/v3/screenshot"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              },
+              "X-Concurrent-Threads": {
+                "$ref": "#/components/headers/X-Concurrent-Threads"
+              },
+              "X-Concurrent-Threads-Active": {
+                "$ref": "#/components/headers/X-Concurrent-Threads-Active"
+              }
+            }
+          },
+          "495": {
+            "description": "SSL Certificate Error. The browser and the target website have incompatible SSL/TLS versions or ciphers.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sslVersionOrCipherMismatch": {
+                    "summary": "Incompatible SSL/TLS version or cipher",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:31.100Z",
+                      "status": 495,
+                      "error": "ssl_version_or_cipher_mismatch",
+                      "message": "The browser and the target website have incompatible SSL/TLS versions or ciphers.",
+                      "path": "/v3/screenshot"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              },
+              "X-Concurrent-Threads": {
+                "$ref": "#/components/headers/X-Concurrent-Threads"
+              },
+              "X-Concurrent-Threads-Active": {
+                "$ref": "#/components/headers/X-Concurrent-Threads-Active"
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable. The request could not be completed due to temporary unavailability on the target or capture service.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "temporaryUnavailable": {
+                    "summary": "Temporarily unavailable, retry the request",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:32.100Z",
+                      "status": 503,
+                      "error": "temporary_unavailable",
+                      "message": "The request could not be completed due to temporary unavailability, such as a closed browser. Retry the request.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "errSocketNotConnected": {
+                    "summary": "Target page may be down or moved",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:32.200Z",
+                      "status": 503,
+                      "error": "ERR_SOCKET_NOT_CONNECTED",
+                      "message": "The target page may be temporarily down or may have moved permanently.",
                       "path": "/v3/screenshot"
                     }
                   }
