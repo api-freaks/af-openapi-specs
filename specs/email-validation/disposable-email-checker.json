@@ -3,7 +3,7 @@
   "info": {
     "title": "Disposable Email Checker API - Detect Temporary & Throwaway Email Addresses",
     "version": "1.0.0",
-    "description": "Check a single email address for disposable/temporary domains, free webmail providers, spam-listed domains, and role-based accounts, with syntax validation and DNS record lookup (MX/A). Returns a minimal shape for syntactically invalid addresses and omits the domain/account/dns detail blocks when the domain cannot be resolved.",
+    "description": "Check a single email address for disposable/temporary domains, free webmail providers, spam-listed domains, and role-based accounts, with syntax validation and DNS record lookup (MX/A). Returns a minimal shape for syntactically invalid addresses and omits the domain/account/dns detail blocks when the domain cannot be resolved. Optionally pass an ip to also get its geolocation and security signals (same format as the Email Checker's address object).",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -18,21 +18,11 @@
   ],
   "paths": {
     "/email/disposable": {
-      "get": {
+      "post": {
         "tags": ["Email Validation APIs"],
         "summary": "Check a single email for disposable/temporary domain",
-        "description": "Validates email syntax and checks the domain for disposable, free, spam, and role-account signals, plus MX/A DNS records.",
+        "description": "Validates email syntax and checks the domain for disposable, free, spam, and role-account signals, plus MX/A DNS records. Send the email (and optionally an ip) as a JSON request body. When an ip is included, the response also carries geolocation and security data for it.",
         "parameters": [
-          {
-            "name": "email",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "email"
-            },
-            "description": "Email address to check."
-          },
           {
             "name": "format",
             "in": "query",
@@ -47,7 +37,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response with disposable email check result.",
+            "description": "Successful response with disposable email check result. ip and address appear only when an ip was sent.",
             "content": {
               "application/json": {
                 "schema": {
@@ -187,6 +177,90 @@
                         "role": false
                       }
                     }
+                  },
+                  "withIpAddress": {
+                    "summary": "Email with ip — location and security data included",
+                    "value": {
+                      "email": "someone@gmail.com",
+                      "validSyntax": true,
+                      "domain": {
+                        "disposable": false,
+                        "free": true,
+                        "name": "gmail.com",
+                        "spam": false,
+                        "validDomain": true
+                      },
+                      "account": {
+                        "role": false
+                      },
+                      "dns": {
+                        "mxRecord": [
+                          "gmail-smtp-in.l.google.com.",
+                          "alt1.gmail-smtp-in.l.google.com.",
+                          "alt2.gmail-smtp-in.l.google.com.",
+                          "alt3.gmail-smtp-in.l.google.com.",
+                          "alt4.gmail-smtp-in.l.google.com."
+                        ]
+                      },
+                      "ip": "8.8.8.8",
+                      "address": {
+                        "validIpAddress": true,
+                        "location": {
+                          "city": "Mountain View",
+                          "district": "Santa Clara",
+                          "zipcode": "94043-1351",
+                          "state_prov": "California",
+                          "country_name": "United States",
+                          "continent_name": "North America",
+                          "continent_code": "NA",
+                          "country_code2": "US",
+                          "country_code3": "USA",
+                          "country_name_official": "United States of America",
+                          "is_eu": false
+                        },
+                        "security": {
+                          "threat_score": 5,
+                          "is_tor": false,
+                          "is_proxy": false,
+                          "is_anonymous": false,
+                          "is_known_attacker": false,
+                          "is_spam": false,
+                          "is_bot": false,
+                          "is_cloud_provider": true,
+                          "cloud_provider": "Google LLC"
+                        }
+                      }
+                    }
+                  },
+                  "invalidIp": {
+                    "summary": "Invalid or reserved IP — still 200, address.validIpAddress is false",
+                    "value": {
+                      "email": "someone@gmail.com",
+                      "validSyntax": true,
+                      "domain": {
+                        "disposable": false,
+                        "free": true,
+                        "name": "gmail.com",
+                        "spam": false,
+                        "validDomain": true
+                      },
+                      "account": {
+                        "role": false
+                      },
+                      "dns": {
+                        "mxRecord": [
+                          "gmail-smtp-in.l.google.com.",
+                          "alt1.gmail-smtp-in.l.google.com.",
+                          "alt2.gmail-smtp-in.l.google.com.",
+                          "alt3.gmail-smtp-in.l.google.com.",
+                          "alt4.gmail-smtp-in.l.google.com."
+                        ]
+                      },
+                      "ip": "10.0.0.1",
+                      "address": {
+                        "validIpAddress": false
+                      }
+                    }
                   }
                 }
               }
@@ -204,23 +278,13 @@
             }
           },
           "400": {
-            "description": "Bad Request – Invalid or missing parameters",
+            "description": "Bad Request – Missing API key",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "missingEmail": {
-                    "summary": "email parameter missing or empty",
-                    "value": {
-                      "error": "Invalid Param Exception",
-                      "message": "please pass correct parameters",
-                      "path": "/v1.0/email/disposable",
-                      "status": 400,
-                      "timestamp": "2026-10-13T10:40:11.892Z"
-                    }
-                  },
                   "missingApiKey": {
                     "summary": "apiKey not supplied",
                     "value": {
@@ -288,7 +352,32 @@
             }
           }
         },
-        "operationId": "checkDisposableEmail"
+        "operationId": "checkDisposableEmail",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisposableEmailCheckRequest"
+              },
+              "examples": {
+                "emailOnly": {
+                  "summary": "Email only",
+                  "value": {
+                    "email": "test@sogetthis.com"
+                  }
+                },
+                "emailWithIp": {
+                  "summary": "Email with the signup IP",
+                  "value": {
+                    "email": "someone@gmail.com",
+                    "ip": "8.8.8.8"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -328,6 +417,14 @@
           },
           "dns": {
             "$ref": "#/components/schemas/DisposableDnsObject"
+          },
+          "ip": {
+            "type": "string",
+            "format": "ip",
+            "description": "The IP address that was looked up. Present only when an ip was sent in the request."
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressObject"
           }
         },
         "description": "Disposable email check response."
@@ -416,6 +513,160 @@
             "type": "string",
             "format": "date-time",
             "description": "Timestamp when the error occurred (ISO 8601)."
+          }
+        }
+      },
+      "DisposableEmailCheckRequest": {
+        "type": "object",
+        "description": "Request body for the disposable email check.",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "The email address to check. A malformed address still returns a normal response, with validSyntax and domain.validDomain set to false."
+          },
+          "ip": {
+            "type": "string",
+            "format": "ip",
+            "description": "Optional IP address to look up for location and security data, such as the IP the signup came from. An invalid or reserved IP still returns 200, with address.validIpAddress set to false."
+          }
+        }
+      },
+      "AddressObject": {
+        "type": "object",
+        "properties": {
+          "validIpAddress": {
+            "type": "boolean",
+            "description": "IP recognized/reachable by the geolocation provider."
+          },
+          "location": {
+            "$ref": "#/components/schemas/EmailLocation"
+          },
+          "security": {
+            "$ref": "#/components/schemas/EmailSecurity"
+          }
+        },
+        "description": "Geolocation and security enrichment data for the IP address. Present only when an ip was sent in the request. If the IP lookup fails, this object is omitted and the disposable email result is unaffected.",
+        "required": []
+      },
+      "EmailLocation": {
+        "type": "object",
+        "description": "Geolocation data derived from the IP address.",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "Municipal or city name."
+          },
+          "district": {
+            "type": "string",
+            "description": "District or neighborhood."
+          },
+          "zipcode": {
+            "type": "string",
+            "description": "Postal or ZIP code."
+          },
+          "state_prov": {
+            "type": "string",
+            "description": "State or province."
+          },
+          "country_name": {
+            "type": "string",
+            "description": "Common country name."
+          },
+          "country_name_official": {
+            "type": "string",
+            "description": "Official country name."
+          },
+          "country_code2": {
+            "type": "string",
+            "description": "Two-character ISO country code."
+          },
+          "country_code3": {
+            "type": "string",
+            "description": "Three-character ISO country code."
+          },
+          "continent_name": {
+            "type": "string",
+            "description": "Continental region name."
+          },
+          "continent_code": {
+            "type": "string",
+            "description": "Continental region identifier."
+          },
+          "accuracy_radius": {
+            "type": "string",
+            "description": "Geolocation precision radius. Not included for every IP."
+          },
+          "confidence": {
+            "type": "string",
+            "description": "Confidence score for geolocation accuracy. Not included for every IP."
+          },
+          "is_eu": {
+            "type": "boolean",
+            "description": "European Union membership status."
+          }
+        },
+        "required": []
+      },
+      "EmailSecurity": {
+        "type": "object",
+        "description": "Threat and anonymity profile for the IP address.",
+        "required": [
+          "threat_score",
+          "is_tor",
+          "is_proxy",
+          "is_anonymous",
+          "is_known_attacker",
+          "is_spam",
+          "is_bot",
+          "is_cloud_provider",
+          "cloud_provider"
+        ],
+        "properties": {
+          "threat_score": {
+            "type": "integer",
+            "description": "Quantitative risk assessment score. Higher values indicate elevated security risk."
+          },
+          "is_tor": {
+            "type": "boolean",
+            "description": "Detection flag for IP addresses routed through the Tor anonymity network."
+          },
+          "is_proxy": {
+            "type": "boolean",
+            "description": "Detection flag identifying IP addresses operating as proxy servers."
+          },
+          "proxy_type": {
+            "type": "string",
+            "description": "Classification of detected proxy infrastructure type (e.g. VPN, HTTP, SOCKS). Included only when is_proxy is true."
+          },
+          "proxy_provider": {
+            "type": "string",
+            "description": "Identified service provider operating the proxy infrastructure. Included only when is_proxy is true."
+          },
+          "is_anonymous": {
+            "type": "boolean",
+            "description": "Anonymization detection flag for IP addresses using identity obfuscation techniques."
+          },
+          "is_known_attacker": {
+            "type": "boolean",
+            "description": "Threat intelligence flag for IP addresses documented as confirmed malicious sources."
+          },
+          "is_spam": {
+            "type": "boolean",
+            "description": "Reputation flag for IP addresses associated with spam transmission."
+          },
+          "is_bot": {
+            "type": "boolean",
+            "description": "Automated traffic detection flag for IP addresses from bot networks."
+          },
+          "is_cloud_provider": {
+            "type": "boolean",
+            "description": "Infrastructure classification flag for IP addresses from cloud computing providers."
+          },
+          "cloud_provider": {
+            "type": "string",
+            "description": "Identified cloud infrastructure or hosting service provider name."
           }
         }
       }

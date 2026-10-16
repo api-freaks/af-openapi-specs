@@ -3,6 +3,14 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.16] - 2026-10-16
+
+### Changed — Disposable Email Checker (single + bulk): POST with JSON body, optional `ip`
+
+- **Single** (`disposable-email-checker.json`) — `GET /email/disposable` is now `POST /email/disposable` with a JSON body `{ "email": "...", "ip": "..." }` (`ip` optional). The `email` query parameter is replaced by a request body (`DisposableEmailCheckRequest`); the old `missingEmail` 400 example is removed (handled by the gateway).
+- **Bulk** (`bulk-disposable-email-checker.json`) — body changes from `{"emails": [...]}` to `{"emailData": [{ "email": "...", "ip": "..." }, ...]}`; limit stays 100. New 400 messages: `Please pass at least one entry in 'emailData'.` and `'emailData' must not contain null entries or entries without a valid 'email'.`
+- **Response** — new `ip` and `address` fields on a single result and on each bulk item, only when an `ip` was sent. `address` reuses the Email Checker's `AddressObject` / `EmailLocation` / `EmailSecurity` schemas. An invalid or reserved IP still returns 200 with `address.validIpAddress: false`; if the IP lookup fails, `address` is omitted and the disposable result is unaffected.
+
 ## [0.4.15] - 2026-10-14
 
 ### Added — new `network` and `security` fields in the IP Intelligence specs (4 files)
