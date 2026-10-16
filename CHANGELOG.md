@@ -3,6 +3,12 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed — Disposable Email Checker (single + bulk)
+
+- Removed behavior notes (malformed address, invalid or reserved IP, failed IP lookup, when `ip`/`address` appear) from the 200 responses and from the `ip` / `address` descriptions. Those notes belong in the website docs, not the spec.
+
 ## [0.4.16] - 2026-10-16
 
 ### Changed — Disposable Email Checker (single + bulk): POST with JSON body, optional `ip`

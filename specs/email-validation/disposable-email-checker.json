@@ -37,7 +37,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response with disposable email check result. ip and address appear only when an ip was sent.",
+            "description": "Successful response with disposable email check result.",
             "content": {
               "application/json": {
                 "schema": {
@@ -421,7 +421,7 @@
           "ip": {
             "type": "string",
             "format": "ip",
-            "description": "The IP address that was looked up. Present only when an ip was sent in the request."
+            "description": "The IP address that was looked up."
           },
           "address": {
             "$ref": "#/components/schemas/AddressObject"
@@ -524,12 +524,12 @@
           "email": {
             "type": "string",
             "format": "email",
-            "description": "The email address to check. A malformed address still returns a normal response, with validSyntax and domain.validDomain set to false."
+            "description": "The email address to check."
           },
           "ip": {
             "type": "string",
             "format": "ip",
-            "description": "Optional IP address to look up for location and security data, such as the IP the signup came from. An invalid or reserved IP still returns 200, with address.validIpAddress set to false."
+            "description": "Optional IP address to look up for location and security data, such as the IP the signup came from."
           }
         }
       },
@@ -547,7 +547,7 @@
             "$ref": "#/components/schemas/EmailSecurity"
           }
         },
-        "description": "Geolocation and security enrichment data for the IP address. Present only when an ip was sent in the request. If the IP lookup fails, this object is omitted and the disposable email result is unaffected.",
+        "description": "Geolocation and security enrichment data for the IP address.",
         "required": []
       },
       "EmailLocation": {
