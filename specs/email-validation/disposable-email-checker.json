@@ -419,9 +419,11 @@
             "$ref": "#/components/schemas/DisposableDnsObject"
           },
           "ip": {
-            "type": "string",
-            "format": "ip",
-            "description": "The IP address that was looked up."
+            "description": "The IP address that was looked up.",
+            "anyOf": [
+              { "type": "string", "format": "ipv4" },
+              { "type": "string", "format": "ipv6" }
+            ]
           },
           "address": {
             "$ref": "#/components/schemas/AddressObject"
@@ -527,9 +529,11 @@
             "description": "The email address to check."
           },
           "ip": {
-            "type": "string",
-            "format": "ip",
-            "description": "Optional IP address to look up for location and security data, such as the IP the signup came from."
+            "description": "Optional IP address to look up for location and security data, such as the IP the signup came from.",
+            "anyOf": [
+              { "type": "string", "format": "ipv4" },
+              { "type": "string", "format": "ipv6" }
+            ]
           }
         }
       },

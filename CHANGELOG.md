@@ -3,11 +3,12 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.4.17] - 2026-10-16
 
 ### Changed — Disposable Email Checker (single + bulk)
 
 - Removed behavior notes (malformed address, invalid or reserved IP, failed IP lookup, when `ip`/`address` appear) from the 200 responses and from the `ip` / `address` descriptions. Those notes belong in the website docs, not the spec.
+- `ip` fields (request and response, single + bulk) now use `anyOf` of `format: ipv4` / `format: ipv6` instead of the nonstandard `format: ip`.
 
 ## [0.4.16] - 2026-10-16
 
