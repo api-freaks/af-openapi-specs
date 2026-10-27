@@ -3,7 +3,7 @@
   "info": {
     "title": "Commodity Symbols API Reference",
     "version": "2.0.0",
-    "description": "Full catalog of 245+ supported commodities across Metals, Energy, Agriculture, Industrial, Raw Materials, Oils and Meals, Textiles, Meats, Poultry, and Livestock, with pricing currency, unit, and update interval per symbol. Deprecated symbols stay listed with `status: \"inactive\"` and a `deprecationDate`.",
+    "description": "Full catalog of 520+ supported commodities across Metals, Energy, Agriculture, Industrial, Raw Materials, Oils and Meals, Textiles, Meats, Poultry, and Livestock, with pricing currency, unit, and update interval per symbol. Deprecated symbols stay listed with `status: \"inactive\"` and a `deprecationDate`.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",

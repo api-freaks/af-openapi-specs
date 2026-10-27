@@ -191,7 +191,7 @@
                       },
                       "unresolved": {
                         "FAKESYM": {
-                          "message": "We don't support this symbol, please visit our symbols page to see supported symbols."
+                          "message": "We don't recognise this symbol code and could not match it to any commodity we carry. See our symbols page for the symbols this API uses."
                         }
                       }
                     }
@@ -307,7 +307,7 @@
                       "message": "The symbol is not supported, please visit the documentation for a list of supported symbols",
                       "unresolved": {
                         "FAKESYM": {
-                          "message": "We don't support this symbol, please visit our symbols page to see supported symbols."
+                          "message": "We don't recognise this symbol code and could not match it to any commodity we carry. See our symbols page for the symbols this API uses."
                         }
                       }
                     }
