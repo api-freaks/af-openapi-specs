@@ -3,6 +3,16 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.18] - 2026-10-27
+
+### Added — Commodity Intraday Rates API (`commodity/commodity-intraday-rates.json`)
+
+New spec for `GET /v2.0/commodity/rates/intraday`: timestamped prices of one commodity through a UTC day at intervals from 1 minute to 1 day, up to 100 points per response with `nextStartTime` for paging, flat 50 credits per request.
+
+- **Parameters** — `symbols` (exactly one), `interval` (enum of 12 values), `date` (`YYYY-MM-DD`), optional `startTime` (`HH:mm`, default `00:00`) and `metadata` (default `true`).
+- **Responses** — 200 (three examples: partial day, a full first page of 100 one-minute points, `metadata=false`), 400 (11 validation examples), 404 (`SYMBOL_NOT_FOUND`, `DATA_NOT_FOUND`).
+- **Schemas** — `CommodityIntradayResponse`, `CommodityIntradayMetadata`, `ErrorResponse`. Checked against the website's docs, playground and reference pages: same parameters, response fields, error messages and sample values.
+
 ## [0.4.17] - 2026-10-16
 
 ### Changed — Disposable Email Checker (single + bulk)

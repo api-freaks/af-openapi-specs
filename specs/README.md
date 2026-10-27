@@ -179,6 +179,7 @@ Grouped by folder. Slug is the stable id; the name links to the file.
 | `historical-commodity-prices` | [Historical Commodity Prices](commodity/historical-commodity-prices.json) |
 | `commodity-fluctuation`       | [Commodity Fluctuation](commodity/commodity-fluctuation.json)             |
 | `commodity-time-series`       | [Commodity Time Series](commodity/commodity-time-series.json)             |
+| `commodity-intraday-rates`    | [Commodity Intraday Rates](commodity/commodity-intraday-rates.json)       |
 | `commodity-symbols`           | [Commodity Symbols](commodity/commodity-symbols.json)                     |
 
 ### Financial

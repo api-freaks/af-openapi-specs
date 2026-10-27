@@ -1,0 +1,659 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Commodity Intraday Rates API",
+    "version": "2.0.0",
+    "description": "Timestamped prices for one commodity on any UTC day, at an interval from one minute to one day. Each point is the single price recorded at that exact time, keyed by its ISO 8601 UTC timestamp. A response holds up to 100 points; when the day has more, `nextStartTime` is the value to send as `startTime` for the next page. Available only for commodities updated every second, every minute, or every 10 minutes.",
+    "contact": {
+      "name": "APIFreaks Support",
+      "url": "https://apifreaks.com/contact",
+      "email": "support@apifreaks.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.apifreaks.com/v2.0",
+      "description": "Commodity Intraday Rates API Server"
+    }
+  ],
+  "paths": {
+    "/commodity/rates/intraday": {
+      "get": {
+        "tags": [
+          "Commodity APIs"
+        ],
+        "summary": "Get intraday commodity rates",
+        "description": "Returns the prices of one commodity through a UTC day at the requested interval, keyed by UTC timestamp. Each request costs a flat 50 credits however many points it returns.",
+        "operationId": "getCommodityIntradayRates",
+        "parameters": [
+          {
+            "name": "symbols",
+            "in": "query",
+            "required": true,
+            "description": "Exactly one commodity symbol. Case-insensitive. Sending two or more returns a 400. Only symbols updated every second, every minute, or every 10 minutes have intraday rates; symbols updated hourly or less often return a 400. Use the Commodity Symbols endpoint for all valid values.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "required": true,
+            "description": "Spacing between points. Case-insensitive. Symbols updated every 10 minutes accept only `10m`, `30m`, `1h`, `2h`, `4h`, `8h`, `12h`, `1d`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1m",
+                "5m",
+                "10m",
+                "15m",
+                "30m",
+                "45m",
+                "1h",
+                "2h",
+                "4h",
+                "8h",
+                "12h",
+                "1d"
+              ]
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "description": "The UTC day to read, in `YYYY-MM-DD` format. Cannot be in the future. For today, points stop at the current UTC minute.",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "required": false,
+            "description": "First mark of the window, as a 24-hour UTC time in `HH:mm`. Must fall on a mark of the interval (for example, `14:30` works for `5m` or `30m`, but not for `1h`). For `1d` it can only be `00:00`.",
+            "schema": {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+              "default": "00:00"
+            }
+          },
+          {
+            "name": "metadata",
+            "in": "query",
+            "required": false,
+            "description": "Whether to include the `metadata` object. Pass `false` to receive only the prices.",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommodityIntradayResponse"
+                },
+                "examples": {
+                  "hourlyPartOfDay": {
+                    "summary": "Hourly gold prices from 18:00 UTC",
+                    "value": {
+                      "success": true,
+                      "symbol": "XAU",
+                      "date": "2026-10-14",
+                      "interval": "1h",
+                      "startTime": "18:00",
+                      "count": 6,
+                      "nextStartTime": null,
+                      "rates": {
+                        "2026-10-14T18:00:00Z": 3961.27,
+                        "2026-10-14T19:00:00Z": 3958.84,
+                        "2026-10-14T20:00:00Z": 3963.1,
+                        "2026-10-14T21:00:00Z": 3966.45,
+                        "2026-10-14T22:00:00Z": 3964.92,
+                        "2026-10-14T23:00:00Z": 3967.38
+                      },
+                      "metadata": {
+                        "XAU": {
+                          "unit": "T.oz",
+                          "quote": "USD"
+                        }
+                      }
+                    }
+                  },
+                  "firstPageOfMinuteData": {
+                    "summary": "First page of one-minute data, more pages available",
+                    "value": {
+                      "success": true,
+                      "symbol": "WTIOIL-FUT",
+                      "date": "2026-10-14",
+                      "interval": "1m",
+                      "startTime": "00:00",
+                      "count": 100,
+                      "nextStartTime": "01:40",
+                      "rates": {
+                        "2026-10-14T00:00:00Z": 94.69,
+                        "2026-10-14T00:01:00Z": 94.71,
+                        "2026-10-14T00:02:00Z": 94.72,
+                        "2026-10-14T00:03:00Z": 94.74,
+                        "2026-10-14T00:04:00Z": 94.76,
+                        "2026-10-14T00:05:00Z": 94.77,
+                        "2026-10-14T00:06:00Z": 94.79,
+                        "2026-10-14T00:07:00Z": 94.8,
+                        "2026-10-14T00:08:00Z": 94.81,
+                        "2026-10-14T00:09:00Z": 94.82,
+                        "2026-10-14T00:10:00Z": 94.83,
+                        "2026-10-14T00:11:00Z": 94.84,
+                        "2026-10-14T00:12:00Z": 94.84,
+                        "2026-10-14T00:13:00Z": 94.84,
+                        "2026-10-14T00:14:00Z": 94.85,
+                        "2026-10-14T00:15:00Z": 94.85,
+                        "2026-10-14T00:16:00Z": 94.85,
+                        "2026-10-14T00:17:00Z": 94.84,
+                        "2026-10-14T00:18:00Z": 94.84,
+                        "2026-10-14T00:19:00Z": 94.84,
+                        "2026-10-14T00:20:00Z": 94.83,
+                        "2026-10-14T00:21:00Z": 94.83,
+                        "2026-10-14T00:22:00Z": 94.82,
+                        "2026-10-14T00:23:00Z": 94.82,
+                        "2026-10-14T00:24:00Z": 94.81,
+                        "2026-10-14T00:25:00Z": 94.81,
+                        "2026-10-14T00:26:00Z": 94.8,
+                        "2026-10-14T00:27:00Z": 94.8,
+                        "2026-10-14T00:28:00Z": 94.8,
+                        "2026-10-14T00:29:00Z": 94.8,
+                        "2026-10-14T00:30:00Z": 94.8,
+                        "2026-10-14T00:31:00Z": 94.8,
+                        "2026-10-14T00:32:00Z": 94.8,
+                        "2026-10-14T00:33:00Z": 94.81,
+                        "2026-10-14T00:34:00Z": 94.81,
+                        "2026-10-14T00:35:00Z": 94.82,
+                        "2026-10-14T00:36:00Z": 94.83,
+                        "2026-10-14T00:37:00Z": 94.84,
+                        "2026-10-14T00:38:00Z": 94.86,
+                        "2026-10-14T00:39:00Z": 94.87,
+                        "2026-10-14T00:40:00Z": 94.89,
+                        "2026-10-14T00:41:00Z": 94.9,
+                        "2026-10-14T00:42:00Z": 94.92,
+                        "2026-10-14T00:43:00Z": 94.94,
+                        "2026-10-14T00:44:00Z": 94.95,
+                        "2026-10-14T00:45:00Z": 94.97,
+                        "2026-10-14T00:46:00Z": 94.99,
+                        "2026-10-14T00:47:00Z": 95.01,
+                        "2026-10-14T00:48:00Z": 95.02,
+                        "2026-10-14T00:49:00Z": 95.04,
+                        "2026-10-14T00:50:00Z": 95.05,
+                        "2026-10-14T00:51:00Z": 95.06,
+                        "2026-10-14T00:52:00Z": 95.07,
+                        "2026-10-14T00:53:00Z": 95.08,
+                        "2026-10-14T00:54:00Z": 95.09,
+                        "2026-10-14T00:55:00Z": 95.1,
+                        "2026-10-14T00:56:00Z": 95.11,
+                        "2026-10-14T00:57:00Z": 95.11,
+                        "2026-10-14T00:58:00Z": 95.11,
+                        "2026-10-14T00:59:00Z": 95.11,
+                        "2026-10-14T01:00:00Z": 95.11,
+                        "2026-10-14T01:01:00Z": 95.11,
+                        "2026-10-14T01:02:00Z": 95.11,
+                        "2026-10-14T01:03:00Z": 95.1,
+                        "2026-10-14T01:04:00Z": 95.1,
+                        "2026-10-14T01:05:00Z": 95.09,
+                        "2026-10-14T01:06:00Z": 95.09,
+                        "2026-10-14T01:07:00Z": 95.08,
+                        "2026-10-14T01:08:00Z": 95.08,
+                        "2026-10-14T01:09:00Z": 95.07,
+                        "2026-10-14T01:10:00Z": 95.07,
+                        "2026-10-14T01:11:00Z": 95.06,
+                        "2026-10-14T01:12:00Z": 95.06,
+                        "2026-10-14T01:13:00Z": 95.06,
+                        "2026-10-14T01:14:00Z": 95.06,
+                        "2026-10-14T01:15:00Z": 95.06,
+                        "2026-10-14T01:16:00Z": 95.07,
+                        "2026-10-14T01:17:00Z": 95.07,
+                        "2026-10-14T01:18:00Z": 95.08,
+                        "2026-10-14T01:19:00Z": 95.09,
+                        "2026-10-14T01:20:00Z": 95.1,
+                        "2026-10-14T01:21:00Z": 95.11,
+                        "2026-10-14T01:22:00Z": 95.12,
+                        "2026-10-14T01:23:00Z": 95.14,
+                        "2026-10-14T01:24:00Z": 95.15,
+                        "2026-10-14T01:25:00Z": 95.17,
+                        "2026-10-14T01:26:00Z": 95.18,
+                        "2026-10-14T01:27:00Z": 95.2,
+                        "2026-10-14T01:28:00Z": 95.22,
+                        "2026-10-14T01:29:00Z": 95.24,
+                        "2026-10-14T01:30:00Z": 95.25,
+                        "2026-10-14T01:31:00Z": 95.27,
+                        "2026-10-14T01:32:00Z": 95.29,
+                        "2026-10-14T01:33:00Z": 95.3,
+                        "2026-10-14T01:34:00Z": 95.31,
+                        "2026-10-14T01:35:00Z": 95.33,
+                        "2026-10-14T01:36:00Z": 95.34,
+                        "2026-10-14T01:37:00Z": 95.35,
+                        "2026-10-14T01:38:00Z": 95.36,
+                        "2026-10-14T01:39:00Z": 95.36
+                      },
+                      "metadata": {
+                        "WTIOIL-FUT": {
+                          "unit": "Bbl",
+                          "quote": "USD"
+                        }
+                      }
+                    }
+                  },
+                  "withoutMetadata": {
+                    "summary": "metadata=false returns only the prices",
+                    "value": {
+                      "success": true,
+                      "symbol": "XAU",
+                      "date": "2026-10-14",
+                      "interval": "4h",
+                      "startTime": "12:00",
+                      "count": 3,
+                      "nextStartTime": null,
+                      "rates": {
+                        "2026-10-14T12:00:00Z": 3955.6,
+                        "2026-10-14T16:00:00Z": 3960.12,
+                        "2026-10-14T20:00:00Z": 3963.1
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request: Missing or invalid parameters, or the symbol has no intraday rates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingSymbols": {
+                    "summary": "Missing required symbols parameter",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:41.118Z",
+                      "path": "/rates/intraday",
+                      "code": 400,
+                      "error": "VALIDATION_ERROR",
+                      "message": "symbols parameter is required in the query parameters."
+                    }
+                  },
+                  "missingInterval": {
+                    "summary": "Missing required interval parameter",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:41.402Z",
+                      "path": "/rates/intraday",
+                      "code": 400,
+                      "error": "VALIDATION_ERROR",
+                      "message": "The 'interval' parameter is required in the query (one of 1m, 5m, 10m, 15m, 30m, 45m, 1h, 2h, 4h, 8h, 12h, 1d)."
+                    }
+                  },
+                  "missingDate": {
+                    "summary": "Missing required date parameter",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:41.655Z",
+                      "path": "/rates/intraday",
+                      "code": 400,
+                      "error": "VALIDATION_ERROR",
+                      "message": "Date is required in query params."
+                    }
+                  },
+                  "multipleSymbols": {
+                    "summary": "More than one symbol sent",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:41.901Z",
+                      "path": "/rates/intraday",
+                      "code": 400,
+                      "error": "VALIDATION_ERROR",
+                      "message": "intraday accepts exactly one symbol in the symbols parameter"
+                    }
+                  },
+                  "invalidInterval": {
+                    "summary": "Interval not available for the symbol",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:42.140Z",
+                      "path": "/rates/intraday",
+                      "code": 400,
+                      "error": "VALIDATION_ERROR",
+                      "message": "Invalid interval '7m' for XAU: valid intervals for XAU are 1m, 5m, 10m, 15m, 30m, 45m, 1h, 2h, 4h, 8h, 12h, 1d"
+                    }
+                  },
+                  "invalidDateFormat": {
+                    "summary": "Date is not in YYYY-MM-DD format",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:42.377Z",
+                      "path": "/rates/intraday",
+                      "code": 400,
+                      "error": "VALIDATION_ERROR",
+                      "message": "Invalid date format: expected YYYY-MM-DD"
+                    }
+                  },
+                  "dateNotExist": {
+                    "summary": "Date does not exist on the calendar",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:42.619Z",
+                      "path": "/rates/intraday",
+                      "code": 400,
+                      "error": "VALIDATION_ERROR",
+                      "message": "Invalid Date: The provided date does not exist."
+                    }
+                  },
+                  "futureDate": {
+                    "summary": "Date is in the future",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:42.858Z",
+                      "path": "/rates/intraday",
+                      "code": 400,
+                      "error": "VALIDATION_ERROR",
+                      "message": "Invalid date: intraday rates are not available for future dates"
+                    }
+                  },
+                  "invalidStartTime": {
+                    "summary": "startTime is not a 24-hour HH:mm time",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:43.093Z",
+                      "path": "/rates/intraday",
+                      "code": 400,
+                      "error": "VALIDATION_ERROR",
+                      "message": "Invalid startTime: expected a 24-hour time in HH:mm (UTC), e.g. 14:30"
+                    }
+                  },
+                  "startTimeNotOnMark": {
+                    "summary": "startTime does not fall on a mark of the interval",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:43.330Z",
+                      "path": "/rates/intraday",
+                      "code": 400,
+                      "error": "VALIDATION_ERROR",
+                      "message": "Invalid startTime '14:30': it must fall on a 1h mark (minutes since 00:00 divisible by 60)"
+                    }
+                  },
+                  "noIntradayForSymbol": {
+                    "summary": "Symbol is updated hourly or less often",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:43.571Z",
+                      "path": "/rates/intraday",
+                      "code": 400,
+                      "error": "VALIDATION_ERROR",
+                      "message": "Intraday rates are not available for NG-EU: they exist only for symbols updated every second, minute or 10 minutes"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "404": {
+            "description": "Not found: Symbol not supported, or no data for the requested window",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "symbolNotFound": {
+                    "summary": "Symbol Not Found",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:44.012Z",
+                      "path": "/rates/intraday",
+                      "code": 404,
+                      "error": "SYMBOL_NOT_FOUND",
+                      "message": "The symbol is not supported, please visit the documentation for a list of supported symbols",
+                      "unresolved": {
+                        "FAKESYM": {
+                          "message": "We don't support this symbol, please visit our symbols page to see supported symbols."
+                        }
+                      }
+                    }
+                  },
+                  "noDataInWindow": {
+                    "summary": "No intraday data for the specified window",
+                    "value": {
+                      "timestamp": "2026-10-27T09:12:44.268Z",
+                      "path": "/rates/intraday",
+                      "code": 404,
+                      "error": "DATA_NOT_FOUND",
+                      "message": "No intraday data found for the specified window"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuthHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-apiKey",
+        "description": "Pass your API key via the X-apiKey request header."
+      },
+      "ApiKeyAuthQuery": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey",
+        "description": "Pass your API key via the apiKey query parameter."
+      }
+    },
+    "schemas": {
+      "CommodityIntradayResponse": {
+        "type": "object",
+        "description": "Intraday response containing the prices of the requested symbol keyed by UTC timestamp.",
+        "required": [
+          "success",
+          "symbol",
+          "date",
+          "interval",
+          "startTime",
+          "count",
+          "nextStartTime",
+          "rates"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "`true` for successful requests."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "The symbol the prices belong to."
+          },
+          "date": {
+            "type": "string",
+            "description": "The UTC day requested. Format: `YYYY-MM-DD`.",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "interval": {
+            "type": "string",
+            "description": "The interval used, in lowercase form (`5M` comes back as `5m`).",
+            "enum": [
+              "1m",
+              "5m",
+              "10m",
+              "15m",
+              "30m",
+              "45m",
+              "1h",
+              "2h",
+              "4h",
+              "8h",
+              "12h",
+              "1d"
+            ]
+          },
+          "startTime": {
+            "type": "string",
+            "description": "First mark of the window, `HH:mm` UTC.",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of points in `rates` (at most 100).",
+            "maximum": 100,
+            "minimum": 0
+          },
+          "nextStartTime": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "`HH:mm` value to pass as `startTime` for the next page, or `null` when the window reached the end of the day (or the current minute, for today)."
+          },
+          "rates": {
+            "type": "object",
+            "description": "Prices keyed by ISO 8601 UTC timestamp (for example `2026-10-14T18:00:00Z`), in ascending order. Values are rounded to two decimals. A mark with no recorded price is left out rather than filled in.",
+            "additionalProperties": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Unit and currency of the prices, keyed by the requested symbol. Omitted when the request sets `metadata=false`.",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/CommodityIntradayMetadata"
+            }
+          },
+          "unresolved": {
+            "type": "object",
+            "description": "Present when the symbol you sent was matched to a single alternative (200, with `resolvedTo`, for example `GOLD` answered as `XAU`), or not recognized at all (404, with a `suggestions` array when close matches exist).",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Detail message explaining how this symbol was handled."
+                },
+                "resolvedTo": {
+                  "type": "string",
+                  "description": "The supported symbol the request was answered with."
+                },
+                "suggestions": {
+                  "type": "array",
+                  "description": "Optional list of supported symbols that closely match the unresolved symbol.",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CommodityIntradayMetadata": {
+        "type": "object",
+        "description": "Unit and currency of the prices for one commodity.",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "description": "Unit the commodity is priced in (for example `T.oz` or `Bbl`)."
+          },
+          "quote": {
+            "type": "string",
+            "description": "Currency the prices are quoted in (for example `USD`)."
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error envelope returned by the API on failed requests. Gateway-level validation errors populate status; commodity-service errors (date/symbol/data validation) populate code instead: check whichever is present.",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Short error category or exception type (e.g., Invalid Param Exception, VALIDATION_ERROR, SYMBOL_NOT_FOUND, DATA_NOT_FOUND)."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message describing the failure."
+          },
+          "path": {
+            "type": "string",
+            "description": "API endpoint path (gateway errors) or internal service path (commodity-service errors) that produced the error."
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code. Present on gateway-level errors."
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP status code. Present on commodity-service errors instead of status."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the error occurred (ISO 8601)."
+          },
+          "unresolved": {
+            "type": "object",
+            "description": "Present only on SYMBOL_NOT_FOUND errors. Map of each unresolved symbol to a detail message and optional close-match suggestions.",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Detail message explaining why this symbol was not resolved."
+                },
+                "suggestions": {
+                  "type": "array",
+                  "description": "Optional list of supported symbols that closely match the unresolved symbol.",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "headers": {
+      "X-AF-Credits-Cost": {
+        "description": "Specifies the number of credits consumed by the current request.",
+        "schema": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuthHeader": []
+    },
+    {
+      "ApiKeyAuthQuery": []
+    }
+  ]
+}
