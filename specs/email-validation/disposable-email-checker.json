@@ -12,12 +12,12 @@
   },
   "servers": [
     {
-      "url": "https://api.apifreaks.com/v1.0",
+      "url": "https://api.apifreaks.com/v2.0",
       "description": "Disposable Email Checker API Server"
     }
   ],
   "paths": {
-    "/email/disposable": {
+    "/email/disposable-check": {
       "post": {
         "tags": ["Email Validation APIs"],
         "summary": "Check a single email for disposable/temporary domain",
@@ -290,7 +290,7 @@
                     "value": {
                       "error": "Invalid Param Exception",
                       "message": "Please provide apiKey",
-                      "path": "/v1.0/email/disposable",
+                      "path": "/v2.0/email/disposable-check",
                       "status": 400,
                       "timestamp": "2026-10-13T10:40:12.475Z"
                     }
@@ -316,7 +316,7 @@
                     "value": {
                       "error": "API Access Exception",
                       "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
-                      "path": "/v1.0/email/disposable",
+                      "path": "/v2.0/email/disposable-check",
                       "status": 401,
                       "timestamp": "2026-10-13T10:40:13.056Z"
                     }
@@ -337,7 +337,7 @@
                     "value": {
                       "error": "Resource Not Found",
                       "message": "The requested resource could not be found. Please verify the URL and try again.",
-                      "path": "/v1.0/email/disposablex",
+                      "path": "/v2.0/email/disposable-checkx",
                       "status": 404,
                       "timestamp": "2026-10-13T11:00:07.798Z"
                     }

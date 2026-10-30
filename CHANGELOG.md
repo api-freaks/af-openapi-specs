@@ -3,6 +3,15 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.19] - 2026-10-30
+
+### Changed — Disposable Email Checker (single + bulk) moves to `/v2.0/email/disposable-check`
+
+- **Single** (`disposable-email-checker.json`) — path `/email/disposable` is now `/email/disposable-check`; server base `https://api.apifreaks.com/v1.0` is now `https://api.apifreaks.com/v2.0`.
+- **Bulk** (`bulk-disposable-email-checker.json`) — path `/email/disposable/bulk` is now `/email/disposable-check/bulk`; server base moves to `v2.0`.
+- Error example `path` values updated to the new `/v2.0/email/disposable-check…` paths. Request and response shapes are unchanged.
+- Matches `AF_API.DisposableEmailChecker` / `BulkDisposableEmailChecker` in `@apifreaks/af-react-comp` 1.1.7 and the website's updated Disposable Email Checker pages.
+
 ## [0.4.18] - 2026-10-27
 
 ### Added — Commodity Intraday Rates API (`commodity/commodity-intraday-rates.json`)

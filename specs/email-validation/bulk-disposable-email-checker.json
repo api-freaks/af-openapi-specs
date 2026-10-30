@@ -12,12 +12,12 @@
   },
   "servers": [
     {
-      "url": "https://api.apifreaks.com/v1.0",
+      "url": "https://api.apifreaks.com/v2.0",
       "description": "Bulk Disposable Email Checker API Server"
     }
   ],
   "paths": {
-    "/email/disposable/bulk": {
+    "/email/disposable-check/bulk": {
       "post": {
         "tags": ["Email Validation APIs"],
         "summary": "Check multiple emails for disposable/temporary domains",
@@ -177,7 +177,7 @@
                     "value": {
                       "error": "Missing or Invalid Parameters",
                       "message": "Please pass at least one entry in 'emailData'.",
-                      "path": "/v1.0/email/disposable/bulk",
+                      "path": "/v2.0/email/disposable-check/bulk",
                       "status": 400,
                       "timestamp": "2026-10-13T10:39:42.887Z"
                     }
@@ -187,7 +187,7 @@
                     "value": {
                       "error": "Missing or Invalid Parameters",
                       "message": "'emailData' must not contain null entries or entries without a valid 'email'.",
-                      "path": "/v1.0/email/disposable/bulk",
+                      "path": "/v2.0/email/disposable-check/bulk",
                       "status": 400,
                       "timestamp": "2026-10-13T10:39:44.002Z"
                     }
@@ -197,7 +197,7 @@
                     "value": {
                       "error": "Invalid Param Exception",
                       "message": "Please provide apiKey",
-                      "path": "/v1.0/email/disposable/bulk",
+                      "path": "/v2.0/email/disposable-check/bulk",
                       "status": 400,
                       "timestamp": "2026-10-13T10:40:02.684Z"
                     }
@@ -223,7 +223,7 @@
                     "value": {
                       "error": "API Access Exception",
                       "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
-                      "path": "/v1.0/email/disposable/bulk",
+                      "path": "/v2.0/email/disposable-check/bulk",
                       "status": 401,
                       "timestamp": "2026-10-13T10:40:03.166Z"
                     }
@@ -244,7 +244,7 @@
                     "value": {
                       "error": "Resource Not Found",
                       "message": "The requested resource could not be found. Please verify the URL and try again.",
-                      "path": "/v1.0/email/disposable/bulkx",
+                      "path": "/v2.0/email/disposable-check/bulkx",
                       "status": 404,
                       "timestamp": "2026-10-13T11:00:08.337Z"
                     }
@@ -270,7 +270,7 @@
                     "value": {
                       "error": "Payload too large Exception",
                       "message": "Maximum request body size limit exceeded",
-                      "path": "/v1.0/email/disposable/bulk",
+                      "path": "/v2.0/email/disposable-check/bulk",
                       "status": 413,
                       "timestamp": "2026-10-13T10:39:58.052Z"
                     }
