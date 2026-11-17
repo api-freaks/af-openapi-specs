@@ -3,7 +3,7 @@
   "info": {
     "title": "Bulk Screenshot API - Capture Up to 50 URLs in a Single Request",
     "version": "1.0.0",
-    "description": "Capture screenshots of multiple websites in a single POST request. Accepts up to 50 URLs per request with per-URL options for file type, viewport size, blocking, caching, and scrolling capture. Returns a status indicator, metadata with success/failure counts, and an array of per-URL results — each containing either screenshot data or an error message.",
+    "description": "Capture screenshots of multiple websites in a single POST request. Accepts up to 50 URLs per request with per-URL options for file type, viewport size, blocking, caching, and scrolling capture. Returns a status indicator, metadata with success/failure counts, and an array of per-URL results — each containing either screenshot data or an error message. Also supports stealth mode, GPU rendering, classic and premium proxies with country selection, timezone emulation, text captcha solving, and PDF options for paper size, orientation, page range, media type and backgrounds. A simple screenshot costs 50 credits. Options add credits on top: scrolling or video +20, classic proxy +20, premium proxy +200 (used instead of a classic proxy), GPU rendering +20, captcha solver +20. Stealth, timezone and the other options add no credits.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -55,6 +55,23 @@
                         "url": "https://github.com",
                         "file_type": "JPEG",
                         "full_page": true
+                      }
+                    ]
+                  }
+                },
+                "gifScrolling": {
+                  "summary": "Scrolling GIF capture",
+                  "value": {
+                    "urls": [
+                      {
+                        "url": "https://whoisfreaks.com/",
+                        "file_type": "gif",
+                        "width": 3840,
+                        "height": 2160,
+                        "fresh": true,
+                        "image_quality": 100,
+                        "scrolling_screenshot": true,
+                        "duration": 10
                       }
                     ]
                   }
@@ -363,6 +380,38 @@
                         }
                       ]
                     }
+                  },
+                  "scrollingGif": {
+                    "summary": "Scrolling GIF capture",
+                    "value": {
+                      "status": "success",
+                      "meta_data": {
+                        "total_urls": 1,
+                        "successful_urls": 1,
+                        "failed_urls": 0
+                      },
+                      "results": [
+                        {
+                          "url": {
+                            "screenshot": "https://s3.eu-central-2.wasabisys.com/w.storage.apifreaks.com/whoisfreaks_com__a34071f0e507.gif",
+                            "url": "https://whoisfreaks.com/",
+                            "created_at": "2026-06-15T17:59:10.306Z",
+                            "file_type": "gif",
+                            "width": 3840,
+                            "height": 2160,
+                            "fresh": true,
+                            "image_quality": 100,
+                            "scrolling_screenshot": true,
+                            "duration": 10,
+                            "output": "json",
+                            "ttl": "2026-07-15T17:58:43.853Z",
+                            "sizes": null
+                          },
+                          "status": "fulfilled",
+                          "error_message": null
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -392,6 +441,39 @@
                       "path": "/v1.0/screenshot",
                       "status": 400,
                       "timestamp": "2026-07-27T10:18:42.036Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              },
+              "X-Concurrent-Threads": {
+                "$ref": "#/components/headers/X-Concurrent-Threads"
+              },
+              "X-Concurrent-Threads-Active": {
+                "$ref": "#/components/headers/X-Concurrent-Threads-Active"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "401": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/screenshot",
+                      "status": 401,
+                      "timestamp": "2026-07-27T10:18:57.172Z"
                     }
                   }
                 },
@@ -444,6 +526,39 @@
                 "$ref": "#/components/headers/X-Concurrent-Threads-Active"
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "500": {
+                    "summary": "Internal server error",
+                    "value": {
+                      "error": "internal_server_error",
+                      "message": "An internal server error occured while processing the request. Please try again or contact support if the issue persists.",
+                      "path": "/v1.0/screenshot",
+                      "status": 500,
+                      "timestamp": "2026-07-27T10:18:57.172Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              },
+              "X-Concurrent-Threads": {
+                "$ref": "#/components/headers/X-Concurrent-Threads"
+              },
+              "X-Concurrent-Threads-Active": {
+                "$ref": "#/components/headers/X-Concurrent-Threads-Active"
+              }
+            }
           }
         }
       }
@@ -472,7 +587,7 @@
         "properties": {
           "status": {
             "type": "string",
-            "description": "Processing status for this item (fulfilled)."
+            "description": "Processing status of the individual URL. Usually `fulfilled`."
           },
           "url": {
             "description": "Screenshot metadata for this URL, or an error object if this specific URL could not be captured.",
@@ -489,7 +604,7 @@
           },
           "error_message": {
             "type": ["string", "null"],
-            "description": "Observed to always be null; per-item error details are returned inside `url` instead."
+            "description": "Error message if processing failed, null if successful."
           }
         }
       },
@@ -501,7 +616,7 @@
           "screenshot": {
             "type": "string",
             "format": "uri",
-            "description": "URL of the captured screenshot image."
+            "description": "URL of the captured screenshot image file."
           },
           "url": {
             "type": "string",
@@ -537,19 +652,19 @@
           },
           "enable_caching": {
             "type": "boolean",
-            "description": "Whether caching was enabled."
+            "description": "Whether caching was enabled (`true`/`false`)."
           },
           "omit_background": {
             "type": "boolean",
-            "description": "Whether background was removed."
+            "description": "Whether background was removed (`true`/`false`)."
           },
           "destroy_screenshot": {
             "type": "boolean",
-            "description": "Whether the screenshot was destroyed after generation."
+            "description": "Whether the screenshot was destroyed after generation (`true`/`false`)."
           },
           "fail_on_error": {
             "type": "boolean",
-            "description": "Whether the request failed on error."
+            "description": "Whether the request failed on error (`true`/`false`)."
           },
           "longitude": {
             "type": "number",
@@ -563,243 +678,260 @@
           },
           "proxy": {
             "type": "string",
-            "description": "The proxy configuration used."
+            "description": "The proxy configuration used for the request."
           },
           "no_cookie_banners": {
             "type": "boolean",
-            "description": "Whether cookie banners were blocked."
+            "description": "Whether cookie banners were blocked (`true`/`false`)."
           },
           "block_ads": {
             "type": "boolean",
-            "description": "Whether ads were blocked."
+            "description": "Whether ads were blocked (`true`/`false`)."
           },
           "headers": {
             "type": "string",
-            "description": "Custom headers included in the request."
+            "description": "The custom headers that were included in the request."
           },
           "cookies": {
             "type": "string",
-            "description": "Cookies included in the request."
+            "description": "The cookies that were included in the request."
           },
           "scroll_to_element": {
             "type": "string",
-            "description": "Element scrolled to before rendering."
+            "description": "The element that was scrolled to before rendering."
           },
           "selector": {
             "type": "string",
-            "description": "Element selected for rendering."
+            "description": "The element that was selected for rendering."
           },
           "blur_selector": {
             "type": "string",
-            "description": "Elements blurred in the output."
+            "description": "The elements that were blurred in the output."
           },
           "remove_selector": {
             "type": "string",
-            "description": "Elements removed from the output."
+            "description": "The elements that were removed from the output."
           },
           "css": {
             "type": "string",
-            "description": "Custom CSS injected into the page."
+            "description": "The custom CSS that was injected into the page."
           },
           "css_url": {
             "type": "string",
             "format": "uri",
-            "description": "External CSS URL that was loaded."
+            "description": "The external CSS URL that was loaded."
           },
           "js": {
             "type": "string",
-            "description": "Custom JavaScript that was injected."
+            "description": "The custom JavaScript that was injected."
           },
           "js_url": {
             "type": "string",
             "format": "uri",
-            "description": "External JavaScript URL that was loaded."
+            "description": "The external JavaScript URL that was loaded."
           },
           "user_agent": {
             "type": "string",
-            "description": "User-Agent string that was used."
+            "description": "The User-Agent string that was used."
           },
           "accept_languages": {
             "type": "string",
-            "description": "Accept-Language header that was used."
+            "description": "The Accept-Language header that was used."
           },
           "delay": {
             "type": "integer",
-            "description": "Delay duration in milliseconds."
+            "description": "The delay duration that was applied in milliseconds."
           },
           "thumbnail_width": {
             "type": "integer",
-            "description": "Thumbnail width in pixels."
+            "description": "The thumbnail width that was used in pixels."
           },
           "output": {
             "type": "string",
-            "description": "Output type used."
+            "description": "The output type that was used."
           },
           "fresh": {
             "type": "boolean",
-            "description": "Whether a fresh render was performed."
+            "description": "Whether a fresh render was performed (`true`/`false`)."
           },
           "lazy_load": {
             "type": "boolean",
-            "description": "Whether lazy loading was triggered."
+            "description": "Whether lazy loading was triggered (`true`/`false`)."
           },
           "full_page": {
             "type": "boolean",
-            "description": "Whether full page capture was used."
+            "description": "Whether full page capture was used (`true`/`false`)."
           },
           "retina": {
             "type": "boolean",
-            "description": "Whether retina capture was used."
+            "description": "Whether retina capture was used (`true`/`false`)."
           },
           "height": {
             "type": "integer",
-            "description": "Viewport height used in pixels."
+            "description": "The viewport height that was used in pixels."
           },
           "width": {
             "type": "integer",
-            "description": "Viewport width used in pixels."
+            "description": "The viewport width that was used in pixels."
           },
           "custom_html": {
             "type": "string",
-            "description": "Custom HTML content rendered."
+            "description": "The custom HTML content that was rendered."
           },
           "block_chat_widgets": {
             "type": "boolean",
-            "description": "Whether chat widgets were blocked."
+            "description": "Whether chat widgets were blocked (`true`/`false`)."
           },
           "block_js": {
             "type": "boolean",
-            "description": "Whether JavaScript was blocked."
+            "description": "Whether JavaScript was blocked (`true`/`false`)."
           },
           "block_stylesheets": {
             "type": "boolean",
-            "description": "Whether stylesheets were blocked."
+            "description": "Whether stylesheets were blocked (`true`/`false`)."
           },
           "block_images": {
             "type": "boolean",
-            "description": "Whether images were blocked."
+            "description": "Whether images were blocked (`true`/`false`)."
           },
           "block_media": {
             "type": "boolean",
-            "description": "Whether media files were blocked."
+            "description": "Whether media files were blocked (`true`/`false`)."
           },
           "block_font": {
             "type": "boolean",
-            "description": "Whether fonts were blocked."
+            "description": "Whether fonts were blocked (`true`/`false`)."
           },
           "block_text_track": {
             "type": "boolean",
-            "description": "Whether text tracks were blocked."
+            "description": "Whether text tracks were blocked (`true`/`false`)."
           },
           "block_xhr": {
             "type": "boolean",
-            "description": "Whether XHR requests were blocked."
+            "description": "Whether XHR requests were blocked (`true`/`false`)."
           },
           "block_fetch": {
             "type": "boolean",
-            "description": "Whether Fetch API requests were blocked."
+            "description": "Whether Fetch API requests were blocked (`true`/`false`)."
           },
           "block_event_source": {
             "type": "boolean",
-            "description": "Whether EventSource connections were blocked."
+            "description": "Whether EventSource connections were blocked (`true`/`false`)."
           },
           "block_web_socket": {
             "type": "boolean",
-            "description": "Whether WebSocket connections were blocked."
+            "description": "Whether WebSocket connections were blocked (`true`/`false`)."
           },
           "block_manifest": {
             "type": "boolean",
-            "description": "Whether manifest files were blocked."
+            "description": "Whether manifest files were blocked (`true`/`false`)."
           },
           "block_specific_requests": {
             "type": "string",
-            "description": "Specific requests that were blocked."
+            "description": "The specific requests that were blocked."
           },
           "adjust_top": {
             "type": "integer",
-            "description": "Vertical position scrolled to in pixels."
+            "description": "The vertical position that was scrolled to in pixels."
           },
           "image_quality": {
             "type": "integer",
-            "description": "Image quality level applied."
+            "description": "The image quality level that was applied."
           },
           "extract_html": {
             "type": "boolean",
-            "description": "Whether HTML content was extracted."
+            "description": "Whether HTML content was extracted (`true`/`false`)."
           },
           "extract_text": {
             "type": "boolean",
-            "description": "Whether text content was extracted."
+            "description": "Whether text content was extracted (`true`/`false`)."
           },
           "dark_mode": {
             "type": "boolean",
-            "description": "Whether dark mode was enabled."
+            "description": "Whether dark mode was enabled (`true`/`false`)."
           },
           "block_tracking": {
             "type": "boolean",
-            "description": "Whether tracking scripts were blocked."
+            "description": "Whether tracking scripts were blocked (`true`/`false`)."
           },
           "wait_for_event": {
             "type": "string",
-            "description": "The event that triggered rendering."
+            "description": "The event that triggered the rendering to start."
           },
           "grayscale": {
             "type": "integer",
-            "description": "Grayscale level applied (0-100)."
+            "description": "The grayscale level that was applied (0-100)."
           },
           "clip": {
-            "$ref": "#/components/schemas/ClipRect"
+            "$ref": "#/components/schemas/ClipRect",
+            "description": "The dimensions of the clipped area that was captured."
           },
           "result_file_name": {
             "type": "string",
-            "description": "Final filename used for the output."
+            "description": "The final filename used for the output file."
           },
           "enable_incognito": {
             "type": "boolean",
-            "description": "Whether incognito mode was enabled."
+            "description": "Whether incognito mode was enabled (`true`/`false`)."
           },
           "timeout": {
             "type": "integer",
-            "description": "Actual timeout duration in milliseconds."
+            "description": "The actual timeout duration that was applied in milliseconds."
           },
           "scrolling_screenshot": {
             "type": "boolean",
-            "description": "Whether scrolling screenshot mode was enabled."
+            "description": "Whether scrolling screenshot mode was enabled (`true`/`false`)."
           },
           "multiple_scrolling": {
             "type": "boolean",
-            "description": "Whether multiple scrolling captures were performed."
+            "description": "Whether multiple scrolling captures were performed (`true`/`false`)."
           },
           "sizes": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Dimensions used for each capture."
+            "description": "The dimensions used for each capture in the array."
           },
           "extract_markdown": {
             "type": "boolean",
-            "description": "Whether markdown extraction was enabled."
+            "description": "Whether markdown extraction was enabled (`true`/`false`)."
           },
           "get_image_urls": {
             "type": "boolean",
-            "description": "Whether image URL extraction was enabled."
+            "description": "Whether image URL extraction was enabled (`true`/`false`)."
           },
           "scroll_delay": {
             "type": "integer",
-            "description": "Delay between scroll steps in milliseconds."
+            "description": "The delay between scroll steps that was applied in milliseconds."
           },
           "selector_to_click": {
             "type": "string",
-            "description": "CSS selector clicked before capture."
+            "description": "The CSS selector of the element that was clicked before capture."
           },
           "click_recursion": {
             "type": "integer",
-            "description": "Number of times the selector was clicked."
+            "description": "The number of times the selector was clicked."
           },
           "video": {
             "type": "boolean",
-            "description": "Whether viewport recording mode was enabled."
+            "description": "Whether viewport recording mode was enabled (`true`/`false`)."
+          },
+          "scroll_speed": {
+            "type": "string",
+            "description": "Scrolling speed that was used."
+          },
+          "scroll_back": {
+            "type": "boolean",
+            "description": "Whether scroll back was enabled."
+          },
+          "start_immediately": {
+            "type": "boolean",
+            "description": "Whether recording started immediately."
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Duration of scrolling capture in seconds."
           }
         }
       },
@@ -849,307 +981,480 @@
           "url": {
             "type": "string",
             "format": "uri",
-            "description": "URL of the website to capture."
+            "description": "URL of the website to be rendered as a screenshot or other format."
           },
           "file_type": {
             "type": "string",
-            "enum": ["PNG", "JPEG", "WEBP", "PDF", "mp4", "gif", "webm"],
-            "description": "Output format for this URL."
+            "enum": [
+              "PNG",
+              "JPEG",
+              "WEBP",
+              "PDF",
+              "MP4",
+              "GIF",
+              "WEBM",
+              "mp4",
+              "gif",
+              "webm"
+            ],
+            "description": "Output format. PNG (lossless, transparency), JPEG (compressed, smaller size), WebP (modern, efficient), PDF (document). For scrolling captures: MP4, GIF, WebM. Scrolling capture formats: WEBM (web-optimized), MP4 (widely compatible, default), GIF (short loops).",
+            "default": "PNG"
           },
-          "width": {
+          "image_quality": {
             "type": "integer",
-            "description": "Viewport width in pixels."
-          },
-          "height": {
-            "type": "integer",
-            "description": "Viewport height in pixels."
-          },
-          "full_page": {
-            "type": "boolean",
-            "description": "Capture a full-page screenshot."
-          },
-          "fresh": {
-            "type": "boolean",
-            "description": "Bypass cache."
-          },
-          "no_cookie_banners": {
-            "type": "boolean",
-            "description": "Remove cookie banners."
-          },
-          "enable_caching": {
-            "type": "boolean",
-            "description": "Enable caching."
-          },
-          "block_ads": {
-            "type": "boolean",
-            "description": "Block ads."
-          },
-          "block_chat_widgets": {
-            "type": "boolean",
-            "description": "Block chat widgets."
-          },
-          "extract_text": {
-            "type": "boolean",
-            "description": "Extract visible text."
-          },
-          "extract_html": {
-            "type": "boolean",
-            "description": "Extract HTML."
-          },
-          "extract_markdown": {
-            "type": "boolean",
-            "description": "Extract markdown."
-          },
-          "get_image_urls": {
-            "type": "boolean",
-            "description": "Extract image URLs."
-          },
-          "destroy_screenshot": {
-            "type": "boolean",
-            "description": "Auto-destroy after fetch."
-          },
-          "lazy_load": {
-            "type": "boolean",
-            "description": "Lazy-load content."
-          },
-          "scroll_delay": {
-            "type": "integer",
-            "description": "Delay in ms between scroll steps."
-          },
-          "retina": {
-            "type": "boolean",
-            "description": "2x resolution."
-          },
-          "dark_mode": {
-            "type": "boolean",
-            "description": "Dark mode."
-          },
-          "block_tracking": {
-            "type": "boolean",
-            "description": "Block tracking."
-          },
-          "enable_incognito": {
-            "type": "boolean",
-            "description": "Incognito mode."
+            "description": "Compression level for JPEG output (0-100). Lower = smaller file, higher = better quality. Only applies to JPEG.",
+            "default": 80
           },
           "omit_background": {
             "type": "boolean",
-            "description": "Transparent background."
+            "description": "Replaces simple white/plain backgrounds with transparency for a cut-out effect. Only works with PNG output.",
+            "default": false
+          },
+          "pdf_options": {
+            "type": "object",
+            "description": "PDF output options. Applies when file_type is PDF.",
+            "properties": {
+              "format": {
+                "type": "string",
+                "enum": [
+                  "A0",
+                  "A1",
+                  "A2",
+                  "A3",
+                  "A4",
+                  "A5",
+                  "A6",
+                  "Letter",
+                  "Legal",
+                  "Tabloid",
+                  "Ledger"
+                ],
+                "description": "Paper size of the PDF. Applies when file_type is PDF. Without it, width and height are used if set, otherwise the page renders as one long page: A0, A1, A2, A3, A4, A5, A6, Letter, Legal, Tabloid, or Ledger."
+              },
+              "landscape": {
+                "type": "boolean",
+                "description": "Renders the PDF in landscape orientation, swapping the width and height of the paper size. Applies when file_type is PDF.",
+                "default": false
+              },
+              "page_range": {
+                "type": "string",
+                "description": "Pages to keep in the PDF, as start-end, for example 1-3 or 5-5. Pages are rendered first and then trimmed. Has no effect on a single-page PDF. Applies when file_type is PDF."
+              },
+              "media": {
+                "type": "string",
+                "enum": ["print", "screen"],
+                "description": "CSS media type used to render the PDF: print or screen."
+              },
+              "print_background": {
+                "type": "boolean",
+                "description": "Includes background colors and images in the PDF. Applies when file_type is PDF.",
+                "default": false
+              }
+            }
+          },
+          "result_file_name": {
+            "type": "string",
+            "description": "Custom name for the output file. Helps with organized storage and retrieval. Note: non-unique names may overwrite existing files."
+          },
+          "ttl": {
+            "type": "integer",
+            "description": "Time in seconds the render stays cached before auto-invalidation. Use higher values for static pages, lower for dynamic content. Default: 2592000 (30 days).",
+            "default": 2592000
+          },
+          "fresh": {
+            "type": "boolean",
+            "description": "If `true`, bypasses cache and captures a fresh render. If `false`, returns cached version when available.",
+            "default": true
+          },
+          "enable_caching": {
+            "type": "boolean",
+            "description": "Stores the render in cache for reuse on subsequent identical requests.",
+            "default": false
+          },
+          "destroy_screenshot": {
+            "type": "boolean",
+            "description": "If `true`, screenshot/PDF is not stored on server and must be downloaded immediately.",
+            "default": false
+          },
+          "fail_on_error": {
+            "type": "boolean",
+            "description": "If `true`, returns an error when the target page responds with 4xx or 5xx status.",
+            "default": false
+          },
+          "width": {
+            "type": "integer",
+            "description": "Viewport width in pixels. Simulates device screen sizes. Max: 7680.",
+            "default": 1680
+          },
+          "height": {
+            "type": "integer",
+            "description": "Viewport height in pixels. Controls how much vertical area is visible. Max: 4320.",
+            "default": 867
+          },
+          "full_page": {
+            "type": "boolean",
+            "description": "Captures the entire webpage from top to bottom, including scrollable content outside the viewport. Ideal for long-form pages.",
+            "default": false
           },
           "thumbnail_width": {
             "type": "integer",
-            "description": "Thumbnail width."
+            "description": "Specifies the width of the thumbnail in pixels. Default value is 0 (meaning no specific value is set, and the screenshot is returned at its original resolution)."
+          },
+          "retina": {
+            "type": "boolean",
+            "description": "Captures at 2x resolution for sharper, high-DPI output. Increases file size.",
+            "default": false
+          },
+          "clip[x]": {
+            "type": "integer",
+            "description": "X coordinate (in pixels) for the top-left corner of the clip area. Default: null."
+          },
+          "clip[y]": {
+            "type": "integer",
+            "description": "Y coordinate (in pixels) for the top-left corner of the clip area. Default: null."
+          },
+          "clip[width]": {
+            "type": "integer",
+            "description": "Width of the clip area in pixels. Default: null."
+          },
+          "clip[height]": {
+            "type": "integer",
+            "description": "Height of the clip area in pixels. Default: null."
           },
           "adjust_top": {
             "type": "integer",
-            "description": "Vertical scroll position."
+            "description": "Initial vertical scroll position in pixels before capture. Use to position mid-page content in viewport. Not supported for PDF.",
+            "default": 0
           },
           "wait_for_event": {
             "type": "string",
             "enum": ["load", "domcontentloaded", "networkidle"],
-            "description": "Wait for event."
-          },
-          "grayscale": {
-            "type": "integer",
-            "description": "Grayscale (0-100)."
+            "description": "Controls when rendering starts based on page load lifecycle. `load` (all resources), `domcontentloaded` (HTML parsed), `networkidle` (no network activity for 500ms).",
+            "default": "load"
           },
           "delay": {
             "type": "integer",
-            "description": "Delay in ms."
+            "description": "Wait period in milliseconds before capture. Allows animations, API responses, and dynamic elements to finish rendering.",
+            "default": 0
+          },
+          "lazy_load": {
+            "type": "boolean",
+            "description": "Automatically scrolls the page to trigger lazy-loaded images and components. Ensures complete content capture.",
+            "default": false
+          },
+          "scroll_delay": {
+            "type": "integer",
+            "description": "Delay in milliseconds between scroll steps when `lazy_load` is enabled. Use higher values for heavy pages.",
+            "default": 500
           },
           "timeout": {
             "type": "integer",
-            "description": "Timeout in ms."
-          },
-          "ttl": {
-            "type": "integer",
-            "description": "Cache TTL in seconds."
-          },
-          "image_quality": {
-            "type": "integer",
-            "description": "JPEG quality (0-100)."
-          },
-          "clip[x]": {
-            "type": "integer",
-            "description": "Clip X."
-          },
-          "clip[y]": {
-            "type": "integer",
-            "description": "Clip Y."
-          },
-          "clip[width]": {
-            "type": "integer",
-            "description": "Clip width."
-          },
-          "clip[height]": {
-            "type": "integer",
-            "description": "Clip height."
-          },
-          "css_url": {
-            "type": "string",
-            "description": "CSS file URL."
-          },
-          "css": {
-            "type": "string",
-            "description": "Custom CSS."
-          },
-          "js_url": {
-            "type": "string",
-            "description": "JS file URL."
-          },
-          "js": {
-            "type": "string",
-            "description": "Custom JS."
-          },
-          "block_js": {
-            "type": "boolean",
-            "description": "Block JS."
-          },
-          "block_stylesheets": {
-            "type": "boolean",
-            "description": "Block stylesheets."
-          },
-          "block_images": {
-            "type": "boolean",
-            "description": "Block images."
-          },
-          "block_media": {
-            "type": "boolean",
-            "description": "Block media."
-          },
-          "block_font": {
-            "type": "boolean",
-            "description": "Block fonts."
-          },
-          "block_text_track": {
-            "type": "boolean",
-            "description": "Block text tracks."
-          },
-          "block_xhr": {
-            "type": "boolean",
-            "description": "Block XHR."
-          },
-          "block_fetch": {
-            "type": "boolean",
-            "description": "Block Fetch."
-          },
-          "block_event_source": {
-            "type": "boolean",
-            "description": "Block EventSource."
-          },
-          "block_web_socket": {
-            "type": "boolean",
-            "description": "Block WebSocket."
-          },
-          "block_manifest": {
-            "type": "boolean",
-            "description": "Block manifest."
-          },
-          "block_specific_requests": {
-            "type": "string",
-            "description": "Specific requests to block."
-          },
-          "blur_selector": {
-            "type": "string",
-            "description": "CSS selectors to blur."
-          },
-          "remove_selector": {
-            "type": "string",
-            "description": "CSS selectors to remove."
-          },
-          "scroll_to_element": {
-            "type": "string",
-            "description": "Element to scroll to."
+            "description": "Maximum wait in milliseconds for page load before aborting. Adjust for slow/heavy pages. Default: 100000 (100s).",
+            "default": 100000
           },
           "selector": {
             "type": "string",
-            "description": "CSS selector to capture."
+            "description": "CSS selector to capture a specific element. Only that element is rendered. Falls back to full page if not found. Default: empty."
+          },
+          "scroll_to_element": {
+            "type": "string",
+            "description": "Scrolls the page to bring the specified CSS selector into view before capture. Ideal for below-the-fold content. Default: empty."
           },
           "selector_to_click": {
             "type": "string",
-            "description": "Element to click."
+            "description": "CSS selector for an element to click before capturing the screenshot. Useful for opening dropdowns, modals, or triggering content."
           },
           "click_recursion": {
             "type": "integer",
-            "description": "Click count."
+            "description": "Number of times to click the selector (when set via `selector_to_click`).",
+            "default": 1
           },
-          "result_file_name": {
+          "blur_selector": {
             "type": "string",
-            "description": "Custom filename."
+            "description": "CSS selectors to blur before capture. Masks sensitive data like emails, payments, or personal info. Multiple selectors supported. Default: empty."
           },
-          "user_agent": {
+          "remove_selector": {
             "type": "string",
-            "description": "Custom User-Agent."
+            "description": "CSS selectors to remove before capture. Deletes matched elements from DOM. Ideal for cleaning ads, popups, sidebars. Multiple selectors supported. Default: empty."
           },
-          "accept_languages": {
+          "css": {
             "type": "string",
-            "description": "Accept-Language."
+            "description": "Allows injecting custom CSS code into the page before rendering. Pass the CSS code directly as a string."
           },
-          "proxy": {
+          "css_url": {
             "type": "string",
-            "description": "Proxy config."
+            "description": "Allows loading external CSS into the page. Provide a URL pointing to the CSS file."
           },
-          "headers": {
+          "js": {
             "type": "string",
-            "description": "Custom headers."
+            "description": "Allows injecting custom JavaScript code into the page before rendering. Pass the JavaScript code directly as a string."
           },
-          "cookies": {
+          "js_url": {
             "type": "string",
-            "description": "Cookies."
+            "description": "Allows loading external JavaScript into the page. Provide a URL pointing to the script file."
           },
           "custom_html": {
             "type": "string",
-            "description": "Custom HTML."
+            "description": "Custom HTML to render instead of loading a URL. Overrides the url option. Use for capturing specific HTML structures or dynamic content."
           },
-          "fail_on_error": {
+          "markdown": {
+            "type": "string",
+            "description": "Markdown to render instead of loading a URL. Works like custom_html, so you can capture a README or notes without hosting a page."
+          },
+          "user_agent": {
+            "type": "string",
+            "description": "Custom User-Agent string sent in the request headers."
+          },
+          "accept_languages": {
+            "type": "string",
+            "description": "Sets the accepted languages for the HTTP request. This is sent as the Accept-Language header.",
+            "default": "en-US,en;q=0.8"
+          },
+          "dark_mode": {
             "type": "boolean",
-            "description": "Fail on 4xx/5xx."
+            "description": "When set to `true`, websites that support prefers-color-scheme: dark will render in dark mode.",
+            "default": false
+          },
+          "grayscale": {
+            "type": "integer",
+            "description": "Applies a grayscale filter to the screenshot. Requires a value from 0 (no effect) to 100 (fully grayscale).",
+            "default": 0
+          },
+          "enable_incognito": {
+            "type": "boolean",
+            "description": "Enables private/incognito browsing. Each render starts with a clean slate - no cookies, cache, or session data persisted.",
+            "default": false
+          },
+          "headers": {
+            "type": "string",
+            "description": "Custom HTTP headers to include as key=value pairs. Use a semicolon to separate multiple headers (e.g., `key1=value1;key2=value2`)."
+          },
+          "cookies": {
+            "type": "string",
+            "description": "Cookies to include in the request before rendering. Supports single or multiple cookies. Example: `cookie=value; otherCookie=otherValue;`."
           },
           "longitude": {
             "type": "number",
             "format": "float",
-            "description": "Geolocation longitude."
+            "description": "Specify longitude for the browser Geolocation API. Provide a numeric value. Default: null (not set)."
           },
           "latitude": {
             "type": "number",
             "format": "float",
-            "description": "Geolocation latitude."
+            "description": "Specify latitude for the browser Geolocation API. Provide a numeric value. Default: null (not set)."
+          },
+          "timezone": {
+            "type": "string",
+            "description": "IANA timezone the browser uses while rendering, such as Asia/Karachi or Europe/London. Useful for clocks and localized dates."
+          },
+          "block_ads": {
+            "type": "boolean",
+            "description": "Blocks requests to known ad networks for cleaner, distraction-free screenshots.",
+            "default": false
+          },
+          "block_chat_widgets": {
+            "type": "boolean",
+            "description": "Blocks live chat popups, support bubbles, and messaging interfaces.",
+            "default": false
+          },
+          "block_tracking": {
+            "type": "boolean",
+            "description": "Blocks tracking scripts and analytics services for cleaner, privacy-oriented renders.",
+            "default": false
+          },
+          "no_cookie_banners": {
+            "type": "boolean",
+            "description": "Hides or blocks cookie consent banners and popups before capture.",
+            "default": false
+          },
+          "block_js": {
+            "type": "boolean",
+            "description": "Disables all JavaScript execution. Renders a static version of the page. Speeds up capture but may break dynamic content.",
+            "default": false
+          },
+          "block_stylesheets": {
+            "type": "boolean",
+            "description": "Blocks all stylesheets - page renders as raw HTML without visual formatting.",
+            "default": false
+          },
+          "block_images": {
+            "type": "boolean",
+            "description": "Blocks all image resources (jpg, png, gif, webp, svg, etc.) for faster rendering.",
+            "default": false
+          },
+          "block_media": {
+            "type": "boolean",
+            "description": "Blocks audio and video resources (mp3, mp4, webm, etc.) from loading.",
+            "default": false
+          },
+          "block_font": {
+            "type": "boolean",
+            "description": "Blocks external font files - page falls back to system defaults. Supported: woff, woff2, ttf, otf, eot.",
+            "default": false
+          },
+          "block_text_track": {
+            "type": "boolean",
+            "description": "Blocks subtitles and caption overlays from loading.",
+            "default": false
+          },
+          "block_xhr": {
+            "type": "boolean",
+            "description": "Blocks all XMLHttpRequest (AJAX) calls - prevents dynamic API-driven content.",
+            "default": false
+          },
+          "block_fetch": {
+            "type": "boolean",
+            "description": "Blocks all Fetch API requests - stops async data loading.",
+            "default": false
+          },
+          "block_event_source": {
+            "type": "boolean",
+            "description": "Blocks EventSource (SSE) connections - prevents real-time data streams.",
+            "default": false
+          },
+          "block_web_socket": {
+            "type": "boolean",
+            "description": "Blocks WebSocket connections - prevents real-time bidirectional communication.",
+            "default": false
+          },
+          "block_manifest": {
+            "type": "boolean",
+            "description": "Blocks manifest files (.json, .webmanifest) - disables PWA-related functionality.",
+            "default": false
+          },
+          "block_specific_requests": {
+            "type": "string",
+            "description": "Fine-grained blocking of specific URLs or patterns. Separate multiple rules by comma, space, or newline. Default: empty."
+          },
+          "extract_text": {
+            "type": "boolean",
+            "description": "Strips all HTML and returns visible text as a .txt file. Ideal for text analysis, indexing, or AI pipelines. Only with output=json.",
+            "default": false
+          },
+          "extract_html": {
+            "type": "boolean",
+            "description": "Returns rendered HTML as a .html file (includes JS-executed DOM). Only available with output=json.",
+            "default": false
+          },
+          "extract_markdown": {
+            "type": "boolean",
+            "description": "Extracts rendered page content as a structured .md (Markdown) file. Preserves headings, lists, links. Only with output=json.",
+            "default": false
+          },
+          "get_image_urls": {
+            "type": "boolean",
+            "description": "Extracts all image URLs from the rendered DOM and returns them in structured format. Only with output=json.",
+            "default": false
+          },
+          "stealth": {
+            "type": "boolean",
+            "description": "Makes the browser look like a regular visitor for pages that block automated traffic. No extra credits.",
+            "default": false
+          },
+          "gpu": {
+            "type": "boolean",
+            "description": "Renders the page with a GPU, including WebGL and canvas content. Adds 20 credits per request.",
+            "default": false
+          },
+          "proxy": {
+            "type": "string",
+            "description": "Allows defining a proxy for the connection. Provide a JSON string with keys: server (include port number), username, and password."
+          },
+          "classic_proxy": {
+            "type": "boolean",
+            "description": "Loads the page through a datacenter proxy. Adds 20 credits per request. Ignored when premium_proxy is true or a custom proxy is set.",
+            "default": false
+          },
+          "premium_proxy": {
+            "type": "boolean",
+            "description": "Loads the page through a residential proxy. Adds 200 credits per request. Used instead of classic_proxy.",
+            "default": false
+          },
+          "country": {
+            "type": "string",
+            "description": "Two-letter country code, such as US or DE, for the exit address of classic_proxy or premium_proxy. Ignored when you send your own proxy. Any two-letter code is sent, including one that is not listed. Classic proxy countries: BG, GE, DE, HN, MD, UA, GB, US. Premium proxy countries: AF, AL, DZ, AO, AG, AR, AM, AW, AU, AT, AZ, BS, BH, BD, BB, BY, BE, BZ, BJ, BT, BO, BQ, BA, BW, BR, BN, BG, BF, BI, CV, KH, CM, CA, KY, CF, TD, CL, CN, CO, KM, CG, CR, CI, HR, CU, CW, CY, CZ, CD, DK, DJ, DM, DO, EC, EG, SV, GQ, EE, SZ, ET, FO, FJ, FI, FR, GF, PF, GA, GM, GE, DE, GH, GI, GR, GL, GD, GP, GU, GT, GG, GN, GW, GY, HT, HN, HK, HU, IS, IN, ID, IR, IQ, IE, IL, IT, JM, JP, JE, JO, KZ, KE, XK, KW, KG, LA, LV, LB, LS, LR, LY, LT, MO, MG, MW, MY, MV, ML, MT, MQ, MR, MU, YT, MX, MD, MN, ME, MA, MZ, MM, NA, NP, NL, NC, NZ, NI, NE, NG, MK, NO, OM, PK, PS, PA, PG, PY, PE, PH, PL, PT, PR, QA, RE, RO, RU, RW, KN, LC, VC, WS, SA, SN, RS, SC, SL, SG, SK, SI, SB, SO, ZA, KR, SS, ES, LK, SD, SR, SE, CH, SY, TW, TJ, TZ, TH, TL, TG, TO, TT, TN, TR, TM, UG, UA, AE, GB, US, UY, UZ, VE, VN, YE, ZM, ZW."
+          },
+          "solve_captcha": {
+            "type": "boolean",
+            "description": "Solves a captcha made of text drawn in a picture, then takes the screenshot. Requires captcha_image and captcha_input. Adds 20 credits per request.",
+            "default": false
+          },
+          "captcha_image": {
+            "type": "string",
+            "description": "CSS selector of the captcha picture. Required when solve_captcha is true."
+          },
+          "captcha_input": {
+            "type": "string",
+            "description": "CSS selector of the box the answer is typed into. Required when solve_captcha is true."
+          },
+          "captcha_submit": {
+            "type": "string",
+            "description": "CSS selector of the button to click after the answer is typed."
+          },
+          "captcha_error": {
+            "type": "string",
+            "description": "CSS selector of the message shown for a wrong answer. While it is visible, the solver tries again."
+          },
+          "captcha_refresh": {
+            "type": "string",
+            "description": "CSS selector of the control that loads a new captcha picture before the next try."
+          },
+          "captcha_retries": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "default": 3,
+            "description": "Number of guesses the solver makes, from 1 to 5."
+          },
+          "ocr_model": {
+            "type": "string",
+            "enum": ["mini-ocr-v1", "ocr-v1"],
+            "default": "mini-ocr-v1",
+            "description": "Recognition model used by the captcha solver: mini-ocr-v1 (default) or ocr-v1."
           },
           "scrolling_screenshot": {
             "type": "boolean",
-            "description": "Scrolling mode."
+            "description": "Enables scrolling screenshot mode to capture a video (webm, gif, mp4) of the webpage.",
+            "default": false
           },
           "scroll_speed": {
             "type": "string",
             "enum": ["normal", "fast", "slow"],
-            "description": "Scroll speed."
+            "description": "Scrolling speed: fast, normal (default), or slow. Affects render time and output pacing.",
+            "default": "normal"
           },
           "duration": {
-            "type": "number",
-            "description": "Duration in seconds."
+            "type": "integer",
+            "description": "Duration of scrolling action in seconds (0-60). Higher = longer video. Default: null (full page scroll).",
+            "minimum": 0,
+            "maximum": 60
           },
           "scroll_back": {
             "type": "boolean",
-            "description": "Scroll back."
+            "description": "If `true`, scrolls to bottom then back to top, creating a seamless loop.",
+            "default": false
           },
           "start_immediately": {
             "type": "boolean",
-            "description": "Start immediately."
-          },
-          "multiple_scrolling": {
-            "type": "boolean",
-            "description": "Multiple scrolling."
-          },
-          "sizes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Viewport sizes."
+            "description": "Starts recording immediately without waiting for full page load.",
+            "default": false
           },
           "video": {
             "type": "boolean",
-            "description": "Video recording."
+            "description": "Records visible viewport only for a specified duration. Use with `duration` parameter. Ideal for dashboards and animations.",
+            "default": false
+          },
+          "output": {
+            "type": "string",
+            "enum": ["json", "image"],
+            "default": "json",
+            "description": "Set the output format. `json` returns metadata with a hosted file URL. `image` streams the raw file bytes directly."
+          },
+          "format": {
+            "type": "string",
+            "enum": ["json"],
+            "default": "json",
+            "description": "Response format: json (default)."
           }
         }
       },
@@ -1160,11 +1465,11 @@
         "properties": {
           "total_urls": {
             "type": "integer",
-            "description": "Total number of URLs processed."
+            "description": "Total number of URLs processed in the bulk request."
           },
           "successful_urls": {
             "type": "integer",
-            "description": "Number of URLs successfully processed."
+            "description": "Number of URLs that were successfully processed."
           },
           "failed_urls": {
             "type": "integer",
@@ -1179,7 +1484,7 @@
         "properties": {
           "status": {
             "type": "string",
-            "description": "API request status indicator (success)."
+            "description": "API request status indicator. `success` for successful requests."
           },
           "meta_data": {
             "$ref": "#/components/schemas/BulkScreenshotMetaData"

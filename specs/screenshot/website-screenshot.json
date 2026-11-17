@@ -3,7 +3,7 @@
   "info": {
     "title": "Website Screenshot API - Full-Page Captures, Scrolling Video & PDF Output",
     "version": "1.0.0",
-    "description": "Capture full-page screenshots and videos of websites with advanced options like device simulation, custom code injection, cookie banner blocking, and scrollable content recording. Supports multiple output formats including PNG, JPEG, WebP, PDF, MP4, GIF, and WebM. Returns a screenshot URL, timestamps, format metadata, and all echoed parameters. Returns a 400 error for an invalid or missing url, and a 408 error if the capture exceeds the configured timeout.",
+    "description": "Capture full-page screenshots and videos of websites with advanced options like device simulation, custom code injection, cookie banner blocking, and scrollable content recording. Supports multiple output formats including PNG, JPEG, WebP, PDF, MP4, GIF, and WebM. Returns a screenshot URL, timestamps, format metadata, and all echoed parameters. Returns a 400 error for an invalid or missing url, and a 408 error if the capture exceeds the configured timeout. Also supports stealth mode, GPU rendering, classic and premium proxies with country selection, timezone emulation, text captcha solving, and PDF options for paper size, orientation, page range, media type and backgrounds. A simple screenshot costs 50 credits. Options add credits on top: scrolling or video +20, classic proxy +20, premium proxy +200 (used instead of a classic proxy), GPU rendering +20, captcha solver +20. Stealth, timezone and the other options add no credits.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -25,6 +25,26 @@
         "operationId": "websiteScreenshot",
         "parameters": [
           {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "URL of the website to be rendered as a screenshot or other format."
+          },
+          {
+            "name": "output",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["json", "image"],
+              "default": "json"
+            },
+            "description": "Set the output format. `json` returns metadata with a hosted file URL. `image` streams the raw file bytes directly."
+          },
+          {
             "name": "format",
             "in": "query",
             "required": false,
@@ -33,17 +53,7 @@
               "enum": ["json"],
               "default": "json"
             },
-            "description": "Response format: 'json'."
-          },
-          {
-            "name": "output",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["json", "image"]
-            },
-            "description": "Output format for screenshot results"
+            "description": "Response format: json (default)."
           },
           {
             "name": "file_type",
@@ -51,171 +61,191 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["PNG", "JPEG", "WEBP", "PDF", "mp4", "gif", "webm"]
+              "enum": [
+                "PNG",
+                "JPEG",
+                "WEBP",
+                "PDF",
+                "MP4",
+                "GIF",
+                "WEBM",
+                "mp4",
+                "gif",
+                "webm"
+              ],
+              "default": "PNG"
             },
-            "description": "File type for screenshot output"
+            "description": "Output format. PNG (lossless, transparency), JPEG (compressed, smaller size), WebP (modern, efficient), PDF (document). For scrolling captures: MP4, GIF, WebM. Scrolling capture formats: WEBM (web-optimized), MP4 (widely compatible, default), GIF (short loops)."
           },
           {
-            "name": "url",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "URLs to capture screenshots of"
-          },
-          {
-            "name": "width",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Browser viewport width in pixels"
-          },
-          {
-            "name": "height",
+            "name": "image_quality",
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "default": 80
             },
-            "description": "Browser viewport height in pixels"
-          },
-          {
-            "name": "full_page",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Capture a full-page screenshot"
-          },
-          {
-            "name": "fresh",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Bypass cache and take a fresh screenshot"
-          },
-          {
-            "name": "no_cookie_banners",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Remove cookie banners from the screenshot"
-          },
-          {
-            "name": "enable_caching",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Enable caching for repeated requests"
-          },
-          {
-            "name": "block_ads",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block advertisements on the page"
-          },
-          {
-            "name": "block_chat_widgets",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block chat widget scripts from loading"
-          },
-          {
-            "name": "extract_text",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Extract visible text from the page"
-          },
-          {
-            "name": "extract_html",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Extract HTML content of the page"
-          },
-          {
-            "name": "destroy_screenshot",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Auto-destroy screenshot after fetch"
-          },
-          {
-            "name": "lazy_load",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Enable lazy-loading content before screenshot"
-          },
-          {
-            "name": "retina",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Capture screenshot in high-DPI (Retina) mode"
-          },
-          {
-            "name": "dark_mode",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Render page in dark mode"
-          },
-          {
-            "name": "block_tracking",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block common user-tracking scripts"
-          },
-          {
-            "name": "enable_incognito",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Enable private/incognito mode for browser session"
+            "description": "Compression level for JPEG output (0-100). Lower = smaller file, higher = better quality. Only applies to JPEG."
           },
           {
             "name": "omit_background",
             "in": "query",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "default": false
             },
-            "description": "Omit background color (transparent background)"
+            "description": "Replaces simple white/plain backgrounds with transparency for a cut-out effect. Only works with PNG output."
+          },
+          {
+            "name": "pdf_options[format]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "A0",
+                "A1",
+                "A2",
+                "A3",
+                "A4",
+                "A5",
+                "A6",
+                "Letter",
+                "Legal",
+                "Tabloid",
+                "Ledger"
+              ]
+            },
+            "description": "Paper size of the PDF. Applies when file_type is PDF. Without it, width and height are used if set, otherwise the page renders as one long page: A0, A1, A2, A3, A4, A5, A6, Letter, Legal, Tabloid, or Ledger."
+          },
+          {
+            "name": "pdf_options[landscape]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Renders the PDF in landscape orientation, swapping the width and height of the paper size. Applies when file_type is PDF."
+          },
+          {
+            "name": "pdf_options[page_range]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Pages to keep in the PDF, as start-end, for example 1-3 or 5-5. Pages are rendered first and then trimmed. Has no effect on a single-page PDF. Applies when file_type is PDF."
+          },
+          {
+            "name": "pdf_options[media]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["print", "screen"]
+            },
+            "description": "CSS media type used to render the PDF: print or screen."
+          },
+          {
+            "name": "pdf_options[print_background]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Includes background colors and images in the PDF. Applies when file_type is PDF."
+          },
+          {
+            "name": "result_file_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Custom name for the output file. Helps with organized storage and retrieval. Note: non-unique names may overwrite existing files."
+          },
+          {
+            "name": "ttl",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 2592000
+            },
+            "description": "Time in seconds the render stays cached before auto-invalidation. Use higher values for static pages, lower for dynamic content. Default: 2592000 (30 days)."
+          },
+          {
+            "name": "fresh",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            },
+            "description": "If `true`, bypasses cache and captures a fresh render. If `false`, returns cached version when available."
+          },
+          {
+            "name": "enable_caching",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Stores the render in cache for reuse on subsequent identical requests."
+          },
+          {
+            "name": "destroy_screenshot",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "If `true`, screenshot/PDF is not stored on server and must be downloaded immediately."
+          },
+          {
+            "name": "fail_on_error",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "If `true`, returns an error when the target page responds with 4xx or 5xx status."
+          },
+          {
+            "name": "width",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1680
+            },
+            "description": "Viewport width in pixels. Simulates device screen sizes. Max: 7680."
+          },
+          {
+            "name": "height",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 867
+            },
+            "description": "Viewport height in pixels. Controls how much vertical area is visible. Max: 4320."
+          },
+          {
+            "name": "full_page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Captures the entire webpage from top to bottom, including scrollable content outside the viewport. Ideal for long-form pages."
           },
           {
             "name": "thumbnail_width",
@@ -224,62 +254,17 @@
             "schema": {
               "type": "integer"
             },
-            "description": "Thumbnail width in pixels"
+            "description": "Specifies the width of the thumbnail in pixels. Default value is 0 (meaning no specific value is set, and the screenshot is returned at its original resolution)."
           },
           {
-            "name": "adjust_top",
+            "name": "retina",
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "boolean",
+              "default": false
             },
-            "description": "Adjust top in pixels"
-          },
-          {
-            "name": "wait_for_event",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["load", "domcontentloaded", "networkidle"]
-            },
-            "description": "Wait for a specific load event before capturing the screenshot."
-          },
-          {
-            "name": "grayscale",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Range:0 to 100 for grayscale filter"
-          },
-          {
-            "name": "delay",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "How many milliseconds to wait before taking the screenshot"
-          },
-          {
-            "name": "timeout",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Maximum timeout in milliseconds. Defalut is `10,000`"
-          },
-          {
-            "name": "ttl",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Number of seconds the screenshot should be cached"
+            "description": "Captures at 2x resolution for sharper, high-DPI output. Increases file size."
           },
           {
             "name": "clip[x]",
@@ -288,7 +273,7 @@
             "schema": {
               "type": "integer"
             },
-            "description": "X position of the clipping rectangle in pixels"
+            "description": "X coordinate (in pixels) for the top-left corner of the clip area. Default: null."
           },
           {
             "name": "clip[y]",
@@ -297,7 +282,7 @@
             "schema": {
               "type": "integer"
             },
-            "description": "Y position of the clipping rectangle in pixels"
+            "description": "Y coordinate (in pixels) for the top-left corner of the clip area. Default: null."
           },
           {
             "name": "clip[width]",
@@ -306,7 +291,7 @@
             "schema": {
               "type": "integer"
             },
-            "description": "Width of the clipping rectangle in pixels"
+            "description": "Width of the clip area in pixels. Default: null."
           },
           {
             "name": "clip[height]",
@@ -315,151 +300,105 @@
             "schema": {
               "type": "integer"
             },
-            "description": "Height of the clipping rectangle in pixels"
+            "description": "Height of the clip area in pixels. Default: null."
           },
           {
-            "name": "css_url",
+            "name": "adjust_top",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Initial vertical scroll position in pixels before capture. Use to position mid-page content in viewport. Not supported for PDF."
+          },
+          {
+            "name": "wait_for_event",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["load", "domcontentloaded", "networkidle"],
+              "default": "load"
+            },
+            "description": "Controls when rendering starts based on page load lifecycle. `load` (all resources), `domcontentloaded` (HTML parsed), `networkidle` (no network activity for 500ms)."
+          },
+          {
+            "name": "delay",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Wait period in milliseconds before capture. Allows animations, API responses, and dynamic elements to finish rendering."
+          },
+          {
+            "name": "lazy_load",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Automatically scrolls the page to trigger lazy-loaded images and components. Ensures complete content capture."
+          },
+          {
+            "name": "scroll_delay",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 500
+            },
+            "description": "Delay in milliseconds between scroll steps when `lazy_load` is enabled. Use higher values for heavy pages."
+          },
+          {
+            "name": "timeout",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100000
+            },
+            "description": "Maximum wait in milliseconds for page load before aborting. Adjust for slow/heavy pages. Default: 100000 (100s)."
+          },
+          {
+            "name": "selector",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "URL to CSS file"
+            "description": "CSS selector to capture a specific element. Only that element is rendered. Falls back to full page if not found. Default: empty."
           },
           {
-            "name": "css",
+            "name": "scroll_to_element",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Your custom CSS code"
+            "description": "Scrolls the page to bring the specified CSS selector into view before capture. Ideal for below-the-fold content. Default: empty."
           },
           {
-            "name": "js_url",
+            "name": "selector_to_click",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "URL to JS file"
+            "description": "CSS selector for an element to click before capturing the screenshot. Useful for opening dropdowns, modals, or triggering content."
           },
           {
-            "name": "js",
+            "name": "click_recursion",
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "default": 1
             },
-            "description": "Your JS code"
-          },
-          {
-            "name": "block_js",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block Scripts"
-          },
-          {
-            "name": "block_stylesheets",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block Stylesheets"
-          },
-          {
-            "name": "block_images",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block Images"
-          },
-          {
-            "name": "block_media",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block Media"
-          },
-          {
-            "name": "block_font",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block Fonts"
-          },
-          {
-            "name": "block_text_track",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block Text Tracks"
-          },
-          {
-            "name": "block_xhr",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block XHR Requests"
-          },
-          {
-            "name": "block_fetch",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block Fetch Requests"
-          },
-          {
-            "name": "block_event_source",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block Event Source"
-          },
-          {
-            "name": "block_web_socket",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block Web Sockets"
-          },
-          {
-            "name": "block_manifest",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Block Manifest"
-          },
-          {
-            "name": "block_specific_requests",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Comma- or newline-separated list of specific requests to block. Each line and comma are treated as separate requests for processing. Example: https://example.com, https://example.js"
+            "description": "Number of times to click the selector (when set via `selector_to_click`)."
           },
           {
             "name": "blur_selector",
@@ -470,7 +409,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Comma-separated list of indexed CSS selectors to blur. Format: index:<selector>, e.g., 0:.banner,1:#ads."
+            "description": "CSS selectors to blur before capture. Masks sensitive data like emails, payments, or personal info. Multiple selectors supported. Default: empty."
           },
           {
             "name": "remove_selector",
@@ -481,174 +420,61 @@
             "schema": {
               "type": "string"
             },
-            "description": "Comma-separated list of indexed CSS selectors to remove. Format: index:<selector>, e.g., 0:.banner,1:#ads."
+            "description": "CSS selectors to remove before capture. Deletes matched elements from DOM. Ideal for cleaning ads, popups, sidebars. Multiple selectors supported. Default: empty."
           },
           {
-            "name": "result_file_name",
+            "name": "css",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Specify a meaningful and unique file name to easily identify the screenshot result. Avoid using spaces or special characters; use hyphens or underscores to separate words."
+            "description": "Allows injecting custom CSS code into the page before rendering. Pass the CSS code directly as a string."
           },
           {
-            "name": "scrolling_screenshot",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "**`Scrolling Screenshot`**: Capture a long scrolling screenshot. When true, disable `fullPage` and `freshScreenshot`."
-          },
-          {
-            "name": "scroll_speed",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["normal", "fast", "slow"]
-            },
-            "description": "Speed of scrolling during the screenshot."
-          },
-          {
-            "name": "scroll_back",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "If true, the scroll will reverse back to the top after reaching the bottom."
-          },
-          {
-            "name": "start_immediately",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "If true, the scrolling capture will start immediately upon page load."
-          },
-          {
-            "name": "multiple_scrolling",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "If true, multiple scrolling screenshots will be taken at different viewport sizes."
-          },
-          {
-            "name": "sizes",
-            "in": "query",
-            "required": false,
-            "style": "form",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Comma-separated list of viewport sizes in format index:XXw:YYh. Example: sizes=0:120w:300h,1:240w:500h"
-          },
-          {
-            "name": "duration",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 60
-            },
-            "description": "Duration in seconds for the scrolling capture. Acceptable range is 0 to 60 seconds."
-          },
-          {
-            "name": "fail_on_error",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "If true, returns an error when the target page responds with 4xx or 5xx status."
-          },
-          {
-            "name": "longitude",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "number"
-            },
-            "description": "Specify longitude for the browser Geolocation API."
-          },
-          {
-            "name": "latitude",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "number"
-            },
-            "description": "Specify latitude for the browser Geolocation API."
-          },
-          {
-            "name": "proxy",
+            "name": "css_url",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Allows defining a proxy for the connection. Provide a JSON string with keys: server (include port number), username, and password."
+            "description": "Allows loading external CSS into the page. Provide a URL pointing to the CSS file."
           },
           {
-            "name": "headers",
+            "name": "js",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Custom HTTP headers to include as key=value pairs. Use a semicolon to separate multiple headers (e.g., key1=value1;key2=value2)."
+            "description": "Allows injecting custom JavaScript code into the page before rendering. Pass the JavaScript code directly as a string."
           },
           {
-            "name": "cookies",
+            "name": "js_url",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Cookies to include in the request before rendering. Supports single or multiple cookies. Example: cookie=value; otherCookie=otherValue;"
+            "description": "Allows loading external JavaScript into the page. Provide a URL pointing to the script file."
           },
           {
-            "name": "scroll_to_element",
+            "name": "custom_html",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Scrolls the page to bring the specified CSS selector into view before capture."
+            "description": "Custom HTML to render instead of loading a URL. Overrides the url option. Use for capturing specific HTML structures or dynamic content."
           },
           {
-            "name": "selector",
+            "name": "markdown",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "CSS selector to capture a specific element. Only that element is rendered."
-          },
-          {
-            "name": "selector_to_click",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "CSS selector for an element to click before capturing the screenshot."
-          },
-          {
-            "name": "click_recursion",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Number of times to click the selector (when set via selector_to_click). Default: 1."
+            "description": "Markdown to render instead of loading a URL. Works like custom_html, so you can capture a README or notes without hosting a page."
           },
           {
             "name": "user_agent",
@@ -664,54 +490,503 @@
             "in": "query",
             "required": false,
             "schema": {
+              "type": "string",
+              "default": "en-US,en;q=0.8"
+            },
+            "description": "Sets the accepted languages for the HTTP request. This is sent as the Accept-Language header."
+          },
+          {
+            "name": "dark_mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "When set to `true`, websites that support prefers-color-scheme: dark will render in dark mode."
+          },
+          {
+            "name": "grayscale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Applies a grayscale filter to the screenshot. Requires a value from 0 (no effect) to 100 (fully grayscale)."
+          },
+          {
+            "name": "enable_incognito",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Enables private/incognito browsing. Each render starts with a clean slate - no cookies, cache, or session data persisted."
+          },
+          {
+            "name": "headers",
+            "in": "query",
+            "required": false,
+            "schema": {
               "type": "string"
             },
-            "description": "Sets the accepted languages for the HTTP request. Sent as the Accept-Language header."
+            "description": "Custom HTTP headers to include as key=value pairs. Use a semicolon to separate multiple headers (e.g., `key1=value1;key2=value2`)."
           },
           {
-            "name": "scroll_delay",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Delay in milliseconds between scroll steps when lazy_load is enabled."
-          },
-          {
-            "name": "custom_html",
+            "name": "cookies",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Custom HTML to render instead of loading a URL. Overrides the url option."
+            "description": "Cookies to include in the request before rendering. Supports single or multiple cookies. Example: `cookie=value; otherCookie=otherValue;`."
           },
           {
-            "name": "image_quality",
+            "name": "longitude",
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "number"
             },
-            "description": "Compression level for JPEG output (0–100). Lower = smaller file, higher = better quality. Only applies to JPEG."
+            "description": "Specify longitude for the browser Geolocation API. Provide a numeric value. Default: null (not set)."
+          },
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Specify latitude for the browser Geolocation API. Provide a numeric value. Default: null (not set)."
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "IANA timezone the browser uses while rendering, such as Asia/Karachi or Europe/London. Useful for clocks and localized dates."
+          },
+          {
+            "name": "block_ads",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks requests to known ad networks for cleaner, distraction-free screenshots."
+          },
+          {
+            "name": "block_chat_widgets",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks live chat popups, support bubbles, and messaging interfaces."
+          },
+          {
+            "name": "block_tracking",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks tracking scripts and analytics services for cleaner, privacy-oriented renders."
+          },
+          {
+            "name": "no_cookie_banners",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Hides or blocks cookie consent banners and popups before capture."
+          },
+          {
+            "name": "block_js",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Disables all JavaScript execution. Renders a static version of the page. Speeds up capture but may break dynamic content."
+          },
+          {
+            "name": "block_stylesheets",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks all stylesheets - page renders as raw HTML without visual formatting."
+          },
+          {
+            "name": "block_images",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks all image resources (jpg, png, gif, webp, svg, etc.) for faster rendering."
+          },
+          {
+            "name": "block_media",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks audio and video resources (mp3, mp4, webm, etc.) from loading."
+          },
+          {
+            "name": "block_font",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks external font files - page falls back to system defaults. Supported: woff, woff2, ttf, otf, eot."
+          },
+          {
+            "name": "block_text_track",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks subtitles and caption overlays from loading."
+          },
+          {
+            "name": "block_xhr",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks all XMLHttpRequest (AJAX) calls - prevents dynamic API-driven content."
+          },
+          {
+            "name": "block_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks all Fetch API requests - stops async data loading."
+          },
+          {
+            "name": "block_event_source",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks EventSource (SSE) connections - prevents real-time data streams."
+          },
+          {
+            "name": "block_web_socket",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks WebSocket connections - prevents real-time bidirectional communication."
+          },
+          {
+            "name": "block_manifest",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Blocks manifest files (.json, .webmanifest) - disables PWA-related functionality."
+          },
+          {
+            "name": "block_specific_requests",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Fine-grained blocking of specific URLs or patterns. Separate multiple rules by comma, space, or newline. Default: empty."
+          },
+          {
+            "name": "extract_text",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Strips all HTML and returns visible text as a .txt file. Ideal for text analysis, indexing, or AI pipelines. Only with output=json."
+          },
+          {
+            "name": "extract_html",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Returns rendered HTML as a .html file (includes JS-executed DOM). Only available with output=json."
           },
           {
             "name": "extract_markdown",
             "in": "query",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "default": false
             },
-            "description": "Extracts rendered page content as a structured .md (Markdown) file."
+            "description": "Extracts rendered page content as a structured .md (Markdown) file. Preserves headings, lists, links. Only with output=json."
           },
           {
             "name": "get_image_urls",
             "in": "query",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "default": false
             },
-            "description": "Extracts all image URLs from the rendered DOM and returns them in structured format."
+            "description": "Extracts all image URLs from the rendered DOM and returns them in structured format. Only with output=json."
+          },
+          {
+            "name": "stealth",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Makes the browser look like a regular visitor for pages that block automated traffic. No extra credits."
+          },
+          {
+            "name": "gpu",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Renders the page with a GPU, including WebGL and canvas content. Adds 20 credits per request."
+          },
+          {
+            "name": "proxy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Allows defining a proxy for the connection. Provide a JSON string with keys: server (include port number), username, and password."
+          },
+          {
+            "name": "classic_proxy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Loads the page through a datacenter proxy. Adds 20 credits per request. Ignored when premium_proxy is true or a custom proxy is set."
+          },
+          {
+            "name": "premium_proxy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Loads the page through a residential proxy. Adds 200 credits per request. Used instead of classic_proxy."
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Two-letter country code, such as US or DE, for the exit address of classic_proxy or premium_proxy. Ignored when you send your own proxy. Any two-letter code is sent, including one that is not listed. Classic proxy countries: BG, GE, DE, HN, MD, UA, GB, US. Premium proxy countries: AF, AL, DZ, AO, AG, AR, AM, AW, AU, AT, AZ, BS, BH, BD, BB, BY, BE, BZ, BJ, BT, BO, BQ, BA, BW, BR, BN, BG, BF, BI, CV, KH, CM, CA, KY, CF, TD, CL, CN, CO, KM, CG, CR, CI, HR, CU, CW, CY, CZ, CD, DK, DJ, DM, DO, EC, EG, SV, GQ, EE, SZ, ET, FO, FJ, FI, FR, GF, PF, GA, GM, GE, DE, GH, GI, GR, GL, GD, GP, GU, GT, GG, GN, GW, GY, HT, HN, HK, HU, IS, IN, ID, IR, IQ, IE, IL, IT, JM, JP, JE, JO, KZ, KE, XK, KW, KG, LA, LV, LB, LS, LR, LY, LT, MO, MG, MW, MY, MV, ML, MT, MQ, MR, MU, YT, MX, MD, MN, ME, MA, MZ, MM, NA, NP, NL, NC, NZ, NI, NE, NG, MK, NO, OM, PK, PS, PA, PG, PY, PE, PH, PL, PT, PR, QA, RE, RO, RU, RW, KN, LC, VC, WS, SA, SN, RS, SC, SL, SG, SK, SI, SB, SO, ZA, KR, SS, ES, LK, SD, SR, SE, CH, SY, TW, TJ, TZ, TH, TL, TG, TO, TT, TN, TR, TM, UG, UA, AE, GB, US, UY, UZ, VE, VN, YE, ZM, ZW."
+          },
+          {
+            "name": "solve_captcha",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Solves a captcha made of text drawn in a picture, then takes the screenshot. Requires captcha_image and captcha_input. Adds 20 credits per request."
+          },
+          {
+            "name": "captcha_image",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "CSS selector of the captcha picture. Required when solve_captcha is true."
+          },
+          {
+            "name": "captcha_input",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "CSS selector of the box the answer is typed into. Required when solve_captcha is true."
+          },
+          {
+            "name": "captcha_submit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "CSS selector of the button to click after the answer is typed."
+          },
+          {
+            "name": "captcha_error",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "CSS selector of the message shown for a wrong answer. While it is visible, the solver tries again."
+          },
+          {
+            "name": "captcha_refresh",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "CSS selector of the control that loads a new captcha picture before the next try."
+          },
+          {
+            "name": "captcha_retries",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5,
+              "default": 3
+            },
+            "description": "Number of guesses the solver makes, from 1 to 5."
+          },
+          {
+            "name": "ocr_model",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["mini-ocr-v1", "ocr-v1"],
+              "default": "mini-ocr-v1"
+            },
+            "description": "Recognition model used by the captcha solver: mini-ocr-v1 (default) or ocr-v1."
+          },
+          {
+            "name": "scrolling_screenshot",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Enables scrolling screenshot mode to capture a video (webm, gif, mp4) of the webpage."
+          },
+          {
+            "name": "video",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Records visible viewport only for a specified duration. Use with `duration` parameter. Ideal for dashboards and animations."
+          },
+          {
+            "name": "scroll_speed",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["normal", "fast", "slow"],
+              "default": "normal"
+            },
+            "description": "Scrolling speed: fast, normal (default), or slow. Affects render time and output pacing."
+          },
+          {
+            "name": "scroll_back",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "If `true`, scrolls to bottom then back to top, creating a seamless loop."
+          },
+          {
+            "name": "start_immediately",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Starts recording immediately without waiting for full page load."
+          },
+          {
+            "name": "multiple_scrolling",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Captures multiple scrolling screenshots at different viewport sizes in one request. Requires the `sizes` parameter."
+          },
+          {
+            "name": "sizes",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of screen sizes in the format index:WIDTHw:HEIGHTh, for example 0:1280w:720h,1:390w:844h. Required when `multiple_scrolling` is `true`."
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 60
+            },
+            "description": "Duration of scrolling action in seconds (0-60). Higher = longer video. Default: null (full page scroll)."
           }
         ],
         "responses": {
@@ -949,6 +1224,16 @@
                       "status": 400,
                       "error": "request_aborted",
                       "message": "The request was aborted before it completed, for example due to a timeout or cancellation.",
+                      "path": "/v3/screenshot"
+                    }
+                  },
+                  "errAddressUnreachable": {
+                    "summary": "Target address unreachable",
+                    "value": {
+                      "timestamp": "2026-07-27T10:19:12.500Z",
+                      "status": 400,
+                      "error": "ERR_ADDRESS_UNREACHABLE",
+                      "message": "Target address is unreachable. Please check the URL or network connectivity.",
                       "path": "/v3/screenshot"
                     }
                   }
@@ -1215,119 +1500,119 @@
           },
           "file_type": {
             "type": "string",
-            "description": "The file type of the output (e.g., PNG, JPEG)."
+            "description": "The file type of the output."
           },
           "width": {
             "type": "integer",
-            "description": "Viewport width used for capture in pixels."
+            "description": "The viewport width that was used in pixels."
           },
           "height": {
             "type": "integer",
-            "description": "Viewport height used for capture in pixels."
+            "description": "The viewport height that was used in pixels."
           },
           "fresh": {
             "type": "boolean",
-            "description": "Whether a fresh render was performed."
+            "description": "Whether a fresh render was performed (`true`/`false`)."
           },
           "full_page": {
             "type": "boolean",
-            "description": "Whether full page capture was used."
+            "description": "Whether full page capture was used (`true`/`false`)."
           },
           "lazy_load": {
             "type": "boolean",
-            "description": "Whether lazy loading was triggered."
+            "description": "Whether lazy loading was triggered (`true`/`false`)."
           },
           "retina": {
             "type": "boolean",
-            "description": "Whether retina capture was used."
+            "description": "Whether retina capture was used (`true`/`false`)."
           },
           "dark_mode": {
             "type": "boolean",
-            "description": "Whether dark mode was enabled."
+            "description": "Whether dark mode was enabled (`true`/`false`)."
           },
           "enable_caching": {
             "type": "boolean",
-            "description": "Whether caching was enabled."
+            "description": "Whether caching was enabled (`true`/`false`)."
           },
           "omit_background": {
             "type": "boolean",
-            "description": "Whether background was removed."
+            "description": "Whether background was removed (`true`/`false`)."
           },
           "destroy_screenshot": {
             "type": "boolean",
-            "description": "Whether the screenshot was destroyed after generation."
+            "description": "Whether the screenshot was destroyed after generation (`true`/`false`)."
           },
           "fail_on_error": {
             "type": "boolean",
-            "description": "Whether the request failed on error."
+            "description": "Whether the request failed on error (`true`/`false`)."
           },
           "block_ads": {
             "type": "boolean",
-            "description": "Whether ads were blocked."
+            "description": "Whether ads were blocked (`true`/`false`)."
           },
           "no_cookie_banners": {
             "type": "boolean",
-            "description": "Whether cookie banners were blocked."
+            "description": "Whether cookie banners were blocked (`true`/`false`)."
           },
           "block_chat_widgets": {
             "type": "boolean",
-            "description": "Whether chat widgets were blocked."
+            "description": "Whether chat widgets were blocked (`true`/`false`)."
           },
           "block_tracking": {
             "type": "boolean",
-            "description": "Whether tracking scripts were blocked."
+            "description": "Whether tracking scripts were blocked (`true`/`false`)."
           },
           "block_js": {
             "type": "boolean",
-            "description": "Whether JavaScript was blocked."
+            "description": "Whether JavaScript was blocked (`true`/`false`)."
           },
           "block_stylesheets": {
             "type": "boolean",
-            "description": "Whether stylesheets were blocked."
+            "description": "Whether stylesheets were blocked (`true`/`false`)."
           },
           "block_images": {
             "type": "boolean",
-            "description": "Whether images were blocked."
+            "description": "Whether images were blocked (`true`/`false`)."
           },
           "block_media": {
             "type": "boolean",
-            "description": "Whether media files were blocked."
+            "description": "Whether media files were blocked (`true`/`false`)."
           },
           "block_font": {
             "type": "boolean",
-            "description": "Whether fonts were blocked."
+            "description": "Whether fonts were blocked (`true`/`false`)."
           },
           "block_xhr": {
             "type": "boolean",
-            "description": "Whether XHR requests were blocked."
+            "description": "Whether XHR requests were blocked (`true`/`false`)."
           },
           "block_fetch": {
             "type": "boolean",
-            "description": "Whether Fetch API requests were blocked."
+            "description": "Whether Fetch API requests were blocked (`true`/`false`)."
           },
           "block_web_socket": {
             "type": "boolean",
-            "description": "Whether WebSocket connections were blocked."
+            "description": "Whether WebSocket connections were blocked (`true`/`false`)."
           },
           "block_manifest": {
             "type": "boolean",
-            "description": "Whether manifest files were blocked."
+            "description": "Whether manifest files were blocked (`true`/`false`)."
           },
           "extract_text": {
             "type": "boolean",
-            "description": "Whether text content was extracted."
+            "description": "Whether text content was extracted (`true`/`false`)."
           },
           "extract_html": {
             "type": "boolean",
-            "description": "Whether HTML content was extracted."
+            "description": "Whether HTML content was extracted (`true`/`false`)."
           },
           "extract_markdown": {
             "type": "boolean",
-            "description": "Whether markdown extraction was enabled."
+            "description": "Whether markdown extraction was enabled (`true`/`false`)."
           },
           "get_image_urls": {
             "type": "boolean",
-            "description": "Whether image URL extraction was enabled."
+            "description": "Whether image URL extraction was enabled (`true`/`false`)."
           },
           "longitude": {
             "type": "number",
@@ -1361,7 +1646,7 @@
           },
           "selector_to_click": {
             "type": "string",
-            "description": "The CSS selector that was clicked before capture."
+            "description": "The CSS selector of the element that was clicked before capture."
           },
           "click_recursion": {
             "type": "integer",
@@ -1435,18 +1720,18 @@
           },
           "scrolling_screenshot": {
             "type": "boolean",
-            "description": "Whether scrolling screenshot mode was enabled."
+            "description": "Whether scrolling screenshot mode was enabled (`true`/`false`)."
           },
           "multiple_scrolling": {
             "type": "boolean",
-            "description": "Whether multiple scrolling captures were performed."
+            "description": "Whether multiple scrolling captures were performed (`true`/`false`)."
           },
           "sizes": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "The dimensions used for each capture."
+            "description": "The dimensions used for each capture in the array."
           },
           "scroll_speed": {
             "type": "string",
@@ -1470,7 +1755,59 @@
           },
           "enable_incognito": {
             "type": "boolean",
-            "description": "Whether incognito mode was enabled."
+            "description": "Whether incognito mode was enabled (`true`/`false`)."
+          },
+          "extracted_html": {
+            "type": "string",
+            "description": "URL of the extracted HTML from the webpage.",
+            "format": "uri"
+          },
+          "extracted_text": {
+            "type": "string",
+            "description": "URL of the extracted plain text from the webpage.",
+            "format": "uri"
+          },
+          "custom_html": {
+            "type": "string",
+            "description": "The custom HTML content that was rendered."
+          },
+          "block_text_track": {
+            "type": "boolean",
+            "description": "Whether text tracks were blocked (`true`/`false`)."
+          },
+          "block_event_source": {
+            "type": "boolean",
+            "description": "Whether EventSource connections were blocked (`true`/`false`)."
+          },
+          "block_specific_requests": {
+            "type": "string",
+            "description": "The specific requests that were blocked."
+          },
+          "clip": {
+            "type": "object",
+            "description": "The dimensions of the clipped area that was captured.",
+            "properties": {
+              "x": {
+                "type": "integer"
+              },
+              "y": {
+                "type": "integer"
+              },
+              "width": {
+                "type": "integer"
+              },
+              "height": {
+                "type": "integer"
+              }
+            }
+          },
+          "scroll_delay": {
+            "type": "integer",
+            "description": "The delay between scroll steps that was applied in milliseconds."
+          },
+          "video": {
+            "type": "boolean",
+            "description": "Whether viewport recording mode was enabled (`true`/`false`)."
           }
         }
       },

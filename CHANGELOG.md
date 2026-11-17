@@ -3,6 +3,16 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.20] - 2026-11-17
+
+### Changed — Website Screenshot + Bulk Screenshot aligned with the website
+
+Both specs now match the website's screenshot reference (`screenshot-response.tsx`): same parameters, defaults, values and descriptions.
+
+- **Website Screenshot** — all 96 query parameters carry the website's descriptions and defaults (for example `fresh=true`, `width=1680`, `height=867`, `timeout=100000`, `ttl=2592000`, `scroll_delay=500`, `file_type=PNG`). `duration` is an integer. `file_type` accepts `MP4`/`GIF`/`WEBM` as well as lowercase. `blur_selector` / `remove_selector` are plain comma-separated selectors.
+- **Website Screenshot response** — added `extracted_html`, `extracted_text`, `custom_html`, `block_text_track`, `block_event_source`, `block_specific_requests`, `clip`, `scroll_delay`, `video`; descriptions match the website. Added the `ERR_ADDRESS_UNREACHABLE` 400 example.
+- **Bulk Screenshot** — per-URL object uses the same parameters, defaults and descriptions (nested `pdf_options.*`), plus `output` and `format`. `multiple_scrolling` and `sizes` removed (not supported in bulk). Added the scrolling-GIF request/response examples and the 401 and 500 responses.
+
 ## [0.4.19] - 2026-10-30
 
 ### Changed — Disposable Email Checker (single + bulk) moves to `/v2.0/email/disposable-check`
