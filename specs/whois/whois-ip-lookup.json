@@ -717,11 +717,8 @@
           "whois_raw_response": {
             "type": "string",
             "description": "Unparsed WHOIS response from the WHOIS server."
-          },
-          "r_whois_raw_response": {
-            "type": ["string", "null"],
-            "description": "WHOIS response from the rwhois server, if available."
           }
+
         }
       },
       "InetNum": {
@@ -770,27 +767,6 @@
             "type": ["string", "null"],
             "description": "URL to the geofeed (RFC 8805) for this prefix."
           },
-          "latitude": {
-            "type": ["number", "null"],
-            "format": "float",
-            "description": "Latitude parsed from the geoloc field."
-          },
-          "longitude": {
-            "type": ["number", "null"],
-            "format": "float",
-            "description": "Longitude parsed from the geoloc field."
-          },
-          "city": {
-            "type": ["string", "null"],
-            "description": "City of allocation, primarily from LACNIC responses."
-          },
-          "languages": {
-            "type": ["array", "null"],
-            "description": "Regional languages in countries of allocation.",
-            "items": {
-              "type": "string"
-            }
-          },
           "status": {
             "type": ["string", "null"],
             "description": "Allocation or assignment status (e.g., 'Direct Allocation')."
@@ -798,31 +774,6 @@
           "organization": {
             "type": ["string", "null"],
             "description": "Handle (unique ID) of the organization managing this inetnum."
-          },
-          "sponsoring_organization": {
-            "type": ["string", "null"],
-            "description": "Handle of the sponsoring organization for this inetnum."
-          },
-          "admin_contacts": {
-            "type": ["array", "null"],
-            "description": "Handles of admin persons or roles in WHOIS data.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "tech_contacts": {
-            "type": ["array", "null"],
-            "description": "Handles of technical persons or roles in WHOIS data.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "abuse_contacts": {
-            "type": ["array", "null"],
-            "description": "Handles of abuse persons or roles in WHOIS data.",
-            "items": {
-              "type": "string"
-            }
           },
           "remarks": {
             "type": ["array", "null"],
@@ -932,10 +883,6 @@
             "type": ["string", "null"],
             "description": "Parsed city from the address field."
           },
-          "district": {
-            "type": ["string", "null"],
-            "description": "Parsed district from the address field."
-          },
           "state": {
             "type": ["string", "null"],
             "description": "Parsed state from the address field."
@@ -976,13 +923,6 @@
               "type": "string"
             }
           },
-          "organizations": {
-            "type": ["array", "null"],
-            "description": "Handles of organization objects linked to this IRT.",
-            "items": {
-              "type": "string"
-            }
-          },
           "admin_contacts": {
             "type": "array",
             "description": "Handles of admin persons or roles linked to this IRT.",
@@ -1000,27 +940,6 @@
           "remarks": {
             "type": ["array", "null"],
             "description": "Remarks for this IRT object.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "signature": {
-            "type": ["array", "null"],
-            "description": "Cryptographic signatures for this IRT object.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "encryption": {
-            "type": ["array", "null"],
-            "description": "Encryption keys for this IRT object.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "auth": {
-            "type": ["array", "null"],
-            "description": "Authentication methods for this IRT object.",
             "items": {
               "type": "string"
             }
@@ -1046,18 +965,6 @@
               "type": "string"
             }
           },
-          "mnt_ref": {
-            "type": ["array", "null"],
-            "description": "Referenced maintainer handles for this IRT object.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "date_created": {
-            "type": ["string", "null"],
-            "format": "date",
-            "description": "Registration date of this IRT object (YYYY-MM-DD)."
-          },
           "date_updated": {
             "type": ["string", "null"],
             "format": "date",
@@ -1066,31 +973,9 @@
           "source": {
             "type": "string",
             "description": "WHOIS data source for this IRT object."
-          },
-          "organization": {
-            "$ref": "#/components/schemas/IpWhoisOrganization"
-          },
-          "administrative_contacts": {
-            "type": ["array", "null"],
-            "description": "Administrative contacts linked to this IRT.",
-            "items": {
-              "$ref": "#/components/schemas/WhoisContactRef"
-            }
-          },
-          "technical_contacts": {
-            "type": ["array", "null"],
-            "description": "Technical contacts linked to this IRT.",
-            "items": {
-              "$ref": "#/components/schemas/WhoisContactRef"
-            }
-          },
-          "abuse_contacts": {
-            "type": ["array", "null"],
-            "description": "Abuse contacts linked to this IRT.",
-            "items": {
-              "$ref": "#/components/schemas/WhoisContactRef"
-            }
           }
+
+
         }
       },
       "IpWhoisOrganization": {
@@ -1132,10 +1017,6 @@
             "type": ["string", "null"],
             "description": "Parsed city from the address field."
           },
-          "district": {
-            "type": ["string", "null"],
-            "description": "Parsed district from the address field."
-          },
           "state": {
             "type": ["string", "null"],
             "description": "Parsed state from the address field."
@@ -1151,26 +1032,9 @@
               "type": "string"
             }
           },
-          "latitude": {
-            "type": ["number", "null"],
-            "format": "float",
-            "description": "Latitude parsed from the geoloc field."
-          },
-          "longitude": {
-            "type": ["number", "null"],
-            "format": "float",
-            "description": "Longitude parsed from the geoloc field."
-          },
           "email": {
             "type": ["array", "null"],
             "description": "Email addresses for the organization.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "abuse_mailbox": {
-            "type": ["array", "null"],
-            "description": "Abuse mailbox email addresses for the organization.",
             "items": {
               "type": "string"
             }
@@ -1213,20 +1077,6 @@
           "remarks": {
             "type": ["array", "null"],
             "description": "Remarks for this organization object.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "notify": {
-            "type": ["array", "null"],
-            "description": "Notify email addresses for this organization object.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "ref_nfy": {
-            "type": ["array", "null"],
-            "description": "Reference notification email addresses for this organization object.",
             "items": {
               "type": "string"
             }
@@ -1288,10 +1138,6 @@
           "city": {
             "type": ["string", "null"],
             "description": "Parsed city from the address field."
-          },
-          "district": {
-            "type": ["string", "null"],
-            "description": "Parsed district from the address field."
           },
           "state": {
             "type": ["string", "null"],
@@ -1422,81 +1268,9 @@
             "type": ["string", "null"],
             "description": "Country of the organization managing this route."
           },
-          "pingable": {
-            "type": ["array", "null"],
-            "description": "Pingable IP addresses in this route.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "ping_hdl": {
-            "type": ["array", "null"],
-            "description": "Handles of pingable contacts for this route.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "holes": {
-            "type": ["array", "null"],
-            "description": "Sub-allocation holes (more specific routes) within this route.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "member_of": {
-            "type": ["array", "null"],
-            "description": "Route sets this route is a member of.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "inject": {
-            "type": ["array", "null"],
-            "description": "Injection details for this route.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "aggr_mtd": {
-            "type": ["string", "null"],
-            "description": "Aggregation method for this route."
-          },
-          "aggr_bndry": {
-            "type": ["string", "null"],
-            "description": "Aggregation boundary for this route."
-          },
-          "export_comps": {
-            "type": ["string", "null"],
-            "description": "Export composition for this route."
-          },
-          "components": {
-            "type": ["string", "null"],
-            "description": "Route components."
-          },
-          "organizations": {
-            "type": ["array", "null"],
-            "description": "Handles of organization objects related to this route.",
-            "items": {
-              "type": "string"
-            }
-          },
           "remarks": {
             "type": ["array", "null"],
             "description": "Remarks for this route object.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "notify": {
-            "type": ["array", "null"],
-            "description": "Notify email addresses for this route object.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "mnt_lower": {
-            "type": ["array", "null"],
-            "description": "Lower-level maintainer handles for this route.",
             "items": {
               "type": "string"
             }
