@@ -228,6 +228,43 @@
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
               }
             }
+          },
+          "415": {
+            "description": "Unsupported Media Type — The uploaded file type, or the file type associated with the provided file_id, is not supported for this operation",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnsupportedFileType": {
+                    "summary": "Unsupported file type (file uploaded in the request)",
+                    "value": {
+                      "timestamp": "2026-11-20T11:30:03.767Z",
+                      "path": "/v1.0/pdf/png",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The provided file type is not supported. Refer to the documentation for valid file types."
+                    }
+                  },
+                  "UnsupportedFileTypeForId": {
+                    "summary": "Unsupported file type for the provided file ID",
+                    "value": {
+                      "timestamp": "2026-11-20T11:29:36.193Z",
+                      "path": "/v1.0/pdf/png",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The file type associated with the provided file ID is not supported for this operation. Please refer to the documentation for the list of allowed file types."
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
           }
         },
         "operationId": "pdfToImage"
@@ -463,6 +500,43 @@
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
               }
             }
+          },
+          "415": {
+            "description": "Unsupported Media Type — The uploaded file type, or the file type associated with the provided file_id, is not supported for this operation",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnsupportedFileType": {
+                    "summary": "Unsupported file type (file uploaded in the request)",
+                    "value": {
+                      "timestamp": "2026-11-20T11:30:05.678Z",
+                      "path": "/v1.0/pdf/jpg",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The provided file type is not supported. Refer to the documentation for valid file types."
+                    }
+                  },
+                  "UnsupportedFileTypeForId": {
+                    "summary": "Unsupported file type for the provided file ID",
+                    "value": {
+                      "timestamp": "2026-11-20T11:29:32.646Z",
+                      "path": "/v1.0/pdf/jpg",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The file type associated with the provided file ID is not supported for this operation. Please refer to the documentation for the list of allowed file types."
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
           }
         }
       }
@@ -665,6 +739,43 @@
                       "status": 400,
                       "error": "Invalid Image Resolution",
                       "message": "Please provide a valid image resolution(dpi). Refer to the documentation for valid resolution values."
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported Media Type — The uploaded file type, or the file type associated with the provided file_id, is not supported for this operation",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnsupportedFileType": {
+                    "summary": "Unsupported file type (file uploaded in the request)",
+                    "value": {
+                      "timestamp": "2026-11-20T11:30:06.388Z",
+                      "path": "/v1.0/pdf/tif",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The provided file type is not supported. Refer to the documentation for valid file types."
+                    }
+                  },
+                  "UnsupportedFileTypeForId": {
+                    "summary": "Unsupported file type for the provided file ID",
+                    "value": {
+                      "timestamp": "2026-11-20T11:29:36.193Z",
+                      "path": "/v1.0/pdf/tif",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The file type associated with the provided file ID is not supported for this operation. Please refer to the documentation for the list of allowed file types."
                     }
                   }
                 },
@@ -893,6 +1004,43 @@
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
               }
             }
+          },
+          "415": {
+            "description": "Unsupported Media Type — The uploaded file type, or the file type associated with the provided file_id, is not supported for this operation",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnsupportedFileType": {
+                    "summary": "Unsupported file type (file uploaded in the request)",
+                    "value": {
+                      "timestamp": "2026-11-20T11:30:07.356Z",
+                      "path": "/v1.0/pdf/bmp",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The provided file type is not supported. Refer to the documentation for valid file types."
+                    }
+                  },
+                  "UnsupportedFileTypeForId": {
+                    "summary": "Unsupported file type for the provided file ID",
+                    "value": {
+                      "timestamp": "2026-11-20T11:29:36.193Z",
+                      "path": "/v1.0/pdf/bmp",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The file type associated with the provided file ID is not supported for this operation. Please refer to the documentation for the list of allowed file types."
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
           }
         }
       }
@@ -1095,6 +1243,43 @@
                       "status": 400,
                       "error": "Invalid Image Resolution",
                       "message": "Please provide a valid image resolution(dpi). Refer to the documentation for valid resolution values."
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported Media Type — The uploaded file type, or the file type associated with the provided file_id, is not supported for this operation",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UnsupportedFileType": {
+                    "summary": "Unsupported file type (file uploaded in the request)",
+                    "value": {
+                      "timestamp": "2026-11-20T11:30:10.008Z",
+                      "path": "/v1.0/pdf/gif",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The provided file type is not supported. Refer to the documentation for valid file types."
+                    }
+                  },
+                  "UnsupportedFileTypeForId": {
+                    "summary": "Unsupported file type for the provided file ID",
+                    "value": {
+                      "timestamp": "2026-11-20T11:29:36.193Z",
+                      "path": "/v1.0/pdf/gif",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The file type associated with the provided file ID is not supported for this operation. Please refer to the documentation for the list of allowed file types."
                     }
                   }
                 },

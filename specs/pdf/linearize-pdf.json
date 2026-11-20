@@ -163,18 +163,28 @@
             }
           },
           "415": {
-            "description": "Unsupported Media Type — File type not supported",
+            "description": "Unsupported Media Type — The uploaded file type, or the file type associated with the provided file_id, is not supported for this operation",
             "content": {
               "application/json": {
                 "examples": {
                   "UnsupportedFileType": {
-                    "summary": "Uploaded file is not a supported type",
+                    "summary": "Unsupported file type (file uploaded in the request)",
                     "value": {
-                      "timestamp": "2026-07-27T10:55:08.869Z",
+                      "timestamp": "2026-11-20T11:29:53.968Z",
                       "path": "/v1.0/pdf/linearize",
                       "status": 415,
                       "error": "Unsupported File Type",
                       "message": "The provided file type is not supported. Refer to the documentation for valid file types."
+                    }
+                  },
+                  "UnsupportedFileTypeForId": {
+                    "summary": "Unsupported file type for the provided file ID",
+                    "value": {
+                      "timestamp": "2026-11-20T11:29:20.963Z",
+                      "path": "/v1.0/pdf/linearize",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The file type associated with the provided file ID is not supported for this operation. Please refer to the documentation for the list of allowed file types."
                     }
                   }
                 },

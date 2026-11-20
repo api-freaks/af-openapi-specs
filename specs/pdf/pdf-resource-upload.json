@@ -130,20 +130,20 @@
             "description": "Unsupported Media Type — File type not supported",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
                 "examples": {
                   "unsupportedFileType": {
                     "summary": "Unsupported file type",
                     "value": {
-                      "timestamp": "2026-07-27T10:47:37.481Z",
+                      "timestamp": "2026-11-20T11:28:22.868Z",
                       "path": "/v1.0/pdf/upload",
                       "status": 415,
                       "error": "Unsupported File Type",
                       "message": "The provided file type is not supported. Refer to the documentation for valid file types."
                     }
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             },

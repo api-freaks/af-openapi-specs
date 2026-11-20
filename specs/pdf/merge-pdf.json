@@ -168,18 +168,28 @@
             }
           },
           "415": {
-            "description": "Unsupported Media Type — File type not supported",
+            "description": "Unsupported Media Type — The uploaded file type, or the file type associated with the provided file_id, is not supported for this operation",
             "content": {
               "application/json": {
                 "examples": {
                   "UnsupportedFileType": {
-                    "summary": "Unsupported file type",
+                    "summary": "Unsupported file type (file uploaded in the request)",
                     "value": {
-                      "timestamp": "2026-07-27T10:49:42.554Z",
+                      "timestamp": "2026-11-20T11:28:17.071Z",
                       "path": "/v1.0/pdf/merge-pdf",
                       "status": 415,
                       "error": "Unsupported File Type",
                       "message": "The provided file type is not supported. Refer to the documentation for valid file types."
+                    }
+                  },
+                  "UnsupportedFileTypeForId": {
+                    "summary": "Unsupported file type for the provided file ID",
+                    "value": {
+                      "timestamp": "2026-11-20T11:29:03.015Z",
+                      "path": "/v1.0/pdf/merge-pdf",
+                      "status": 415,
+                      "error": "Unsupported File Type",
+                      "message": "The file type associated with the provided file ID is not supported for this operation. Please refer to the documentation for the list of allowed file types."
                     }
                   }
                 },
