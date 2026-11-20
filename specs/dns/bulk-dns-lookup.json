@@ -21,14 +21,14 @@
       "post": {
         "tags": ["DNS APIs"],
         "summary": "Retrieve A, AAAA, MX, NS, SOA, SPF, TXT, and CNAME DNS records of multiple hostnames in a single request",
-        "description": "Perform DNS lookups for multiple hostnames in a single request. Supports up to 100 hostnames per request and returns DNS records including A, AAAA, MX, NS, SOA, SPF, TXT, and CNAME records.",
+        "description": "Perform DNS lookups for multiple hostnames in a single request. Supports up to 100 hostnames per request and returns DNS records including A, AAAA, MX, NS, SOA, SPF, TXT, and CNAME records. IP addresses in `ipAddresses` are looked up for PTR records. Entries in the response are not guaranteed to follow request order, and a hostname submitted more than once is returned once. Each hostname in `domainNames` costs 15 credits, including duplicates and unregistered domains; hostnames that cannot be processed, IP addresses, and error responses are not charged.",
         "operationId": "bulkDnsLookup",
         "parameters": [
           {
             "name": "format",
             "in": "query",
             "required": false,
-            "description": "Format of the response.",
+            "description": "Format of the response. With `xml` the response is served as `application/xml` with the root element `BulkDnsInfo`, containing a `bulkDnsResponse` element with one `dnsInfo` element per entry and one `dnsRecord` element per record.",
             "schema": {
               "type": "string",
               "enum": ["json", "xml"],
@@ -39,20 +39,15 @@
             "name": "type",
             "in": "query",
             "required": true,
-            "description": "A comma-separated list of DNS record types for lookup.",
+            "style": "form",
+            "explode": false,
+            "description": "A comma-separated list of DNS record types for lookup (for example `MX,TXT`), or `all` for every supported type. Values are case-insensitive.",
             "schema": {
-              "type": "string",
-              "enum": [
-                "A",
-                "AAAA",
-                "MX",
-                "NS",
-                "SOA",
-                "SPF",
-                "TXT",
-                "CNAME",
-                "all"
-              ]
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["A", "AAAA", "MX", "NS", "SOA", "SPF", "TXT", "CNAME", "all"]
+              }
             }
           }
         ],
@@ -77,13 +72,179 @@
         },
         "responses": {
           "200": {
-            "description": "Successful DNS lookup response. Each entry in the bulk_dns_info array corresponds to one queried domain or IP address, in request order.",
+            "description": "Successful DNS lookup response. Each entry in the bulk_dns_info array corresponds to one queried domain or IP address. Entries are not guaranteed to follow request order. A registered domain with no matching records, and an unregistered domain (domainRegistered false), are returned with an empty dnsRecords array.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BulkDNSLookupResponse"
                 },
                 "examples": {
+                  "singleTypeCname": {
+                    "summary": "Single record type (type=CNAME)",
+                    "value": {
+                      "bulk_dns_info": [
+                        {
+                          "status": true,
+                          "queryTime": "2026-11-20 10:23:35",
+                          "domainName": "www.github.com",
+                          "domainRegistered": true,
+                          "dnsTypes": {
+                            "CNAME": 5
+                          },
+                          "dnsRecords": [
+                            {
+                              "name": "www.github.com",
+                              "type": 5,
+                              "dnsType": "CNAME",
+                              "ttl": 3600,
+                              "rawText": "www.github.com.\t\t3600\tIN\tCNAME\tgithub.com.",
+                              "rRsetType": 5,
+                              "target": "github.com."
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "allRecordTypes": {
+                    "summary": "Every record type for one domain (type=all)",
+                    "value": {
+                      "bulk_dns_info": [
+                        {
+                          "status": true,
+                          "queryTime": "2026-11-20 10:23:38",
+                          "domainName": "example.com",
+                          "domainRegistered": true,
+                          "dnsTypes": {
+                            "A": 1,
+                            "NS": 2,
+                            "SOA": 6,
+                            "MX": 15,
+                            "TXT": 16,
+                            "AAAA": 28,
+                            "SPF": 99
+                          },
+                          "dnsRecords": [
+                            {
+                              "name": "example.com",
+                              "type": 1,
+                              "dnsType": "A",
+                              "ttl": 186,
+                              "rawText": "example.com.\t\t186\tIN\tA\t104.20.23.154",
+                              "rRsetType": 1,
+                              "address": "104.20.23.154"
+                            },
+                            {
+                              "name": "example.com",
+                              "type": 1,
+                              "dnsType": "A",
+                              "ttl": 186,
+                              "rawText": "example.com.\t\t186\tIN\tA\t172.66.147.243",
+                              "rRsetType": 1,
+                              "address": "172.66.147.243"
+                            },
+                            {
+                              "name": "example.com",
+                              "type": 2,
+                              "dnsType": "NS",
+                              "ttl": 80215,
+                              "rawText": "example.com.\t\t80215\tIN\tNS\telliott.ns.cloudflare.com.",
+                              "rRsetType": 2,
+                              "singleName": "elliott.ns.cloudflare.com."
+                            },
+                            {
+                              "name": "example.com",
+                              "type": 2,
+                              "dnsType": "NS",
+                              "ttl": 80215,
+                              "rawText": "example.com.\t\t80215\tIN\tNS\thera.ns.cloudflare.com.",
+                              "rRsetType": 2,
+                              "singleName": "hera.ns.cloudflare.com."
+                            },
+                            {
+                              "name": "example.com",
+                              "type": 6,
+                              "dnsType": "SOA",
+                              "ttl": 1800,
+                              "rawText": "example.com.\t\t1800\tIN\tSOA\telliott.ns.cloudflare.com. dns.cloudflare.com. 2420077714 10000 2400 604800 1800",
+                              "rRsetType": 6,
+                              "admin": "dns.cloudflare.com.",
+                              "host": "elliott.ns.cloudflare.com.",
+                              "expire": 604800,
+                              "minimum": 1800,
+                              "refresh": 10000,
+                              "retry": 2400,
+                              "serial": 2420077714
+                            },
+                            {
+                              "name": "example.com",
+                              "type": 15,
+                              "dnsType": "MX",
+                              "ttl": 96,
+                              "rawText": "example.com.\t\t96\tIN\tMX\t0 .",
+                              "rRsetType": 15,
+                              "target": ".",
+                              "priority": 0
+                            },
+                            {
+                              "name": "example.com",
+                              "type": 16,
+                              "dnsType": "TXT",
+                              "ttl": 300,
+                              "rawText": "example.com.\t\t300\tIN\tTXT\t\"_k2n1y4vw3qtb4skdx9e7dxt97qrmmq9\"",
+                              "rRsetType": 16,
+                              "strings": [
+                                "_k2n1y4vw3qtb4skdx9e7dxt97qrmmq9"
+                              ]
+                            },
+                            {
+                              "name": "example.com",
+                              "type": 28,
+                              "dnsType": "AAAA",
+                              "ttl": 18,
+                              "rawText": "example.com.\t\t18\tIN\tAAAA\t2606:4700:10:0:0:0:ac42:93f3",
+                              "rRsetType": 28,
+                              "address": "2606:4700:10:0:0:0:ac42:93f3"
+                            },
+                            {
+                              "name": "example.com",
+                              "type": 28,
+                              "dnsType": "AAAA",
+                              "ttl": 18,
+                              "rawText": "example.com.\t\t18\tIN\tAAAA\t2606:4700:10:0:0:0:6814:179a",
+                              "rRsetType": 28,
+                              "address": "2606:4700:10:0:0:0:6814:179a"
+                            },
+                            {
+                              "name": "example.com",
+                              "type": 99,
+                              "dnsType": "SPF",
+                              "ttl": 300,
+                              "rawText": "example.com.\t\t300\tIN\tSPF\t\"v=spf1 -all\"",
+                              "rRsetType": 99,
+                              "strings": [
+                                "v=spf1 -all"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "unregisteredDomain": {
+                    "summary": "Unregistered domain (200, domainRegistered false)",
+                    "value": {
+                      "bulk_dns_info": [
+                        {
+                          "status": true,
+                          "queryTime": "2026-11-20 10:23:38",
+                          "domainName": "nonexistent-domain-xyz123456.com",
+                          "domainRegistered": false,
+                          "dnsRecords": []
+                        }
+                      ]
+                    }
+                  },
                   "default": {
                     "summary": "Bulk DNS lookup with domain and IP entries",
                     "value": {
@@ -341,7 +502,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Missing type parameter or malformed request body",
+            "description": "Bad Request — Missing or unsupported type parameter, or a missing, empty or malformed request body (domainNames is required and must be a non-empty array)",
             "content": {
               "application/json": {
                 "schema": {
@@ -358,14 +519,96 @@
                       "message": "please pass correct parameters"
                     }
                   },
+                  "invalidDnsType": {
+                    "summary": "Unsupported value in the type query parameter",
+                    "value": {
+                      "timestamp": "2026-11-20T10:11:49.376174718Z",
+                      "status": 400,
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide correct dns records type(s) [For Technical Support: support@whoisfreaks.com]",
+                      "path": "/v2.0/dns/bulk/live"
+                    }
+                  },
                   "malformedBody": {
-                    "summary": "Missing or malformed request body",
+                    "summary": "Missing or malformed request body (missing or empty domainNames, non-array values, or a non-JSON body)",
                     "value": {
                       "error": "Invalid request body Exception",
                       "message": "Please provide data in required format in request body",
                       "path": "/v1.0/domain/dns/live",
                       "status": 400,
                       "timestamp": "2026-07-23T09:52:49.074Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "206": {
+            "description": "Partial Content — A hostname or IP address in the batch could not be processed (for example a malformed hostname, an invalid IP address, or an IP address submitted in domainNames); its entry has status false and an empty dnsRecords array",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkDNSLookupResponse"
+                },
+                "examples": {
+                  "invalidIpAddress": {
+                    "summary": "Invalid IP address in ipAddresses (the entry carries ipAddress, not domainName)",
+                    "value": {
+                      "bulk_dns_info": [
+                        {
+                          "status": true,
+                          "queryTime": "2026-11-20 10:23:41",
+                          "domainName": "example.com",
+                          "domainRegistered": true,
+                          "dnsTypes": {
+                            "A": 1
+                          },
+                          "dnsRecords": [
+                            {
+                              "name": "example.com",
+                              "type": 1,
+                              "dnsType": "A",
+                              "ttl": 169,
+                              "rawText": "example.com.\t\t169\tIN\tA\t104.20.23.154",
+                              "rRsetType": 1,
+                              "address": "104.20.23.154"
+                            },
+                            {
+                              "name": "example.com",
+                              "type": 1,
+                              "dnsType": "A",
+                              "ttl": 169,
+                              "rawText": "example.com.\t\t169\tIN\tA\t172.66.147.243",
+                              "rRsetType": 1,
+                              "address": "172.66.147.243"
+                            }
+                          ]
+                        },
+                        {
+                          "status": false,
+                          "queryTime": "2026-11-20 10:23:41",
+                          "ipAddress": "999.1.1.1",
+                          "dnsRecords": []
+                        }
+                      ]
+                    }
+                  },
+                  "unresolvedHostname": {
+                    "summary": "Malformed hostname in the batch",
+                    "value": {
+                      "bulk_dns_info": [
+                        {
+                          "status": false,
+                          "queryTime": "2026-11-20 10:11:50",
+                          "domainName": "not a host!!",
+                          "dnsRecords": []
+                        }
+                      ]
                     }
                   }
                 }
@@ -431,7 +674,7 @@
         "properties": {
           "domainNames": {
             "type": "array",
-            "description": "List of hostnames to lookup DNS records for (max 100).",
+            "description": "List of hostnames to lookup DNS records for (1 to 100). Required and must not be empty. A hostname submitted more than once is returned once but charged each time.",
             "maxItems": 100,
             "items": {
               "type": "string"
@@ -439,7 +682,7 @@
           },
           "ipAddresses": {
             "type": "array",
-            "description": "Array of IP addresses to include in the lookup for PTR record enrichment.",
+            "description": "Array of IPv4 or IPv6 addresses to look up PTR records for. Each address returns its own entry with an ipAddress field. An invalid address returns an entry with status false. Cannot be sent without domainNames.",
             "items": {
               "type": "string"
             }
@@ -463,33 +706,35 @@
       "BulkDnsLookupItem": {
         "type": "object",
         "description": "Per-domain DNS lookup result within a bulk response, containing status, timestamps, and DNS records.",
+        "required": ["status", "queryTime", "dnsRecords"],
         "properties": {
           "status": {
             "type": "boolean",
-            "description": "Indicates whether the query for this domain was processed successfully."
+            "description": "Indicates whether the query for this entry was processed successfully. false for a hostname or IP address that could not be processed (the response is then 206). true is also returned for an unregistered domain; check domainRegistered."
           },
           "queryTime": {
             "type": "string",
             "description": "Time at which the query was made (YYYY-MM-DD HH:mm:ss)."
           },
           "domainName": {
-            "type": ["string", "null"],
-            "description": "Queried domain name (present for domain lookups, null for IP lookups)."
+            "type": "string",
+            "description": "Queried domain name. Present for entries that came from domainNames and omitted for IP address entries."
           },
           "domainRegistered": {
-            "type": ["boolean", "null"],
-            "description": "Indicates whether the domain is registered (present for domain lookups)."
+            "type": "boolean",
+            "description": "Indicates whether the domain is registered. Present for domain entries that were processed and omitted for IP address entries and entries with status false."
           },
           "ipAddress": {
-            "type": ["string", "null"],
-            "description": "IP address queried (present for IP/PTR lookups)."
+            "type": "string",
+            "description": "IP address queried (IPv4 or IPv6). Present for entries that came from ipAddresses and omitted for domain entries."
           },
           "dnsTypes": {
-            "$ref": "#/components/schemas/DnsTypes"
+            "$ref": "#/components/schemas/DnsTypes",
+            "description": "Map of the record types found to their IANA type codes. Omitted when the entry has no records (status false, unregistered domain, or no records found)."
           },
           "dnsRecords": {
             "type": "array",
-            "description": "List of DNS records for this entry. Field presence varies by dnsType — see DnsRecord for which fields apply to which type.",
+            "description": "List of DNS records for this entry; empty when status is false, the domain is unregistered, or no records of the requested types exist. Field presence varies by dnsType — see DnsRecord for which fields apply to which type.",
             "items": {
               "$ref": "#/components/schemas/DnsRecord"
             }

@@ -70,7 +70,7 @@
             "schema": {
               "type": "number"
             },
-            "description": "Latitude of the location, used together with long. A value of exactly 0 is treated as missing by the live API and returns a 400, so use a small non-zero value (e.g. 0.0001) for equator queries.",
+            "description": "Latitude of the location, used together with long. A value of exactly 0 is treated as missing by the live API, and the location is then inferred from the requester IP instead of returning an error, so use a small non-zero value (e.g. 0.0001) for equator queries.",
             "required": false
           },
           {
@@ -79,7 +79,7 @@
             "schema": {
               "type": "number"
             },
-            "description": "Longitude of the location, used together with lat. A value of exactly 0 is treated as missing by the live API and returns a 400, so use a small non-zero value (e.g. 0.0001) for prime-meridian queries.",
+            "description": "Longitude of the location, used together with lat. A value of exactly 0 is treated as missing by the live API, and the location is then inferred from the requester IP instead of returning an error, so use a small non-zero value (e.g. 0.0001) for prime-meridian queries.",
             "required": false
           },
           {
@@ -1045,12 +1045,12 @@
       "TimeSeriesData": {
         "type": "object",
         "description": "Time-series data object keyed by date (YYYY-MM-DD). Each key is a date and the value is a TimeSeriesDay containing daily aggregates, hourly readings, and astronomy data.",
-        "properties": {
-          "date": {
-            "$ref": "#/components/schemas/TimeSeriesDay"
-          }
+        "additionalProperties": {
+          "$ref": "#/components/schemas/TimeSeriesDay"
         },
-        "required": ["date"]
+        "propertyNames": {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
       }
     },
     "headers": {

@@ -212,7 +212,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Incomplete parameter combination, invalid timezone name, invalid coordinates, or location address not found",
+            "description": "Bad Request — Incomplete or mixed parameter combination, invalid timezone name, time, coordinates, or airport / LO code format",
             "content": {
               "application/json": {
                 "schema": {
@@ -223,6 +223,16 @@
                     "summary": "Incomplete parameters combination",
                     "value": {
                       "message": "Parameters' combination is not complete. 'tz_from' and 'tz_to' or 'location_from' and 'location_to' or 'lat_from' and 'long_from' and 'lat_to' and 'long_to' or 'locode_from' and 'locode_to' or 'iata_from' and 'iata_to' or 'icao_from' and 'icao_to' combinations must be provided."
+                    }
+                  },
+                  "MismatchedParameters": {
+                    "summary": "Only one side of a pair, or parameters from different groups, supplied (for example tz_from alone)",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "please pass correct parameters",
+                      "path": "/v1.0/timezone/converter",
+                      "status": 400,
+                      "timestamp": "2026-11-20T09:56:23.268Z"
                     }
                   },
                   "InvalidSourceTimezone": {
@@ -237,16 +247,34 @@
                       "message": "Provided  lat_from (999) or long_from (0) is not valid. Latitude must be between -90.0 and +90.0 and longitude must be between -180.0 and +180.0."
                     }
                   },
-                  "FromLocationNotFound": {
-                    "summary": "Source (from) location address not found",
+                  "InvalidTime": {
+                    "summary": "Unparseable time value",
                     "value": {
-                      "message": "We couldn't find the (from) location (ZZZNOTEXIST). Try a city or state level address only."
+                      "message": "Check whether your input values are correct; source_time_zone = UTC, destined_time_zone = Asia/Karachi, date_time = notatime"
                     }
                   },
-                  "ToLocationNotFound": {
-                    "summary": "Target (to) location address not found",
+                  "InvalidIataFormat": {
+                    "summary": "Malformed IATA code",
                     "value": {
-                      "message": "We couldn't find the (to) location (ZZZNOTEXIST). Try a city or state level address only."
+                      "message": "Invalid IATA code: INVALID. IATA code must be in the format of AAA."
+                    }
+                  },
+                  "InvalidIcaoFormat": {
+                    "summary": "Malformed ICAO code",
+                    "value": {
+                      "message": "Invalid ICAO code: INVALID. ICAO code must be in the format of AAAA."
+                    }
+                  },
+                  "InvalidLocodeFormat": {
+                    "summary": "Malformed UN/LOCODE",
+                    "value": {
+                      "message": "Invalid LOCode: ABC. LOCode must start with the first two characters as alphabets followed by three alphanumeric characters."
+                    }
+                  },
+                  "NonNumericCoordinate": {
+                    "summary": "Non-numeric coordinate",
+                    "value": {
+                      "message": "Invalid value 'abc' for parameter 'lat_from'."
                     }
                   }
                 }
@@ -259,7 +287,7 @@
             }
           },
           "404": {
-            "description": "Not Found — Airport (IATA/ICAO) code or UN/LOCODE has no matching data",
+            "description": "Not Found — Location address, airport (IATA/ICAO) code, or UN/LOCODE has no matching data",
             "content": {
               "application/json": {
                 "schema": {
@@ -276,6 +304,18 @@
                     "summary": "UN/LOCODE not found",
                     "value": {
                       "message": "'Data not found for the provided LO code: ZZZZZ Please contact at support@ipgeolocation.io if provided LO code exists.'"
+                    }
+                  },
+                  "FromLocationNotFound": {
+                    "summary": "Source (from) location address not found",
+                    "value": {
+                      "message": "We couldn't find the (from) location (ZZZNOTEXIST). Try a city or state level address only."
+                    }
+                  },
+                  "ToLocationNotFound": {
+                    "summary": "Target (to) location address not found",
+                    "value": {
+                      "message": "We couldn't find the (to) location (ZZZNOTEXIST). Try a city or state level address only."
                     }
                   }
                 }

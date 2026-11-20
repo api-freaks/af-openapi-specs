@@ -124,7 +124,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Invalid domainName parameter",
+            "description": "Bad Request — Missing or invalid domainName parameter, or missing apiKey",
             "content": {
               "application/json": {
                 "schema": {
@@ -137,8 +137,28 @@
                       "timestamp": "2026-07-23T07:47:39.105Z",
                       "status": 400,
                       "error": "Invalid Param Exception",
-                      "message": "Please pass domain param correct value [For Technical Support: support@whoisfreaks.com]",
+                      "message": "Please pass domain param correct value [For Technical Support: support@apifreaks.com]",
                       "path": "/v1.0/whois"
+                    }
+                  },
+                  "missingDomain": {
+                    "summary": "Missing or empty domainName parameter",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "please pass correct parameters",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 400,
+                      "timestamp": "2026-11-20T11:12:56.465Z"
+                    }
+                  },
+                  "missingApiKey": {
+                    "summary": "Missing apiKey",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 400,
+                      "timestamp": "2026-11-20T11:12:59.785Z"
                     }
                   }
                 }
@@ -174,6 +194,291 @@
             "headers": {
               "X-AF-Credits-Cost": {
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — API key invalid or inactive, no subscription or credits, deactivated subscription or account, or suspicious activity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 401,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  },
+                  "inactiveApiKey": {
+                    "summary": "Inactive API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is inactive.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 401,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  },
+                  "noSubscription": {
+                    "summary": "No subscription plan or credits",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Please buy a subscription plan or add api credits, then use this api key.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 401,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  },
+                  "subscriptionDeactivated": {
+                    "summary": "Subscription deactivated",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Your subscription is deactivated. Please buy new plan or add api credits for using apifreaks APIs.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 401,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  },
+                  "subscriptionDeactivatedPaymentFailure": {
+                    "summary": "Subscription deactivated after repeated payment failure",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Your subscription is deactivated due to much time payment failure. Please buy a new plan or add api credits for using apifreaks APIs.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 401,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  },
+                  "accountDeactivated": {
+                    "summary": "Account deactivated",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Your account is deactivated.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 401,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  },
+                  "blockedSuspiciousActivity": {
+                    "summary": "Blocked for suspicious activity",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "You are blocked due to suspicious activity.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 401,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  },
+                  "apiRecordNotFound": {
+                    "summary": "API record not found",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Api record not found.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 401,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  },
+                  "suspiciousActivity": {
+                    "summary": "Suspicious activity",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Suspicious Activity.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 401,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Precondition Failed — API plan request limit exceeded and the subscription is canceled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "planLimitExceeded": {
+                    "summary": "API plan request limit exceeded",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 412,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "You have exceeded the limit of api plan requests and your subscription is canceled. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/domain/whois/history"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large — API credit or surcharge request limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "surchargeLimitExceeded": {
+                    "summary": "Surcharge request limit exceeded",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 413,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "You have exceeded the limit of Surcharge Requests [allowed_surcharge_request_no]. Please upgrade your plan. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/domain/whois/history"
+                    }
+                  },
+                  "creditLimitExceeded": {
+                    "summary": "API credit request limit exceeded",
+                    "value": {
+                      "message": "You have exceeded the limit of api credits requests [allowed_request_no]. Please upgrade your plan.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 413,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests — Per-minute request limit reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "rateLimited": {
+                    "summary": "Request limit per minute reached",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 429,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Please slow down. Your maximum request limit per minute reached.",
+                      "path": "/v1.0/domain/whois/history"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "499": {
+            "description": "Client Closed Request — The client timeout is too short and the connection was closed before the response completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "clientTimeoutTooShort": {
+                    "summary": "Client timeout too short",
+                    "value": {
+                      "message": "The request or connection timeout you’ve set is too short, which is causing the server to close the connection before completing the response. Please increase the timeout duration to ensure successful communication with the server.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 499,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "internalServerError": {
+                    "summary": "Internal server error",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 500,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Internal Server error occurred. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/domain/whois/history"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "serviceUnavailable": {
+                    "summary": "Service unavailable",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 503,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Service is unavailable. Please try after some time. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/domain/whois/history"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout — The request timed out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "requestTimedOut": {
+                    "summary": "Request timed out",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 504,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Request is timed-out. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/domain/whois/history"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "505": {
+            "description": "HTTP Version Not Supported — The HTTP version used is outdated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "httpVersionNotSupported": {
+                    "summary": "Outdated HTTP version",
+                    "value": {
+                      "message": "You might be using an outdated HTTP version.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 505,
+                      "timestamp": "2026-11-20T11:13:00.576Z"
+                    }
+                  }
+                }
               }
             }
           }

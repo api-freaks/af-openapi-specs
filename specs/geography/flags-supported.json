@@ -28,10 +28,10 @@
             "name": "format",
             "in": "query",
             "required": false,
-            "description": "Format of the response. Possible values: json, xml.",
+            "description": "Response format. Currently only `json` is supported; the API returns JSON for any other accepted value.",
             "schema": {
               "type": "string",
-              "enum": ["json", "xml"],
+              "enum": ["json"],
               "default": "json"
             }
           }
@@ -46,7 +46,7 @@
                 },
                 "examples": {
                   "typicalSuccess": {
-                    "summary": "Typical successful response",
+                    "summary": "Typical successful response (first 5 of 238 countries; all 22 organizations)",
                     "value": {
                       "supported_countries": [
                         {
@@ -70,9 +70,9 @@
                           "iso3": "COL"
                         },
                         {
-                          "name": "Pakistan",
-                          "iso2": "PK",
-                          "iso3": "PAK"
+                          "name": "Kyrgyzstan",
+                          "iso2": "KG",
+                          "iso3": "KGZ"
                         }
                       ],
                       "supported_organizations": [
@@ -81,20 +81,27 @@
                         "Arab_League",
                         "Organization_of_American_States",
                         "African_Union",
+                        "Eurasian_Economic_Union",
                         "European_Union",
                         "United_Nations",
-                        "NATO",
+                        "Nordic_Council",
+                        "Union_of_South_American_Nations",
+                        "OPEC",
+                        "Central_American_Integration_System",
                         "Association_of_Southeast_Asian_Nations",
-                        "Commonwealth_of_Nations"
+                        "Collective_Security_Treaty_Organization",
+                        "East_African_Community",
+                        "NATO",
+                        "Organisation_internationale_de_la_Francophonie",
+                        "Southern_African_Development_Community",
+                        "Caribbean_Community",
+                        "Commonwealth_of_Nations",
+                        "Turkic_Council",
+                        "Pacific_Community"
                       ]
                     }
                   }
                 }
-              }
-            },
-            "headers": {
-              "X-AF-Credits-Cost": {
-                "$ref": "#/components/headers/X-AF-Credits-Cost"
               }
             }
           }

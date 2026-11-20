@@ -64,7 +64,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response — a JSON array of VAT results, one entry per country that resolved successfully, in request order. Countries that fail to resolve are omitted rather than represented as error entries.",
+            "description": "Successful response — a JSON array of VAT results, one entry per country that resolved successfully, in request order. Countries that fail to resolve are omitted rather than represented as error entries. If none of the requested countries resolve, a 404 is returned instead.",
             "content": {
               "application/json": {
                 "schema": {
@@ -124,7 +124,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Missing or malformed request body",
+            "description": "Bad Request — Missing, malformed or non-array request body, or a non-JSON Content-Type",
             "content": {
               "application/json": {
                 "schema": {
@@ -140,6 +140,35 @@
                       "status": 400,
                       "timestamp": "2026-07-27T11:46:29.315Z"
                     }
+                  },
+                  "InvalidJsonPayload": {
+                    "summary": "Body sent with a non-JSON Content-Type (for example text/plain)",
+                    "value": {
+                      "message": "Invalid JSON payload."
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — None of the requested countries returned VAT data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "NoVatData": {
+                    "summary": "No requested country resolved (unknown country, empty country, or an item without a country)",
+                    "value": {
+                      "message": "No VAT data found."
+                    }
                   }
                 }
               }
@@ -151,7 +180,7 @@
             }
           },
           "413": {
-            "description": "Payload Too Large — Request body exceeds the size limit",
+            "description": "Payload Too Large — Request body exceeds the size limit (more than 100 entries in `countries`)",
             "content": {
               "application/json": {
                 "schema": {
@@ -219,7 +248,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Tax type applied for the country or state."
+            "description": "Tax type applied for the country or state (for example `vat` or `hst`)."
           },
           "currency": {
             "type": "string",

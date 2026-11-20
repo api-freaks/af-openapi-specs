@@ -220,6 +220,16 @@
                         }
                       ]
                     }
+                  },
+                  "unregisteredDomain": {
+                    "summary": "Domain not registered, or no records found (200 with domainRegistered false; credits are still charged)",
+                    "value": {
+                      "status": true,
+                      "queryTime": "2026-11-20 10:10:24",
+                      "domainName": "thisdomaindoesnotexist-zzz123.com",
+                      "domainRegistered": false,
+                      "dnsRecords": []
+                    }
                   }
                 }
               }
@@ -299,7 +309,7 @@
     "schemas": {
       "DNSLookupResponse": {
         "type": "object",
-        "required": ["status", "queryTime", "dnsTypes", "dnsRecords"],
+        "required": ["status", "queryTime", "dnsRecords"],
         "properties": {
           "status": {
             "type": "boolean",
@@ -322,7 +332,8 @@
             "description": "IP address queried (present when ipAddress parameter is used instead of host-name)."
           },
           "dnsTypes": {
-            "$ref": "#/components/schemas/DnsTypes"
+            "$ref": "#/components/schemas/DnsTypes",
+            "description": "Map of each record type found to its IANA type code. Omitted when the domain is not registered or no records were found."
           },
           "dnsRecords": {
             "type": "array",

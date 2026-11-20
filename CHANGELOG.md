@@ -3,6 +3,16 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.21] - 2026-11-20
+
+### Changed — DNS, WHOIS, timezone, geography, VAT, weather and commodity specs refreshed
+
+- **WHOIS** — Domain WHOIS, Bulk WHOIS, WHOIS History, Reverse WHOIS, IP WHOIS and ASN Lookup gain expanded examples and response schemas.
+- **DNS** — DNS Lookup and Bulk DNS Lookup: `format` is `json` only; `dnsTypes` is no longer required; added the unregistered-domain example (200 with `domainRegistered: false`).
+- **Timezone** — Timezone Lookup and Converter updated.
+- **Geography** — Supported Flags example refreshed (organization list and countries).
+- **Financial / Weather / Commodity** — Bulk VAT Rates by Country, Time Series Weather and Historical Commodity Prices updated.
+
 ## [0.4.20] - 2026-11-17
 
 ### Changed — Website Screenshot + Bulk Screenshot aligned with the website

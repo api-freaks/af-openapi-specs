@@ -39,7 +39,7 @@
             "name": "ip",
             "in": "query",
             "required": true,
-            "description": "IPv4 or IPv6 address to look up.",
+            "description": "IPv4 or IPv6 address to look up. Private, loopback and reserved addresses are not rejected: they return a 200 with the IANA special-use record.",
             "schema": {
               "type": "string"
             }
@@ -131,21 +131,39 @@
             }
           },
           "206": {
-            "description": "Partial Content -- The WHOIS server returned an incomplete response. Some fields may be missing or truncated.",
+            "description": "Partial Content -- The registry query succeeded but the registrar query failed, so some details (for example contacts, routes or whois_raw_response) may be missing. Retry later for the full record.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/IpWhoisPartialResponse"
                 },
                 "examples": {
                   "partialResponse": {
-                    "summary": "Partial WHOIS response",
+                    "summary": "Partial WHOIS response (inet_nums only)",
                     "value": {
-                      "timestamp": "2025-08-14T09:25:32.271Z",
-                      "status": 206,
-                      "error": "Partial Response",
-                      "message": "Partial response due to an error occurred while processing the request.",
-                      "path": "/v1.0/ip/whois/live"
+                      "status": true,
+                      "ip_address": "8.8.8.8",
+                      "query_time": "2024-02-01 07:50:47",
+                      "whois_server": "whois.arin.net",
+                      "inet_nums": [
+                        {
+                          "start_ip": "8.8.8.0",
+                          "end_ip": "8.8.8.255",
+                          "cidr": [
+                            "8.8.8.0/24"
+                          ],
+                          "net_name": "GOGL",
+                          "net_handle": "NET-8-8-8-0-2",
+                          "status": "Direct Allocation",
+                          "organization": "Google LLC (GOGL)",
+                          "date_created": "2023-12-28",
+                          "date_updated": "2023-12-28",
+                          "source": "https://rdap.arin.net/registry/ip/8.8.8.0",
+                          "parents": [
+                            "NET8 (NET-8-0-0-0-0)"
+                          ]
+                        }
+                      ]
                     }
                   }
                 }
@@ -158,7 +176,7 @@
             }
           },
           "400": {
-            "description": "Bad Request -- Missing or invalid ip parameter",
+            "description": "Bad Request -- Missing or invalid ip parameter, or no apiKey",
             "content": {
               "application/json": {
                 "schema": {
@@ -184,6 +202,16 @@
                       "message": "Request-param 'ip' (not-an-ip) is not an IP address",
                       "path": "/v1.0/ip-whois"
                     }
+                  },
+                  "missingApiKey": {
+                    "summary": "Missing apiKey",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/ip/whois/live",
+                      "status": 400,
+                      "timestamp": "2026-11-19T09:08:36.219Z"
+                    }
                   }
                 }
               }
@@ -191,6 +219,337 @@
             "headers": {
               "X-AF-Credits-Cost": {
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- invalid apiKey",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid apiKey",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/ip/whois/live",
+                      "status": 401,
+                      "timestamp": "2026-11-20T10:10:38.861Z"
+                    }
+                  },
+                  "inactiveApiKey": {
+                    "summary": "Inactive API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is inactive.",
+                      "path": "/v1.0/ip/whois/live",
+                      "status": 401,
+                      "timestamp": "2026-11-20T10:10:38.861Z"
+                    }
+                  },
+                  "noSubscription": {
+                    "summary": "No subscription or credits",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Please buy a subscription plan or add api credits, then use this api key.",
+                      "path": "/v1.0/ip/whois/live",
+                      "status": 401,
+                      "timestamp": "2026-11-20T10:10:38.861Z"
+                    }
+                  },
+                  "subscriptionDeactivated": {
+                    "summary": "Subscription deactivated",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Your subscription is deactivated. Please buy new plan or add api credits for using apifreaks APIs.",
+                      "path": "/v1.0/ip/whois/live",
+                      "status": 401,
+                      "timestamp": "2026-11-20T10:10:38.861Z"
+                    }
+                  },
+                  "subscriptionPaymentFailure": {
+                    "summary": "Subscription deactivated after payment failures",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Your subscription is deactivated due to much time payment failure. Please buy a new plan or add api credits for using apifreaks APIs.",
+                      "path": "/v1.0/ip/whois/live",
+                      "status": 401,
+                      "timestamp": "2026-11-20T10:10:38.861Z"
+                    }
+                  },
+                  "accountDeactivated": {
+                    "summary": "Account deactivated",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Your account is deactivated.",
+                      "path": "/v1.0/ip/whois/live",
+                      "status": 401,
+                      "timestamp": "2026-11-20T10:10:38.861Z"
+                    }
+                  },
+                  "blockedSuspiciousActivity": {
+                    "summary": "Blocked for suspicious activity",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "You are blocked due to suspicious activity.",
+                      "path": "/v1.0/ip/whois/live",
+                      "status": 401,
+                      "timestamp": "2026-11-20T10:10:38.861Z"
+                    }
+                  },
+                  "apiRecordNotFound": {
+                    "summary": "API record not found",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Api record not found.",
+                      "path": "/v1.0/ip/whois/live",
+                      "status": 401,
+                      "timestamp": "2026-11-20T10:10:38.861Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Not Acceptable -- format is not json or xml",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidFormat": {
+                    "summary": "Unsupported format",
+                    "value": {
+                      "error": "Unsupported Media Type",
+                      "message": "The media type specified in the request is not supported. For more details, please refer to the API documentation.",
+                      "path": "/v1.0/ip/whois/live",
+                      "status": 406,
+                      "timestamp": "2026-11-19T09:08:38.549Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found -- Gateway response when the endpoint is called with an HTTP method other than GET (POST, PUT and DELETE were verified live)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "resourceNotFound": {
+                    "summary": "Wrong HTTP method or path",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/ip/whois/live",
+                      "status": 404,
+                      "timestamp": "2026-11-20T11:13:06.175Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout -- The WHOIS data could not be fetched",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "fetchFailed": {
+                    "summary": "Unable to fetch whois data",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 408,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Unable to fetch whois data.Please try again [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/ip/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Precondition Failed -- The API plan request limit is exceeded and the subscription is canceled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "planLimitExceeded": {
+                    "summary": "API plan request limit exceeded",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 412,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "You have exceeded the limit of api plan requests and your subscription is canceled. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/ip/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large -- A request or surcharge limit is exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "surchargeLimitExceeded": {
+                    "summary": "Surcharge request limit exceeded",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 413,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "You have exceeded the limit of Surcharge Requests [allowed_surcharge_request_no]. Please upgrade your plan. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/ip/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests -- The per-minute request limit is reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "rateLimited": {
+                    "summary": "Per-minute request limit reached",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 429,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Please slow down. Your maximum request limit per minute reached.",
+                      "path": "/v1.0/ip/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "499": {
+            "description": "Client Closed Request -- The request or connection timeout set by the client is too short",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "clientTimeoutTooShort": {
+                    "summary": "Client timeout too short",
+                    "value": {
+                      "message": "The request or connection timeout you’ve set is too short, which is causing the server to close the connection before completing the response. Please increase the timeout duration to ensure successful communication with the server."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "internalServerError": {
+                    "summary": "Internal server error",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 500,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Internal Server error occurred. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/ip/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "serviceUnavailable": {
+                    "summary": "Service unavailable",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 503,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Service is unavailable. Please try after some time. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/ip/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout -- The request timed out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "requestTimedOut": {
+                    "summary": "Request timed out",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 504,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Request is timed-out. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/ip/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "505": {
+            "description": "HTTP Version Not Supported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "httpVersionNotSupported": {
+                    "summary": "Outdated HTTP version",
+                    "value": {
+                      "message": "You might be using an outdated HTTP version."
+                    }
+                  }
+                }
               }
             }
           }
@@ -214,6 +573,52 @@
       }
     },
     "schemas": {
+      "IpWhoisPartialResponse": {
+        "type": "object",
+        "description": "Partial WHOIS response (HTTP 206). Same shape as IpWhoisResponse, but only the fields the registry returned are present; whois_raw_response, the organization and the contact lists may be missing.",
+        "required": ["status", "ip_address", "query_time", "whois_server", "inet_nums"],
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/status"
+          },
+          "ip_address": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/ip_address"
+          },
+          "query_time": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/query_time"
+          },
+          "whois_server": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/whois_server"
+          },
+          "inet_nums": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/inet_nums"
+          },
+          "irt": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/irt"
+          },
+          "organization": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/organization"
+          },
+          "administrative_contacts": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/administrative_contacts"
+          },
+          "technical_contacts": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/technical_contacts"
+          },
+          "abuse_contacts": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/abuse_contacts"
+          },
+          "routes": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/routes"
+          },
+          "whois_raw_response": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/whois_raw_response"
+          },
+          "r_whois_raw_response": {
+            "$ref": "#/components/schemas/IpWhoisResponse/properties/r_whois_raw_response"
+          }
+        }
+      },
       "ErrorResponse": {
         "type": "object",
         "required": ["message"],
@@ -254,7 +659,7 @@
         "properties": {
           "status": {
             "type": "boolean",
-            "description": "Indicates whether the WHOIS response from the WHOIS server is complete."
+            "description": "true when the record from the WHOIS server is complete. A different field from status inside inet_nums."
           },
           "ip_address": {
             "type": "string",
@@ -280,6 +685,13 @@
           },
           "organization": {
             "$ref": "#/components/schemas/IpWhoisOrganization"
+          },
+          "administrative_contacts": {
+            "type": "array",
+            "description": "Administrative contact persons or roles for this IP allocation. Returned by RIPE NCC, APNIC, LACNIC and AFRINIC; not returned by ARIN.",
+            "items": {
+              "$ref": "#/components/schemas/WhoisContactRef"
+            }
           },
           "technical_contacts": {
             "type": "array",
@@ -989,7 +1401,7 @@
       "RouteObject": {
         "type": "object",
         "description": "BGP route object containing the route prefix, origin AS, and related metadata.",
-        "required": [],
+        "required": ["source"],
         "properties": {
           "route": {
             "type": ["string", "null"],

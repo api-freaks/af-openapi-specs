@@ -3,7 +3,7 @@
   "info": {
     "title": "Historical Commodity Prices, Delivered Simply.",
     "version": "2.0.0",
-    "description": "OHLC price data for one or more commodities on a specific date, back to January 1990. Falls back to the nearest earlier rate if none exists for the exact date. Monthly-updated commodities only have a closing price — `open`, `high`, and `low` come back as `0`. Unresolved symbols degrade to a 206 partial response instead of failing the whole request.",
+    "description": "OHLC price data for one or more commodities on a specific date, back to January 1990. Falls back to the nearest earlier rate if none exists for the exact date. Monthly-updated commodities have a single monthly price, which is returned as `open`, `high`, `low`, and `close`. Unresolved symbols degrade to a 206 partial response instead of failing the whole request. A known alias (for example `GOLD`) is resolved to its API symbol and returned with a 200, listed under `unresolved` with a `resolvedTo` value.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -48,7 +48,7 @@
             "name": "date",
             "in": "query",
             "required": true,
-            "description": "Date in `YYYY-MM-DD` format. Data available from 1990 onwards.",
+            "description": "Date in `YYYY-MM-DD` format. Data available from 1990 onwards. If there is no rate on the date (weekend, holiday, or a future date), the nearest earlier rate is returned and its own date appears in the rate object.",
             "schema": {
               "type": "string"
             }
@@ -87,17 +87,39 @@
                     }
                   },
                   "monthlyCommodity": {
-                    "summary": "Monthly-updated commodity (open/high/low unavailable)",
+                    "summary": "Monthly-updated commodity (one monthly price in all four fields)",
                     "value": {
                       "success": true,
                       "date": "2025-01-10",
                       "rates": {
                         "NG-EU": {
                           "date": "2025-01-01",
-                          "open": 0,
-                          "high": 0,
-                          "low": 0,
+                          "open": 14.66,
+                          "high": 14.66,
+                          "low": 14.66,
                           "close": 14.66
+                        }
+                      }
+                    }
+                  },
+                  "aliasResolved": {
+                    "summary": "Alias symbol resolved to its API symbol (symbols=GOLD)",
+                    "value": {
+                      "success": true,
+                      "date": "2025-01-10",
+                      "rates": {
+                        "XAU": {
+                          "date": "2025-01-10",
+                          "open": 2669.93,
+                          "high": 2697.85,
+                          "low": 2663.61,
+                          "close": 2689.44
+                        }
+                      },
+                      "unresolved": {
+                        "GOLD": {
+                          "message": "GOLD is not a symbol code used by this API. Gold is available as \"XAU\", so its rate was returned under that symbol.",
+                          "resolvedTo": "XAU"
                         }
                       }
                     }
@@ -302,7 +324,7 @@
           },
           "unresolved": {
             "type": "object",
-            "description": "Present only on a 206 Partial Content response, when some requested symbols could not be resolved. Map of each unresolved symbol to a detail message and optional close-match suggestions.",
+            "description": "Present on a 206 Partial Content response when some requested symbols could not be resolved, and on a 200 response when an alias was resolved to its API symbol. Map of each symbol to a detail message, optional close-match suggestions, and `resolvedTo` for resolved aliases.",
             "additionalProperties": {
               "type": "object",
               "properties": {
@@ -316,6 +338,10 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "resolvedTo": {
+                  "type": "string",
+                  "description": "Present when the symbol is a known alias. The API symbol the alias was resolved to; the rate is returned under that symbol in `rates`."
                 }
               }
             }
@@ -335,7 +361,7 @@
       },
       "HistoricalCommodityRate": {
         "type": "object",
-        "description": "OHLC price data for a single commodity on a specific date. For monthly-updated commodities, only `close` is meaningful — `open`, `high`, and `low` are returned as `0`.",
+        "description": "OHLC price data for a single commodity on a specific date. For monthly-updated commodities, the single monthly price is returned in `open`, `high`, `low`, and `close`.",
         "required": ["date", "open", "high", "low", "close"],
         "properties": {
           "date": {
@@ -345,17 +371,17 @@
           "open": {
             "type": "number",
             "format": "float",
-            "description": "Opening price on the given date. `0` for monthly-updated commodities."
+            "description": "Opening price on the given date. Equals `close` for monthly-updated commodities."
           },
           "high": {
             "type": "number",
             "format": "float",
-            "description": "Highest price recorded on the given date. `0` for monthly-updated commodities."
+            "description": "Highest price recorded on the given date. Equals `close` for monthly-updated commodities."
           },
           "low": {
             "type": "number",
             "format": "float",
-            "description": "Lowest price recorded on the given date. `0` for monthly-updated commodities."
+            "description": "Lowest price recorded on the given date. Equals `close` for monthly-updated commodities."
           },
           "close": {
             "type": "number",

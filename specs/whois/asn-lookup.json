@@ -63,16 +63,16 @@
                       "description": "",
                       "orgHandle": "dynami-109",
                       "country": "US",
-                      "domain": "nisc.sri.com",
-                      "website": "",
+                      "domain": "dynamics.com",
+                      "website": "http://dynamics.com",
                       "allocationStatus": "",
                       "numOfIPv4Routes": "0",
                       "numOfIPv6Routes": "0",
                       "whoisHost": "ARIN",
                       "dateAllocated": "",
-                      "type": "ISP",
+                      "type": "BUSINESS",
                       "routeObjects": [],
-                      "whoisResponse": "\n#\n# ARIN WHOIS data and services are subject to the Terms of Use\n# available at: https://www.arin.net/resources/registry/whois/tou/\n#\n# If you see inaccuracies in the results, please report at\n# https://www.arin.net/resources/registry/whois/inaccuracy_reporting/\n#\n# Copyright 1997-2026, American Registry for Internet Numbers, Ltd.\n#\n\n\nASNumber:       15\nASName:         NET-DYNAMICS-EXP\nASHandle:       AS15\nRegDate:        \nUpdated:        1991-06-27\nRef:            https://rdap.arin.net/registry/autnum/15\n\n\nOrgName:        DYNAMICS\nOrgId:          DYNAMI-109\nCity:           \nStateProv:      \nPostalCode:     \nCountry:        US\nRegDate:        \nUpdated:        2012-10-10\nRef:            https://rdap.arin.net/registry/entity/DYNAMI-109\n\n\nOrgTechHandle: ZSU-ARIN\nOrgTechName:   Su, Zaw-Sing \nOrgTechPhone:  +1-415-859-4576 \nOrgTechEmail:  zsu@nisc.sri.com\nOrgTechRef:    https://rdap.arin.net/registry/entity/ZSU-ARIN\n\nOrgAbuseHandle: ZSU-ARIN\nOrgAbuseName:   Su, Zaw-Sing \nOrgAbusePhone:  +1-415-859-4576 \nOrgAbuseEmail:  zsu@nisc.sri.com\nOrgAbuseRef:    https://rdap.arin.net/registry/entity/ZSU-ARIN\n\nRTechHandle: ZSU-ARIN\nRTechName:   Su, Zaw-Sing \nRTechPhone:  +1-415-859-4576 \nRTechEmail:  zsu@nisc.sri.com\nRTechRef:    https://rdap.arin.net/registry/entity/ZSU-ARIN\n\n\n#\n# ARIN WHOIS data and services are subject to the Terms of Use\n# available at: https://www.arin.net/resources/registry/whois/tou/\n#\n# If you see inaccuracies in the results, please report at\n# https://www.arin.net/resources/registry/whois/inaccuracy_reporting/\n#\n# Copyright 1997-2026, American Registry for Internet Numbers, Ltd.\n#\n",
+                      "whoisResponse": "\n#\n# ARIN WHOIS data and services are subject to the Terms of Use\n# available at: https://www.arin.net/resources/registry/whois/tou/\n#\n# If you see inaccuracies in the results, please report at\n# https://www.arin.net/resources/registry/whois/inaccuracy_reporting/\n#\n# Copyright 1997-2026, American Registry for Internet Numbers, Ltd.\n#\n\n\nASNumber:       15\nASName:         NET-DYNAMICS-EXP\nASHandle:       AS15\nRegDate:        \nUpdated:        1991-06-27\nRef:            https://rdap.arin.net/registry/autnum/15\n\n\nOrgName:        DYNAMICS\nOrgId:          DYNAMI-109\nCity:           \nStateProv:      \nPostalCode:     \nCountry:        US\nRegDate:        \nUpdated:        2012-10-10\nRef:            https://rdap.arin.net/registry/entity/DYNAMI-109\n\n\nOrgTechHandle: ZSU-ARIN\nOrgTechName:   Su, Zaw-Sing \nOrgTechPhone:  +1-415-859-4576 \nOrgTechEmail:  zsu@nisc.sri.com\nOrgTechRef:    https://rdap.arin.net/registry/entity/ZSU-ARIN\n\nOrgAbuseHandle: ZSU-ARIN\nOrgAbuseName:   Su, Zaw-Sing \nOrgAbusePhone:  +1-415-859-4576 \nOrgAbuseEmail:  zsu@nisc.sri.com\nOrgAbuseRef:    https://rdap.arin.net/registry/entity/ZSU-ARIN\n\nRTechHandle: ZSU-ARIN\nRTechName:   Su, Zaw-Sing \nRTechPhone:  +1-415-859-4576 \nRTechEmail:  zsu@nisc.sri.com\nRTechRef:    https://rdap.arin.net/registry/entity/ZSU-ARIN\n\n\n#\n# ARIN WHOIS data and services are subject to the Terms of Use\n# available at: https://www.arin.net/resources/registry/whois/tou/\n#\n# If you see inaccuracies in the results, please report at\n# https://www.arin.net/resources/registry/whois/inaccuracy_reporting/\n#\n# Copyright 1997-2026, American Registry for Internet Numbers, Ltd.\n#\n\n",
                       "downstreams": [],
                       "parsedWhoisResponse": {
                         "status": true,
@@ -82,8 +82,13 @@
                             "aut_num": "15",
                             "as_handle": "AS15",
                             "as_name": "NET-DYNAMICS-EXP",
-                            "tech_contacts": ["ZSU-ARIN", "ZSU-ARIN"],
-                            "abuse_contacts": ["ZSU-ARIN"],
+                            "tech_contacts": [
+                              "ZSU-ARIN",
+                              "ZSU-ARIN"
+                            ],
+                            "abuse_contacts": [
+                              "ZSU-ARIN"
+                            ],
                             "date_updated": "1991-06-27",
                             "source": "https://rdap.arin.net/registry/autnum/15"
                           }
@@ -91,8 +96,12 @@
                         "organization": {
                           "handle": "DYNAMI-109",
                           "name": "DYNAMICS",
-                          "address": ["US"],
-                          "country": ["US"],
+                          "address": [
+                            "US"
+                          ],
+                          "country": [
+                            "US"
+                          ],
                           "date_updated": "2012-10-10",
                           "source": "https://rdap.arin.net/registry/entity/DYNAMI-109",
                           "addressCountry": "US"
@@ -101,8 +110,12 @@
                           {
                             "handle": "ZSU-ARIN",
                             "name": "Su, Zaw-Sing",
-                            "email": ["zsu@nisc.sri.com"],
-                            "phone": ["+1-415-859-4576"],
+                            "email": [
+                              "zsu@nisc.sri.com"
+                            ],
+                            "phone": [
+                              "+1-415-859-4576"
+                            ],
                             "source": "https://rdap.arin.net/registry/entity/ZSU-ARIN"
                           }
                         ],
@@ -110,8 +123,12 @@
                           {
                             "handle": "ZSU-ARIN",
                             "name": "Su, Zaw-Sing",
-                            "email": ["zsu@nisc.sri.com"],
-                            "phone": ["+1-415-859-4576"],
+                            "email": [
+                              "zsu@nisc.sri.com"
+                            ],
+                            "phone": [
+                              "+1-415-859-4576"
+                            ],
                             "source": "https://rdap.arin.net/registry/entity/ZSU-ARIN"
                           }
                         ]
@@ -119,7 +136,9 @@
                       "upstreams": [],
                       "peers": [],
                       "contacts": {
-                        "emailContacts": ["zsu@nisc.sri.com"],
+                        "emailContacts": [
+                          "zsu@nisc.sri.com"
+                        ],
                         "abuseContacts": []
                       },
                       "legacyRoutes": []
@@ -134,8 +153,212 @@
               }
             }
           },
+          "206": {
+            "description": "Partial Content — the registry query succeeded but the registrar query failed, so registrar-level details such as contact information may be missing. Retry later for the full record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ASNLookupResponse"
+                },
+                "examples": {
+                  "partialRegistrarFailure": {
+                    "summary": "Partial content (registrar query failed). The documentation shows this example with the snake_case parsed-WHOIS fields (status, as_number, query_time, whois_server, as_blocks, aut_nums); the body below keeps the live response shape, so registrar-level fields may be empty or absent",
+                    "value": {
+                      "asNumber": "15",
+                      "asName": "NET-DYNAMICS-EXP",
+                      "orgName": "DYNAMICS",
+                      "description": "",
+                      "orgHandle": "dynami-109",
+                      "country": "US",
+                      "domain": "dynamics.com",
+                      "website": "http://dynamics.com",
+                      "allocationStatus": "",
+                      "numOfIPv4Routes": "0",
+                      "numOfIPv6Routes": "0",
+                      "whoisHost": "ARIN",
+                      "dateAllocated": "",
+                      "type": "BUSINESS",
+                      "routeObjects": [],
+                      "whoisResponse": "\n#\n# ARIN WHOIS data and services are subject to the Terms of Use\n# available at: https://www.arin.net/resources/registry/whois/tou/\n#\n# If you see inaccuracies in the results, please report at\n# https://www.arin.net/resources/registry/whois/inaccuracy_reporting/\n#\n# Copyright 1997-2026, American Registry for Internet Numbers, Ltd.\n#\n\n\nASNumber:       15\nASName:         NET-DYNAMICS-EXP\nASHandle:       AS15\nRegDate:        \nUpdated:        1991-06-27\nRef:            https://rdap.arin.net/registry/autnum/15\n\n\nOrgName:        DYNAMICS\nOrgId:          DYNAMI-109\nCity:           \nStateProv:      \nPostalCode:     \nCountry:        US\nRegDate:        \nUpdated:        2012-10-10\nRef:            https://rdap.arin.net/registry/entity/DYNAMI-109\n\n\nOrgTechHandle: ZSU-ARIN\nOrgTechName:   Su, Zaw-Sing \nOrgTechPhone:  +1-415-859-4576 \nOrgTechEmail:  zsu@nisc.sri.com\nOrgTechRef:    https://rdap.arin.net/registry/entity/ZSU-ARIN\n\nOrgAbuseHandle: ZSU-ARIN\nOrgAbuseName:   Su, Zaw-Sing \nOrgAbusePhone:  +1-415-859-4576 \nOrgAbuseEmail:  zsu@nisc.sri.com\nOrgAbuseRef:    https://rdap.arin.net/registry/entity/ZSU-ARIN\n\nRTechHandle: ZSU-ARIN\nRTechName:   Su, Zaw-Sing \nRTechPhone:  +1-415-859-4576 \nRTechEmail:  zsu@nisc.sri.com\nRTechRef:    https://rdap.arin.net/registry/entity/ZSU-ARIN\n\n\n#\n# ARIN WHOIS data and services are subject to the Terms of Use\n# available at: https://www.arin.net/resources/registry/whois/tou/\n#\n# If you see inaccuracies in the results, please report at\n# https://www.arin.net/resources/registry/whois/inaccuracy_reporting/\n#\n# Copyright 1997-2026, American Registry for Internet Numbers, Ltd.\n#\n\n",
+                      "downstreams": [],
+                      "parsedWhoisResponse": {
+                        "status": true,
+                        "whois_server": "whois.arin.net",
+                        "aut_nums": [
+                          {
+                            "aut_num": "15",
+                            "as_handle": "AS15",
+                            "as_name": "NET-DYNAMICS-EXP",
+                            "tech_contacts": [
+                              "ZSU-ARIN",
+                              "ZSU-ARIN"
+                            ],
+                            "abuse_contacts": [
+                              "ZSU-ARIN"
+                            ],
+                            "date_updated": "1991-06-27",
+                            "source": "https://rdap.arin.net/registry/autnum/15"
+                          }
+                        ],
+                        "organization": {
+                          "handle": "DYNAMI-109",
+                          "name": "DYNAMICS",
+                          "address": [
+                            "US"
+                          ],
+                          "country": [
+                            "US"
+                          ],
+                          "date_updated": "2012-10-10",
+                          "source": "https://rdap.arin.net/registry/entity/DYNAMI-109",
+                          "addressCountry": "US"
+                        },
+                        "technical_contacts": [
+                          {
+                            "handle": "ZSU-ARIN",
+                            "name": "Su, Zaw-Sing",
+                            "email": [
+                              "zsu@nisc.sri.com"
+                            ],
+                            "phone": [
+                              "+1-415-859-4576"
+                            ],
+                            "source": "https://rdap.arin.net/registry/entity/ZSU-ARIN"
+                          }
+                        ],
+                        "abuse_contacts": [
+                          {
+                            "handle": "ZSU-ARIN",
+                            "name": "Su, Zaw-Sing",
+                            "email": [
+                              "zsu@nisc.sri.com"
+                            ],
+                            "phone": [
+                              "+1-415-859-4576"
+                            ],
+                            "source": "https://rdap.arin.net/registry/entity/ZSU-ARIN"
+                          }
+                        ]
+                      },
+                      "upstreams": [],
+                      "peers": [],
+                      "contacts": {
+                        "emailContacts": [
+                          "zsu@nisc.sri.com"
+                        ],
+                        "abuseContacts": []
+                      },
+                      "legacyRoutes": []
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid, inactive, or blocked, or the account has no active subscription or API credits",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/asn/whois/live",
+                      "status": 401,
+                      "timestamp": "2026-11-20T10:10:39.568Z"
+                    }
+                  },
+                  "inactiveApiKey": {
+                    "summary": "Inactive API key",
+                    "value": {
+                      "timestamp": "2026-11-20T10:00:00.000Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Provided API key is inactive.",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  },
+                  "noSubscription": {
+                    "summary": "No subscription plan or API credits",
+                    "value": {
+                      "timestamp": "2026-11-20T10:00:00.000Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Please buy a subscription plan or add api credits, then use this api key.",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  },
+                  "subscriptionDeactivated": {
+                    "summary": "Subscription deactivated",
+                    "value": {
+                      "timestamp": "2026-11-20T10:00:00.000Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Your subscription is deactivated. Please buy new plan or add api credits for using apifreaks APIs.",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  },
+                  "subscriptionPaymentFailure": {
+                    "summary": "Subscription deactivated after repeated payment failure",
+                    "value": {
+                      "timestamp": "2026-11-20T10:00:00.000Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Your subscription is deactivated due to much time payment failure. Please buy a new plan or add api credits for using apifreaks APIs.",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  },
+                  "accountDeactivated": {
+                    "summary": "Account deactivated",
+                    "value": {
+                      "timestamp": "2026-11-20T10:00:00.000Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Your account is deactivated.",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  },
+                  "blockedSuspiciousActivity": {
+                    "summary": "Blocked due to suspicious activity",
+                    "value": {
+                      "timestamp": "2026-11-20T10:00:00.000Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "You are blocked due to suspicious activity.",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  },
+                  "apiRecordNotFound": {
+                    "summary": "API record not found",
+                    "value": {
+                      "timestamp": "2026-11-20T10:00:00.000Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Api record not found.",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  },
+                  "suspiciousActivity": {
+                    "summary": "Suspicious activity",
+                    "value": {
+                      "timestamp": "2026-11-20T10:00:00.000Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Suspicious Activity.",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "400": {
-            "description": "Bad Request — Invalid asn parameter",
+            "description": "Bad Request — Invalid asn parameter (non-numeric, decimal, zero, negative or out of range)",
             "content": {
               "application/json": {
                 "schema": {
@@ -145,10 +368,30 @@
                   "invalidAsn": {
                     "summary": "Non-numeric asn value",
                     "value": {
-                      "timestamp": "2026-07-23T07:47:06.640Z",
+                      "timestamp": "2026-11-20T10:10:28.196408123Z",
                       "status": 400,
                       "error": "Input parameter is not valid",
                       "message": "Request-param 'asn' (ABC123) is not valid",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  },
+                  "nonPositiveAsn": {
+                    "summary": "asn is zero or negative",
+                    "value": {
+                      "timestamp": "2026-11-20T10:10:36.803568403Z",
+                      "status": 400,
+                      "error": "Input parameter is not valid",
+                      "message": "Request-param 'asn' (AS0) must be greater than zero",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  },
+                  "decimalAsn": {
+                    "summary": "asn is not a whole number",
+                    "value": {
+                      "timestamp": "2026-11-20T10:10:35.401036154Z",
+                      "status": 400,
+                      "error": "Input parameter is not valid",
+                      "message": "Request-param 'asn' (15.5) is not valid",
                       "path": "/v2.0/asn-whois"
                     }
                   }
@@ -162,17 +405,27 @@
             }
           },
           "404": {
-            "description": "Not Found — ASN could not be found",
+            "description": "Not Found — ASN could not be found, or the endpoint was called with an unsupported HTTP method",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "asnNotFound": {
-                    "summary": "ASN not allocated or unrecognized",
+                  "wrongHttpMethod": {
+                    "summary": "Endpoint called with a method other than GET (for example POST): the gateway returns 404, not 405",
                     "value": {
-                      "timestamp": "2026-07-23T07:47:45.427Z",
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/asn/whois/live",
+                      "status": 404,
+                      "timestamp": "2026-11-20T11:13:27.720Z"
+                    }
+                  },
+                  "asnNotFound": {
+                    "summary": "ASN not allocated or not found",
+                    "value": {
+                      "timestamp": "2026-11-20T10:10:28.927174297Z",
                       "status": 404,
                       "error": "Data Not Found",
                       "message": "ASN data for 999999999 could not be found.",
@@ -185,6 +438,202 @@
             "headers": {
               "X-AF-Credits-Cost": {
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout — The WHOIS data could not be fetched",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "fetchFailed": {
+                    "summary": "Unable to fetch WHOIS data",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 408,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Unable to fetch whois data.Please try again [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/asn/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Precondition Failed — The API plan request limit is exceeded and the subscription is canceled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "planLimitExceeded": {
+                    "summary": "API plan request limit exceeded",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 412,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "You have exceeded the limit of api plan requests and your subscription is canceled. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/asn/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large — The surcharge request limit is exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "surchargeLimitExceeded": {
+                    "summary": "Surcharge request limit exceeded",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 413,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "You have exceeded the limit of Surcharge Requests [allowed_surcharge_request_no]. Please upgrade your plan. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/asn/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests — The per-minute request limit is reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "rateLimited": {
+                    "summary": "Per-minute request limit reached",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 429,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Please slow down. Your maximum request limit per minute reached.",
+                      "path": "/v1.0/asn/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "499": {
+            "description": "Client Closed Request — The request or connection timeout set by the client is too short, so the server closes the connection before completing the response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "clientTimeoutTooShort": {
+                    "summary": "Client timeout too short",
+                    "value": {
+                      "timestamp": "2026-11-20T10:00:00.000Z",
+                      "status": 499,
+                      "message": "The request or connection timeout you’ve set is too short, which is causing the server to close the connection before completing the response. Please increase the timeout duration to ensure successful communication with the server.",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "internalError": {
+                    "summary": "Internal server error",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 500,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Internal Server error occurred. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/asn/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "serviceUnavailable": {
+                    "summary": "Service unavailable",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 503,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Service is unavailable. Please try after some time. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/asn/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "gatewayTimeout": {
+                    "summary": "Request timed out",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 504,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Request is timed-out. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v1.0/asn/whois/live"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "505": {
+            "description": "HTTP Version Not Supported — The request uses an outdated HTTP version",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "httpVersionNotSupported": {
+                    "summary": "Outdated HTTP version",
+                    "value": {
+                      "timestamp": "2026-11-20T10:00:00.000Z",
+                      "status": 505,
+                      "message": "You might be using an outdated HTTP version.",
+                      "path": "/v2.0/asn-whois"
+                    }
+                  }
+                }
               }
             }
           }
@@ -242,12 +691,16 @@
           "asNumber",
           "asName",
           "orgName",
+          "description",
           "orgHandle",
           "country",
+          "domain",
+          "website",
           "allocationStatus",
           "numOfIPv4Routes",
           "numOfIPv6Routes",
           "whoisHost",
+          "dateAllocated",
           "type",
           "routeObjects",
           "whoisResponse",
@@ -273,7 +726,7 @@
           },
           "description": {
             "type": "string",
-            "description": "Free-text description associated with the organization, when published."
+            "description": "Free-text description associated with the organization. Empty string when not published."
           },
           "orgHandle": {
             "type": "string",
@@ -285,15 +738,15 @@
           },
           "domain": {
             "type": "string",
-            "description": "Domain name associated with the organization, when published."
+            "description": "Domain name associated with the organization. Empty string when not published."
           },
           "website": {
             "type": "string",
-            "description": "Organization website URL, when published."
+            "description": "Organization website URL. Empty string when not published."
           },
           "allocationStatus": {
             "type": "string",
-            "description": "Allocation status of the ASN as published by the registry."
+            "description": "Allocation status of the ASN as published by the registry (e.g. ASSIGNED). Empty string when not published."
           },
           "numOfIPv4Routes": {
             "type": "string",
@@ -313,7 +766,7 @@
           },
           "type": {
             "type": "string",
-            "description": "ASN category (e.g. ISP, BUSINESS, HOSTING, EDUCATION)."
+            "description": "ASN category (e.g. ISP, BUSINESS, HOSTING, EDUCATION). Empty string when the category is unknown."
           },
           "routeObjects": {
             "type": "array",
@@ -392,7 +845,11 @@
       "AsnRelation": {
         "type": "object",
         "description": "A related Autonomous System (upstream provider, downstream customer, or BGP peer).",
-        "required": ["asNumber"],
+        "required": [
+          "asNumber",
+          "description",
+          "country"
+        ],
         "properties": {
           "asNumber": {
             "type": "string",
@@ -400,11 +857,11 @@
           },
           "description": {
             "type": "string",
-            "description": "Free-text description of the related Autonomous System, when published."
+            "description": "Free-text description of the related Autonomous System. May be an empty string."
           },
           "country": {
             "type": "string",
-            "description": "ISO 3166-1 alpha-2 country code of the related Autonomous System, when published."
+            "description": "ISO 3166-1 alpha-2 country code of the related Autonomous System. May be an empty string."
           }
         }
       },
@@ -416,8 +873,7 @@
           "whois_server",
           "aut_nums",
           "organization",
-          "technical_contacts",
-          "abuse_contacts"
+          "technical_contacts"
         ],
         "properties": {
           "status": {
@@ -447,22 +903,27 @@
           },
           "abuse_contacts": {
             "type": "array",
-            "description": "Parsed abuse contact records for the ASN.",
+            "description": "Parsed abuse contact records for the ASN. Absent when the registry publishes none.",
             "items": {
               "$ref": "#/components/schemas/WhoisContact"
             }
           },
-          "whois_raw_response": {
-            "type": "string",
-            "description": "Unparsed raw WHOIS text, when returned separately from whoisResponse."
+          "administrative_contacts": {
+            "type": "array",
+            "description": "Parsed administrative contact records for the ASN. Returned for RIPE, APNIC, LACNIC and AFRINIC registrations; absent for ARIN.",
+            "items": {
+              "$ref": "#/components/schemas/WhoisContact"
+            }
           },
-          "r_whois_raw_response": {
-            "type": "string",
-            "description": "Raw referral WHOIS (rwhois) text, when the registry delegates to a referral server."
+          "as_blocks": {
+            "type": "array",
+            "description": "AS block objects that contain the requested ASN. Returned for RIPE and APNIC registrations.",
+            "items": {
+              "$ref": "#/components/schemas/AsBlock"
+            }
           },
-          "query_time": {
-            "type": "string",
-            "description": "Timestamp when the WHOIS query was executed, in `YYYY-MM-DD HH:mm:ss` format — not ISO 8601 (no `T` separator, no milliseconds, no `Z`)."
+          "irt": {
+            "$ref": "#/components/schemas/Irt"
           }
         }
       },
@@ -471,11 +932,7 @@
         "description": "Parsed autnum (Autonomous System Number) registry object and its routing policy attributes.",
         "required": [
           "aut_num",
-          "as_handle",
-          "as_name",
           "tech_contacts",
-          "abuse_contacts",
-          "date_updated",
           "source"
         ],
         "properties": {
@@ -485,7 +942,7 @@
           },
           "as_handle": {
             "type": "string",
-            "description": "Registry handle for the autnum object (e.g. AS15)."
+            "description": "Registry handle for the autnum object (e.g. AS15). Not returned by every registry."
           },
           "as_name": {
             "type": "string",
@@ -611,6 +1068,48 @@
           "source": {
             "type": "string",
             "description": "URL of the registry record this autnum object was parsed from."
+          },
+          "mnt_by": {
+            "type": "array",
+            "description": "Maintainer objects that protect the autnum object.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mnt_lower": {
+            "type": "array",
+            "description": "Maintainer objects authorised to create more specific objects under this autnum.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mnt_routes": {
+            "type": "array",
+            "description": "Maintainer objects authorised to create route objects for this autnum.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mnt_irt": {
+            "type": "array",
+            "description": "IRT (incident response team) objects associated with the autnum.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notify": {
+            "type": "array",
+            "description": "Email addresses notified when the autnum object changes.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remarks": {
+            "type": "array",
+            "description": "Free-text remarks attached to the autnum object.",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -673,13 +1172,91 @@
           "source": {
             "type": "string",
             "description": "URL of the registry record this organization object was parsed from."
+          },
+          "type": {
+            "type": "string",
+            "description": "Organization type as recorded by the registry (e.g. LIR, OTHER)."
+          },
+          "description": {
+            "type": "array",
+            "description": "Free-text description lines attached to the organization object.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "email": {
+            "type": "array",
+            "description": "Organization email address(es).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "phone": {
+            "type": "array",
+            "description": "Organization phone number(s).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fax_no": {
+            "type": "array",
+            "description": "Organization fax number(s).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "admin_contacts": {
+            "type": "array",
+            "description": "Registry handles of administrative contacts for the organization.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tech_contacts": {
+            "type": "array",
+            "description": "Registry handles of technical contacts for the organization.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "abuse_contacts": {
+            "type": "array",
+            "description": "Registry handles of abuse contacts for the organization.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mnt_by": {
+            "type": "array",
+            "description": "Maintainer objects that protect the organization object.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mnt_ref": {
+            "type": "array",
+            "description": "Maintainer objects authorised to reference the organization object.",
+            "items": {
+              "type": "string"
+            }
           }
-        }
+        },
+        "required": [
+          "handle",
+          "name",
+          "address",
+          "country",
+          "source"
+        ]
       },
       "WhoisContact": {
         "type": "object",
-        "description": "A parsed technical or abuse contact record from the registry.",
-        "required": ["handle", "name", "email"],
+        "description": "A parsed administrative, technical or abuse contact record from the registry. Which optional fields appear depends on the registry.",
+        "required": [
+          "handle",
+          "phone",
+          "source"
+        ],
         "properties": {
           "handle": {
             "type": "string",
@@ -687,11 +1264,11 @@
           },
           "name": {
             "type": "string",
-            "description": "Contact's registered name."
+            "description": "Contact's registered name. Not returned for role objects that carry no name."
           },
           "email": {
             "type": "array",
-            "description": "Contact email address(es).",
+            "description": "Contact email address(es). Absent when the registry publishes none.",
             "items": {
               "type": "string"
             }
@@ -703,9 +1280,256 @@
               "type": "string"
             }
           },
+          "address": {
+            "type": "array",
+            "description": "Address lines for the contact, as published by the registry.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "street": {
+            "type": "string",
+            "description": "Street address of the contact, when published separately."
+          },
+          "city": {
+            "type": "string",
+            "description": "City of the contact, when published separately."
+          },
+          "state": {
+            "type": "string",
+            "description": "State or province of the contact, when published separately."
+          },
+          "zip_code": {
+            "type": "string",
+            "description": "Postal/ZIP code of the contact, when published separately."
+          },
+          "country": {
+            "type": "string",
+            "description": "Country of the contact, as published by the registry (code or name)."
+          },
+          "addressCountry": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code derived from the contact address."
+          },
+          "fax_no": {
+            "type": "array",
+            "description": "Contact fax number(s).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "abuse_mailbox": {
+            "type": "array",
+            "description": "Abuse mailbox address(es) for the contact.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "organizations": {
+            "type": "array",
+            "description": "Registry handles of the organizations the contact belongs to.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "admin_contacts": {
+            "type": "array",
+            "description": "Registry handles of administrative contacts referenced by this contact.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tech_contacts": {
+            "type": "array",
+            "description": "Registry handles of technical contacts referenced by this contact.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mnt_by": {
+            "type": "array",
+            "description": "Maintainer objects that protect the contact object.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mnt_ref": {
+            "type": "array",
+            "description": "Maintainer objects authorised to reference the contact object.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remarks": {
+            "type": "array",
+            "description": "Free-text remarks attached to the contact object.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "date_created": {
+            "type": "string",
+            "description": "Date the contact object was first registered.",
+            "format": "date"
+          },
+          "date_updated": {
+            "type": "string",
+            "description": "Date the contact object was last updated.",
+            "format": "date"
+          },
           "source": {
             "type": "string",
             "description": "URL of the registry record this contact was parsed from."
+          }
+        }
+      },
+      "AsBlock": {
+        "type": "object",
+        "description": "An AS block object that contains the requested ASN.",
+        "required": [
+          "as_block",
+          "source"
+        ],
+        "properties": {
+          "as_block": {
+            "type": "string",
+            "description": "The AS number range, e.g. `AS4608 - AS4865`."
+          },
+          "description": {
+            "type": "array",
+            "description": "Free-text description lines attached to the AS block.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "admin_contacts": {
+            "type": "array",
+            "description": "Registry handles of administrative contacts for the AS block.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tech_contacts": {
+            "type": "array",
+            "description": "Registry handles of technical contacts for the AS block.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remarks": {
+            "type": "array",
+            "description": "Free-text remarks attached to the AS block.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mnt_by": {
+            "type": "array",
+            "description": "Maintainer objects that protect the AS block.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mnt_lower": {
+            "type": "array",
+            "description": "Maintainer objects authorised to create more specific objects under the AS block.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "date_created": {
+            "type": "string",
+            "description": "Date the AS block was first registered.",
+            "format": "date"
+          },
+          "date_updated": {
+            "type": "string",
+            "description": "Date the AS block was last updated.",
+            "format": "date"
+          },
+          "source": {
+            "type": "string",
+            "description": "Registry the AS block was parsed from (e.g. APNIC, RIPE)."
+          }
+        }
+      },
+      "Irt": {
+        "type": "object",
+        "description": "IRT (incident response team) object linked to the ASN. Returned when the registry publishes one (for example APNIC).",
+        "required": [
+          "handle",
+          "source"
+        ],
+        "properties": {
+          "handle": {
+            "type": "string",
+            "description": "Registry handle for the IRT object."
+          },
+          "address": {
+            "type": "array",
+            "description": "Address lines for the IRT, as published by the registry.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "city": {
+            "type": "string",
+            "description": "City of the IRT."
+          },
+          "country": {
+            "type": "string",
+            "description": "Country of the IRT, as published by the registry."
+          },
+          "email": {
+            "type": "array",
+            "description": "IRT email address(es).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "abuse_mailbox": {
+            "type": "array",
+            "description": "Abuse mailbox address(es) of the IRT.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "admin_contacts": {
+            "type": "array",
+            "description": "Registry handles of administrative contacts for the IRT.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tech_contacts": {
+            "type": "array",
+            "description": "Registry handles of technical contacts for the IRT.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remarks": {
+            "type": "array",
+            "description": "Free-text remarks attached to the IRT object.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mnt_by": {
+            "type": "array",
+            "description": "Maintainer objects that protect the IRT object.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "date_updated": {
+            "type": "string",
+            "description": "Date the IRT object was last updated.",
+            "format": "date"
+          },
+          "source": {
+            "type": "string",
+            "description": "Registry the IRT object was parsed from."
           }
         }
       },

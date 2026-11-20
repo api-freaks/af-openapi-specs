@@ -152,21 +152,238 @@
             }
           },
           "206": {
-            "description": "Partial Content — The response contains partial data because an error occurred while processing the request",
+            "description": "Partial Content — The registry query succeeded but the registrar query failed, so registrar-level details such as contact information may be missing. The body has the same shape as a 200 response. Retry later to get the full record.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/DomainWhoisLookupResponse"
                 },
                 "examples": {
                   "partialContent": {
-                    "summary": "Partial WHOIS data returned",
+                    "summary": "Registry data only (registrar query failed)",
                     "value": {
-                      "timestamp": "2025-08-14T09:25:32.271Z",
-                      "status": 206,
-                      "error": "Partial Content",
-                      "message": "The response contains partial data due to an error while processing the request.",
-                      "path": "/v2.0/domain/whois/live"
+                      "status": true,
+                      "domain_name": "whoisfreaks.com",
+                      "query_time": "2024-07-11 13:03:30",
+                      "whois_server": "whois.verisign-grs.com",
+                      "domain_registered": "yes",
+                      "create_date": "2019-03-19",
+                      "update_date": "2024-02-18",
+                      "expiry_date": "2025-03-19",
+                      "domain_registrar": {
+                        "iana_id": "1068",
+                        "registrar_name": "NAMECHEAP INC",
+                        "whois_server": "whois.namecheap.com",
+                        "website_url": "http://www.namecheap.com",
+                        "email_address": "abuse@namecheap.com",
+                        "phone_number": "+1.9854014545"
+                      },
+                      "reseller_contact": {
+                        "name": "NAMECHEAP INC",
+                        "email_address": "N/A",
+                        "phone": "N/A"
+                      },
+                      "registrant_contact": {
+                        "name": "Redacted for Privacy",
+                        "company": "Privacy service provided by Withheld for Privacy ehf",
+                        "street": "Kalkofnsvegur 2",
+                        "city": "Reykjavik",
+                        "state": "Capital Region",
+                        "zip_code": "101",
+                        "country_name": "Iceland",
+                        "country_code": "IS",
+                        "email_address": "b8e54d7b11b347b285b60992e0889dde.protect@withheldforprivacy.com",
+                        "phone": "+354.4212434",
+                        "fax": "N/A",
+                        "mailing_address": "Kalkofnsvegur 2, 101 Reykjavik, Capital Region, Iceland"
+                      },
+                      "administrative_contact": {
+                        "name": "Redacted for Privacy",
+                        "company": "Privacy service provided by Withheld for Privacy ehf",
+                        "street": "Kalkofnsvegur 2",
+                        "city": "Reykjavik",
+                        "state": "Capital Region",
+                        "zip_code": "101",
+                        "country_name": "Iceland",
+                        "country_code": "IS",
+                        "email_address": "b8e54d7b11b347b285b60992e0889dde.protect@withheldforprivacy.com",
+                        "phone": "+354.4212434",
+                        "fax": "N/A",
+                        "mailing_address": "Kalkofnsvegur 2, 101 Reykjavik, Capital Region, Iceland"
+                      },
+                      "technical_contact": {
+                        "name": "Redacted for Privacy",
+                        "company": "Privacy service provided by Withheld for Privacy ehf",
+                        "street": "Kalkofnsvegur 2",
+                        "city": "Reykjavik",
+                        "state": "Capital Region",
+                        "zip_code": "101",
+                        "country_name": "Iceland",
+                        "country_code": "IS",
+                        "email_address": "b8e54d7b11b347b285b60992e0889dde.protect@withheldforprivacy.com",
+                        "phone": "+354.4212434",
+                        "fax": "N/A",
+                        "mailing_address": "Kalkofnsvegur 2, 101 Reykjavik, Capital Region, Iceland"
+                      },
+                      "billing_contact": {
+                        "name": "N/A",
+                        "company": "N/A",
+                        "street": "N/A",
+                        "city": "N/A",
+                        "state": "N/A",
+                        "zip_code": "N/A",
+                        "country_name": "N/A",
+                        "country_code": "N/A",
+                        "email_address": "N/A",
+                        "phone": "N/A",
+                        "fax": "N/A",
+                        "mailing_address": "N/A"
+                      },
+                      "name_servers": [
+                        "dns3.cloudns.net",
+                        "dns4.cloudns.net",
+                        "dns7.cloudns.net",
+                        "dns8.cloudns.net"
+                      ],
+                      "domain_status": [
+                        "clientTransferProhibited"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "210": {
+            "description": "Cached — Both the registry and the registrar queries failed, so the response is the latest record stored in the database rather than live data. The body has the same shape as a 200 response. Retry later if you need current data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainWhoisLookupResponse"
+                },
+                "examples": {
+                  "cachedResponse": {
+                    "summary": "Latest stored record (live queries failed)",
+                    "value": {
+                      "status": true,
+                      "domain_name": "whoisfreaks.com",
+                      "query_time": "2024-07-11 13:03:30",
+                      "whois_server": "whois.verisign-grs.com",
+                      "domain_registered": "yes",
+                      "create_date": "2019-03-19",
+                      "update_date": "2024-02-18",
+                      "expiry_date": "2025-03-19",
+                      "domain_registrar": {
+                        "iana_id": "1068",
+                        "registrar_name": "NAMECHEAP INC",
+                        "whois_server": "whois.namecheap.com",
+                        "website_url": "http://www.namecheap.com",
+                        "email_address": "abuse@namecheap.com",
+                        "phone_number": "+1.9854014545"
+                      },
+                      "reseller_contact": {
+                        "name": "NAMECHEAP INC",
+                        "email_address": "N/A",
+                        "phone": "N/A"
+                      },
+                      "registrant_contact": {
+                        "name": "Redacted for Privacy",
+                        "company": "Privacy service provided by Withheld for Privacy ehf",
+                        "street": "Kalkofnsvegur 2",
+                        "city": "Reykjavik",
+                        "state": "Capital Region",
+                        "zip_code": "101",
+                        "country_name": "Iceland",
+                        "country_code": "IS",
+                        "email_address": "b8e54d7b11b347b285b60992e0889dde.protect@withheldforprivacy.com",
+                        "phone": "+354.4212434",
+                        "fax": "N/A",
+                        "mailing_address": "Kalkofnsvegur 2, 101 Reykjavik, Capital Region, Iceland"
+                      },
+                      "administrative_contact": {
+                        "name": "Redacted for Privacy",
+                        "company": "Privacy service provided by Withheld for Privacy ehf",
+                        "street": "Kalkofnsvegur 2",
+                        "city": "Reykjavik",
+                        "state": "Capital Region",
+                        "zip_code": "101",
+                        "country_name": "Iceland",
+                        "country_code": "IS",
+                        "email_address": "b8e54d7b11b347b285b60992e0889dde.protect@withheldforprivacy.com",
+                        "phone": "+354.4212434",
+                        "fax": "N/A",
+                        "mailing_address": "Kalkofnsvegur 2, 101 Reykjavik, Capital Region, Iceland"
+                      },
+                      "technical_contact": {
+                        "name": "Redacted for Privacy",
+                        "company": "Privacy service provided by Withheld for Privacy ehf",
+                        "street": "Kalkofnsvegur 2",
+                        "city": "Reykjavik",
+                        "state": "Capital Region",
+                        "zip_code": "101",
+                        "country_name": "Iceland",
+                        "country_code": "IS",
+                        "email_address": "b8e54d7b11b347b285b60992e0889dde.protect@withheldforprivacy.com",
+                        "phone": "+354.4212434",
+                        "fax": "N/A",
+                        "mailing_address": "Kalkofnsvegur 2, 101 Reykjavik, Capital Region, Iceland"
+                      },
+                      "billing_contact": {
+                        "name": "N/A",
+                        "company": "N/A",
+                        "street": "N/A",
+                        "city": "N/A",
+                        "state": "N/A",
+                        "zip_code": "N/A",
+                        "country_name": "N/A",
+                        "country_code": "N/A",
+                        "email_address": "N/A",
+                        "phone": "N/A",
+                        "fax": "N/A",
+                        "mailing_address": "N/A"
+                      },
+                      "name_servers": [
+                        "dns3.cloudns.net",
+                        "dns4.cloudns.net",
+                        "dns7.cloudns.net",
+                        "dns8.cloudns.net"
+                      ],
+                      "domain_status": [
+                        "clientTransferProhibited"
+                      ],
+                      "whois_raw_domain": "Currently live lookup is not possible. It is the latest data in our database.",
+                      "registry_data": {
+                        "domain_name": "WHOISFREAKS.COM",
+                        "query_time": "2024-07-11 13:03:30",
+                        "whois_server": "whois.verisign-grs.com",
+                        "domain_registered": "yes",
+                        "create_date": "N/A",
+                        "update_date": "N/A",
+                        "expiry_date": "N/A",
+                        "domain_registrar": {
+                          "iana_id": "1068",
+                          "registrar_name": "NameCheap, Inc.",
+                          "whois_server": "whois.namecheap.com",
+                          "website_url": "http://www.namecheap.com",
+                          "email_address": "abuse@namecheap.com",
+                          "phone_number": "+1.6613102107"
+                        },
+                        "name_servers": [
+                          "dns3.cloudns.net",
+                          "dns4.cloudns.net",
+                          "dns7.cloudns.net",
+                          "dns8.cloudns.net"
+                        ],
+                        "domain_status": [
+                          "clientTransferProhibited"
+                        ],
+                        "whois_raw_registry": "Currently live lookup is not possible. It is the latest data in our database."
+                      }
                     }
                   }
                 }
@@ -179,7 +396,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Missing or invalid domainName parameter",
+            "description": "Bad Request — Missing or invalid domainName parameter, or missing API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -196,13 +413,23 @@
                       "timestamp": "2026-07-23T08:04:19.197Z"
                     }
                   },
+                  "missingApiKey": {
+                    "summary": "Missing API key",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v2.0/domain/whois/live",
+                      "status": 400,
+                      "timestamp": "2026-11-20T11:12:59.795Z"
+                    }
+                  },
                   "invalidDomain": {
                     "summary": "Malformed domain name",
                     "value": {
                       "timestamp": "2026-07-23T08:04:18.733Z",
                       "status": 400,
                       "error": "Invalid Param Exception",
-                      "message": "Please pass domain param correct value [For Technical Support: support@whoisfreaks.com]",
+                      "message": "Please pass domain param correct value [For Technical Support: support@apifreaks.com]",
                       "path": "/v2.0/whois/live"
                     }
                   }
@@ -216,7 +443,7 @@
             }
           },
           "403": {
-            "description": "Forbidden — Domain extension not supported for live WHOIS",
+            "description": "Forbidden — Domain extension not supported for live WHOIS, or the domain belongs to an inactive TLD",
             "content": {
               "application/json": {
                 "schema": {
@@ -231,6 +458,400 @@
                       "error": "Not Supported Domain extension",
                       "message": "We are not providing the whois of this domain extension (local)",
                       "path": "/v2.0/whois/live"
+                    }
+                  },
+                  "inactiveTld": {
+                    "summary": "Domain belongs to an inactive TLD",
+                    "value": {
+                      "timestamp": "2026-11-20T11:13:00.607Z",
+                      "status": 403,
+                      "message": "Provided domain belongs to an inactive TLD. Please try to use historical whois lookup.",
+                      "path": "/v2.0/whois/live"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid or inactive, or the subscription, credits or account are not usable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v2.0/domain/whois/live",
+                      "status": 401,
+                      "timestamp": "2026-11-20T11:13:00.607Z"
+                    }
+                  },
+                  "inactiveApiKey": {
+                    "summary": "Inactive API key",
+                    "value": {
+                      "timestamp": "2026-11-20T11:13:00.607Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Provided API key is inactive.",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  },
+                  "noSubscription": {
+                    "summary": "No subscription or credits",
+                    "value": {
+                      "timestamp": "2026-11-20T11:13:00.607Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Please buy a subscription plan or add api credits, then use this api key.",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  },
+                  "subscriptionDeactivated": {
+                    "summary": "Subscription deactivated",
+                    "value": {
+                      "timestamp": "2026-11-20T11:13:00.607Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Your subscription is deactivated. Please buy new plan or add api credits for using apifreaks APIs.",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  },
+                  "paymentFailure": {
+                    "summary": "Subscription deactivated after payment failures",
+                    "value": {
+                      "timestamp": "2026-11-20T11:13:00.607Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Your subscription is deactivated due to much time payment failure. Please buy a new plan or add api credits for using apifreaks APIs.",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  },
+                  "accountDeactivated": {
+                    "summary": "Account deactivated",
+                    "value": {
+                      "timestamp": "2026-11-20T11:13:00.607Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Your account is deactivated.",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  },
+                  "blockedSuspiciousActivity": {
+                    "summary": "Blocked for suspicious activity",
+                    "value": {
+                      "timestamp": "2026-11-20T11:13:00.607Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "You are blocked due to suspicious activity.",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  },
+                  "apiRecordNotFound": {
+                    "summary": "API record not found",
+                    "value": {
+                      "timestamp": "2026-11-20T11:13:00.607Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Api record not found.",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  },
+                  "suspiciousActivity": {
+                    "summary": "Suspicious activity",
+                    "value": {
+                      "timestamp": "2026-11-20T11:13:00.607Z",
+                      "status": 401,
+                      "error": "API Access Exception",
+                      "message": "Suspicious Activity.",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "406": {
+            "description": "Not Acceptable — The format value is not supported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "unsupportedFormat": {
+                    "summary": "Unsupported format value",
+                    "value": {
+                      "error": "Unsupported Media Type",
+                      "message": "The media type specified in the request is not supported. For more details, please refer to the API documentation.",
+                      "path": "/v2.0/domain/whois/live",
+                      "status": 406,
+                      "timestamp": "2026-11-20T11:13:01.252Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout — The WHOIS data could not be fetched",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "fetchWhoisFailed": {
+                    "summary": "Unable to fetch WHOIS data",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 408,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Unable to fetch whois data.Please try again [For Technical Support: support@apifreaks.com]",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "412": {
+            "description": "Precondition Failed — The API plan request limit is exceeded and the subscription is canceled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "planLimitExceeded": {
+                    "summary": "API plan request limit exceeded",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 412,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "You have exceeded the limit of api plan requests and your subscription is canceled. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large — The API credits or surcharge request limit is exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "surchargeLimitExceeded": {
+                    "summary": "Surcharge request limit exceeded",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 413,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "You have exceeded the limit of Surcharge Requests [allowed_surcharge_request_no]. Please upgrade your plan. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  },
+                  "creditsLimitExceeded": {
+                    "summary": "API credits request limit exceeded",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 413,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "You have exceeded the limit of api credits requests [allowed_request_no]. Please upgrade your plan.",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests — The per-minute request limit is reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "rateLimited": {
+                    "summary": "Per-minute request limit reached",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 429,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Please slow down. Your maximum request limit per minute reached.",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "499": {
+            "description": "Client Closed Request — The client request or connection timeout is too short",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "clientTimeoutTooShort": {
+                    "summary": "Client timeout too short",
+                    "value": {
+                      "timestamp": "2026-11-20T11:13:00.607Z",
+                      "status": 499,
+                      "message": "The request or connection timeout you’ve set is too short, which is causing the server to close the connection before completing the response. Please increase the timeout duration to ensure successful communication with the server.",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "internalServerError": {
+                    "summary": "Internal server error",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 500,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Internal Server error occurred. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "serviceUnavailable": {
+                    "summary": "Service unavailable",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 503,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Service is unavailable. Please try after some time. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout — The request timed out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "requestTimedOut": {
+                    "summary": "Request timed out",
+                    "value": {
+                      "timestamp": "2024-07-10T13:47:02.486Z",
+                      "status": 504,
+                      "error": "Fetching Whois Data Failed",
+                      "message": "Request is timed-out. [For Technical Support email at: support@apifreaks.com]",
+                      "path": "/v2.0/domain/whois/live"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "505": {
+            "description": "HTTP Version Not Supported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "httpVersionOutdated": {
+                    "summary": "Outdated HTTP version",
+                    "value": {
+                      "timestamp": "2026-11-20T11:13:00.607Z",
+                      "status": 505,
+                      "message": "You might be using an outdated HTTP version.",
+                      "path": "/v2.0/domain/whois/live"
                     }
                   }
                 }

@@ -429,7 +429,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Invalid coordinates, timezone name, IP address, or airport code",
+            "description": "Bad Request — Invalid coordinates, timezone name, IP address, airport code, LO code format, language, or non-numeric coordinate",
             "content": {
               "application/json": {
                 "schema": {
@@ -465,6 +465,24 @@
                     "value": {
                       "message": "Invalid ICAO code: INVALID. ICAO code must be in the format of AAAA."
                     }
+                  },
+                  "InvalidLoCodeFormat": {
+                    "summary": "Malformed UN/LOCODE",
+                    "value": {
+                      "message": "Invalid LOCode: ABC. LOCode must start with the first two characters as alphabets followed by three alphanumeric characters."
+                    }
+                  },
+                  "InvalidLanguage": {
+                    "summary": "Unsupported lang value",
+                    "value": {
+                      "message": "This 'xx' lang is not valid. Please use 'en' as the default language"
+                    }
+                  },
+                  "NonNumericCoordinate": {
+                    "summary": "Non-numeric lat or long",
+                    "value": {
+                      "message": "Invalid value 'abc' for parameter 'lat'."
+                    }
                   }
                 }
               }
@@ -476,7 +494,7 @@
             }
           },
           "404": {
-            "description": "Not Found — Location address not found, or LO code has no matching data",
+            "description": "Not Found — Location address not found, or airport code / LO code has no matching data",
             "content": {
               "application/json": {
                 "schema": {
@@ -493,6 +511,35 @@
                     "summary": "UN/LOCODE not found",
                     "value": {
                       "message": "'Data not found for the provided LO code: XXXXX Please contact at support@ipgeolocation.io if provided LO code exists.'"
+                    }
+                  },
+                  "AirportNotFound": {
+                    "summary": "IATA/ICAO airport code not found",
+                    "value": {
+                      "message": "'Data not found for the provided airport code: ZZZ Please contact at support@ipgeolocation.io if provided airport code exists.'"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "423": {
+            "description": "Locked — Bogon or reserved IP address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "BogonIp": {
+                    "summary": "Bogon or reserved IP address",
+                    "value": {
+                      "message": "'192.168.1.1' is a bogon IP address."
                     }
                   }
                 }
@@ -801,13 +848,11 @@
             "description": "The full name of the airport."
           },
           "latitude": {
-            "type": "number",
-            "format": "float",
+            "type": "string",
             "description": "The latitude coordinate of the airport."
           },
           "longitude": {
-            "type": "number",
-            "format": "float",
+            "type": "string",
             "description": "The longitude coordinate of the airport."
           },
           "elevation_ft": {
@@ -873,13 +918,11 @@
             "description": "The type of location as comma-separated list of facilities (e.g., Port, Rail Terminal, Road Terminal, Airport)."
           },
           "latitude": {
-            "type": "number",
-            "format": "float",
+            "type": "string",
             "description": "The latitude coordinate of the location."
           },
           "longitude": {
-            "type": "number",
-            "format": "float",
+            "type": "string",
             "description": "The longitude coordinate of the location."
           }
         }
