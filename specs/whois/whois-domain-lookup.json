@@ -143,6 +143,17 @@
                     }
                   }
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainWhoisLookupResponse"
+                },
+                "examples": {
+                  "typicalSuccessXml": {
+                    "summary": "Typical successful response, as XML (format=xml)",
+                    "value": "<DomainInfo>\n  <status>true</status>\n  <domain_name>example.com</domain_name>\n  <query_time>2026-11-25 07:12:38</query_time>\n  <domain_registered>yes</domain_registered>\n  <create_date>1992-01-01</create_date>\n  <update_date>2026-08-14</update_date>\n  <expiry_date>2027-08-13</expiry_date>\n  <name_servers>\n    <nameServer>elliott.ns.cloudflare.com</nameServer>\n    <nameServer>hera.ns.cloudflare.com</nameServer>\n  </name_servers>\n  <whois_raw_domain>% IANA WHOIS server % for more information on IANA, visit http://www.iana.org % This query ...</whois_raw_domain>\n  <registry_data>\n    <domain_name>EXAMPLE.COM</domain_name>\n    <query_time>2026-11-25 07:12:37</query_time>\n    <whois_server />\n    <domain_registered>yes</domain_registered>\n    <create_date>1995-08-14</create_date>\n    <update_date>2026-08-14</update_date>\n    <expiry_date>2027-08-13</expiry_date>\n    <domain_registrar>\n      <iana_id>376</iana_id>\n      <status>reserved</status>\n      <registrar_name>RESERVED-Internet Assigned Numbers Authority</registrar_name>\n      <normalized_name>reserved-internet assigned numbers authority</normalized_name>\n      <website_url>http://res-dom.iana.org</website_url>\n    </domain_registrar>\n    <name_servers>\n      <nameServer>elliott.ns.cloudflare.com</nameServer>\n      <nameServer>hera.ns.cloudflare.com</nameServer>\n    </name_servers>\n    <domain_status>\n      <domainStatus>clientupdateprohibited</domainStatus>\n      <domainStatus>clientdeleteprohibited</domainStatus>\n      <domainStatus>clienttransferprohibited</domainStatus>\n    </domain_status>\n    <whois_raw_registery>Domain Name: EXAMPLE.COM    Registry Domain ID: 2336799_DOMAIN_COM-VRSN    Registrar WHOIS ...</whois_raw_registery>\n  </registry_data>\n</DomainInfo>"
+                  }
+                }
               }
             },
             "headers": {
@@ -245,9 +256,7 @@
                         "dns7.cloudns.net",
                         "dns8.cloudns.net"
                       ],
-                      "domain_status": [
-                        "clientTransferProhibited"
-                      ]
+                      "domain_status": ["clientTransferProhibited"]
                     }
                   }
                 }
@@ -353,9 +362,7 @@
                         "dns7.cloudns.net",
                         "dns8.cloudns.net"
                       ],
-                      "domain_status": [
-                        "clientTransferProhibited"
-                      ],
+                      "domain_status": ["clientTransferProhibited"],
                       "whois_raw_domain": "Currently live lookup is not possible. It is the latest data in our database.",
                       "registry_data": {
                         "domain_name": "WHOISFREAKS.COM",
@@ -379,9 +386,7 @@
                           "dns7.cloudns.net",
                           "dns8.cloudns.net"
                         ],
-                        "domain_status": [
-                          "clientTransferProhibited"
-                        ],
+                        "domain_status": ["clientTransferProhibited"],
                         "whois_raw_registry": "Currently live lookup is not possible. It is the latest data in our database."
                       }
                     }
@@ -465,7 +470,8 @@
                     "value": {
                       "timestamp": "2026-11-20T11:13:00.607Z",
                       "status": 403,
-                      "message": "Provided domain belongs to an inactive TLD. Please try to use historical whois lookup.",
+                      "error": "Unable to process live request",
+                      "message": "Provided domain belongs to an inactive TLD. please try to use historical whois lookup [For Technical Support: support@apifreaks.com]",
                       "path": "/v2.0/whois/live"
                     }
                   }
@@ -475,6 +481,28 @@
             "headers": {
               "X-AF-Credits-Cost": {
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — The URL is wrong. The live WHOIS endpoint is /domain/whois/live",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "resourceNotFound": {
+                    "summary": "Wrong path",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v2.0/domain/whois/livee",
+                      "status": 404,
+                      "timestamp": "2026-11-25T07:12:50.000Z"
+                    }
+                  }
+                }
               }
             }
           },
@@ -703,33 +731,6 @@
               }
             }
           },
-          "429": {
-            "description": "Too Many Requests — The per-minute request limit is reached",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "rateLimited": {
-                    "summary": "Per-minute request limit reached",
-                    "value": {
-                      "timestamp": "2024-07-10T13:47:02.486Z",
-                      "status": 429,
-                      "error": "Fetching Whois Data Failed",
-                      "message": "Please slow down. Your maximum request limit per minute reached.",
-                      "path": "/v2.0/domain/whois/live"
-                    }
-                  }
-                }
-              }
-            },
-            "headers": {
-              "X-AF-Credits-Cost": {
-                "$ref": "#/components/headers/X-AF-Credits-Cost"
-              }
-            }
-          },
           "499": {
             "description": "Client Closed Request — The client request or connection timeout is too short",
             "content": {
@@ -917,7 +918,6 @@
           "status",
           "domain_name",
           "query_time",
-          "whois_server",
           "domain_registered"
         ],
         "properties": {
@@ -935,12 +935,52 @@
           },
           "whois_server": {
             "type": "string",
-            "description": "WHOIS or RDAP server that provided this record."
+            "description": "WHOIS or RDAP server that provided this record. Not returned for every lookup; registry_data carries its own whois_server."
           },
           "domain_registered": {
             "type": "string",
             "enum": ["yes", "no", "restricted"],
             "description": "Domain registration status; 'restricted' means the registry withholds registration details."
+          },
+          "domain_handle": {
+            "type": "string",
+            "description": "Registry handle of the domain, returned when the registry publishes one."
+          },
+          "abuse_contact": {
+            "type": "object",
+            "description": "Where to send abuse reports for the domain: the registrar's name, email and phone.",
+            "properties": {
+              "registrar_name": {
+                "type": "string",
+                "description": "Name of the registrar the abuse contact belongs to."
+              },
+              "email_address": {
+                "type": "string",
+                "description": "Email address for abuse reports."
+              },
+              "phone_number": {
+                "type": "string",
+                "description": "Phone number for abuse reports."
+              }
+            }
+          },
+          "eligibility_info": {
+            "type": "object",
+            "description": "Eligibility record that some registries require for a registration, such as the trademark behind a name in an extension that asks for one.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Identifier of the eligibility record, such as a trademark number."
+              },
+              "name": {
+                "type": "string",
+                "description": "Name the eligibility record is held under."
+              },
+              "type": {
+                "type": "string",
+                "description": "Kind of eligibility, such as Trademark Owner."
+              }
+            }
           },
           "create_date": {
             "type": "string",
@@ -1043,6 +1083,14 @@
           "phone_number": {
             "type": ["string", "null"],
             "description": "Registrar contact phone number, when published."
+          },
+          "handle": {
+            "type": "string",
+            "description": "Registrar handle, returned when the registry publishes one."
+          },
+          "registry_id": {
+            "type": "string",
+            "description": "Registry identifier of the registrar, when published."
           }
         }
       },
@@ -1050,6 +1098,18 @@
         "type": "object",
         "description": "A contact record (registrant, administrative, technical, billing, or reseller) published in the domain's WHOIS record.",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "Contact ID, when published."
+          },
+          "handle": {
+            "type": "string",
+            "description": "Contact handle, returned when the registry publishes one."
+          },
+          "id_type": {
+            "type": "string",
+            "description": "Kind of identifier held in id, such as cnpj or Registry, when the registry publishes it."
+          },
           "name": {
             "type": "string",
             "description": "Contact's full name."

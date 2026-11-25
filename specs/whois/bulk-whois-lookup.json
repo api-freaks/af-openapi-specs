@@ -164,6 +164,17 @@
                     }
                   }
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkWhoisLookupResponse"
+                },
+                "examples": {
+                  "typicalSuccessXml": {
+                    "summary": "Typical successful response, as XML (format=xml)",
+                    "value": "<BulkWhoisResponse>\n  <bulk_whois_response>\n    <domainInfo>\n      <status>true</status>\n      <domain_name>example.com</domain_name>\n      <query_time>2026-11-25 07:13:13</query_time>\n      <domain_registered>yes</domain_registered>\n      <create_date>1992-01-01</create_date>\n      <update_date>2026-08-14</update_date>\n      <expiry_date>2027-08-13</expiry_date>\n      <name_servers>\n        <nameServer>elliott.ns.cloudflare.com</nameServer>\n        <nameServer>hera.ns.cloudflare.com</nameServer>\n      </name_servers>\n      <whois_raw_domain>% IANA WHOIS server % for more information on IANA, visit http://www.iana.org % This query ...</whois_raw_domain>\n      <registry_data>\n        <domain_name>EXAMPLE.COM</domain_name>\n        <query_time>2026-11-25 07:13:12</query_time>\n        <whois_server />\n        <domain_registered>yes</domain_registered>\n        <create_date>1995-08-14</create_date>\n        <update_date>2026-08-14</update_date>\n        <expiry_date>2027-08-13</expiry_date>\n        <domain_registrar>\n          <iana_id>376</iana_id>\n          <status>reserved</status>\n          <registrar_name>RESERVED-Internet Assigned Numbers Authority</registrar_name>\n          <normalized_name>reserved-internet assigned numbers authority</normalized_name>\n          <website_url>http://res-dom.iana.org</website_url>\n        </domain_registrar>\n        <name_servers>\n          <nameServer>elliott.ns.cloudflare.com</nameServer>\n          <nameServer>hera.ns.cloudflare.com</nameServer>\n        </name_servers>\n        <domain_status>\n          <domainStatus>clientupdateprohibited</domainStatus>\n          <domainStatus>clientdeleteprohibited</domainStatus>\n          <domainStatus>clienttransferprohibited</domainStatus>\n        </domain_status>\n        <whois_raw_registery>Domain Name: EXAMPLE.COM    Registry Domain ID: 2336799_DOMAIN_COM-VRSN    Registrar WHOIS ...</whois_raw_registery>\n      </registry_data>\n    </domainInfo>\n  </bulk_whois_response>\n</BulkWhoisResponse>"
+                  }
+                }
               }
             },
             "headers": {
@@ -246,9 +257,7 @@
                             "dns7.cloudns.net",
                             "dns8.cloudns.net"
                           ],
-                          "domain_status": [
-                            "clientTransferProhibited"
-                          ]
+                          "domain_status": ["clientTransferProhibited"]
                         },
                         {
                           "status": true,
@@ -372,6 +381,17 @@
                     }
                   }
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkWhoisLookupResponse"
+                },
+                "examples": {
+                  "partialFailureXml": {
+                    "summary": "One name failed, as XML (format=xml)",
+                    "value": "<BulkWhoisResponse>\n  <bulk_whois_response>\n    <domainInfo>\n      <status>false</status>\n      <domain_name>example.zzzz</domain_name>\n      <status_code>403</status_code>\n      <error>NotSupportedDomainExtException</error>\n      <message>We are not providing the whois of this domain extension (zzzz)</message>\n    </domainInfo>\n    <domainInfo>\n      <status>true</status>\n      <domain_name>example.com</domain_name>\n      <query_time>2026-11-25 07:20:14</query_time>\n      <domain_registered>yes</domain_registered>\n      <create_date>1992-01-01</create_date>\n      <update_date>2026-08-14</update_date>\n      <expiry_date>2027-08-13</expiry_date>\n      <name_servers>\n        <nameServer>elliott.ns.cloudflare.com</nameServer>\n        <nameServer>hera.ns.cloudflare.com</nameServer>\n      </name_servers>\n      <whois_raw_domain>% IANA WHOIS server % for more information on IANA, visit http://www.iana.org % This query ...</whois_raw_domain>\n      <registry_data>\n        <domain_name>EXAMPLE.COM</domain_name>\n        <query_time>2026-11-25 07:20:13</query_time>\n        <whois_server />\n        <domain_registered>yes</domain_registered>\n        <create_date>1995-08-14</create_date>\n        <update_date>2026-08-14</update_date>\n        <expiry_date>2027-08-13</expiry_date>\n        <domain_registrar>\n          <iana_id>376</iana_id>\n          <status>reserved</status>\n          <registrar_name>RESERVED-Internet Assigned Numbers Authority</registrar_name>\n          <normalized_name>reserved-internet assigned numbers authority</normalized_name>\n          <website_url>http://res-dom.iana.org</website_url>\n        </domain_registrar>\n        <name_servers>\n          <nameServer>elliott.ns.cloudflare.com</nameServer>\n          <nameServer>hera.ns.cloudflare.com</nameServer>\n        </name_servers>\n        <domain_status>\n          <domainStatus>clientupdateprohibited</domainStatus>\n          <domainStatus>clientdeleteprohibited</domainStatus>\n          <domainStatus>clienttransferprohibited</domainStatus>\n        </domain_status>\n        <whois_raw_registery>Domain Name: EXAMPLE.COM    Registry Domain ID: 2336799_DOMAIN_COM-VRSN    Registrar WHOIS ...</whois_raw_registery>\n      </registry_data>\n    </domainInfo>\n  </bulk_whois_response>\n</BulkWhoisResponse>"
+                  }
+                }
               }
             },
             "headers": {
@@ -381,7 +401,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Missing, empty or malformed request body (domainNames is required and must be a non-empty array), or missing API key",
+            "description": "Bad Request — Missing, empty or malformed request body (domainNames is required and must be a non-empty array of text), a body that is not sent as application/json, or missing API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -406,6 +426,26 @@
                       "path": "/v2.0/domain/whois/live",
                       "status": 400,
                       "timestamp": "2026-11-20T11:12:59.104Z"
+                    }
+                  },
+                  "unprocessableBody": {
+                    "summary": "domainNames holds something other than text",
+                    "value": {
+                      "timestamp": "2026-11-25T07:13:30.000Z",
+                      "status": 400,
+                      "error": "Bad request. [For Technical Support: support@apifreaks.com]",
+                      "message": "Unable to process request.",
+                      "path": "/v2.0/bulkwhois/live"
+                    }
+                  },
+                  "invalidContentType": {
+                    "summary": "Body sent with a Content-Type other than application/json",
+                    "value": {
+                      "timestamp": "2026-11-25T07:13:32.000Z",
+                      "status": 400,
+                      "error": "Invalid Response Format",
+                      "message": "Invalid format (Available formats: json, xml) [For Technical Support: support@apifreaks.com]",
+                      "path": "/v2.0/bulkwhois/live"
                     }
                   }
                 }
@@ -540,9 +580,7 @@
                             "dns7.cloudns.net",
                             "dns8.cloudns.net"
                           ],
-                          "domain_status": [
-                            "clientTransferProhibited"
-                          ],
+                          "domain_status": ["clientTransferProhibited"],
                           "whois_raw_domain": "Currently live lookup is not possible. It is the latest data in our database.",
                           "registry_data": {
                             "domain_name": "WHOISFREAKS.COM",
@@ -566,9 +604,7 @@
                               "dns7.cloudns.net",
                               "dns8.cloudns.net"
                             ],
-                            "domain_status": [
-                              "clientTransferProhibited"
-                            ],
+                            "domain_status": ["clientTransferProhibited"],
                             "whois_raw_registery": "Currently live lookup is not possible. It is the latest data in our database."
                           }
                         },
@@ -649,9 +685,7 @@
                             "cheryl.ns.cloudflare.com",
                             "nash.ns.cloudflare.com"
                           ],
-                          "domain_status": [
-                            "clientTransferProhibited"
-                          ],
+                          "domain_status": ["clientTransferProhibited"],
                           "whois_raw_domain": "Currently live lookup is not possible. It is the latest data in our database.",
                           "registry_data": {
                             "domain_name": "JFREAKS.COM",
@@ -673,9 +707,7 @@
                               "cheryl.ns.cloudflare.com",
                               "nash.ns.cloudflare.com"
                             ],
-                            "domain_status": [
-                              "clientTransferProhibited"
-                            ],
+                            "domain_status": ["clientTransferProhibited"],
                             "whois_raw_registery": "Currently live lookup is not possible. It is the latest data in our database."
                           }
                         }
@@ -769,10 +801,11 @@
                   "inactiveTld": {
                     "summary": "Inactive TLD",
                     "value": {
-                      "message": "Provided domain belongs to an inactive TLD. Please try to use historical whois lookup.",
+                      "message": "Provided domain belongs to an inactive TLD. please try to use historical whois lookup [For Technical Support: support@apifreaks.com]",
                       "path": "/v2.0/domain/whois/live",
                       "status": 403,
-                      "timestamp": "2026-07-10T13:47:02.486Z"
+                      "timestamp": "2026-07-10T13:47:02.486Z",
+                      "error": "Unable to process live request"
                     }
                   }
                 }
@@ -816,28 +849,6 @@
                       "message": "You have exceeded the limit of api plan requests and your subscription is canceled. [For Technical Support email at: support@apifreaks.com]",
                       "path": "/v2.0/domain/whois/live",
                       "status": 412,
-                      "timestamp": "2026-07-10T13:47:02.486Z"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests — Per-minute request limit reached",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "rateLimitReached": {
-                    "summary": "Per-minute request limit reached",
-                    "value": {
-                      "error": "Fetching Whois Data Failed",
-                      "message": "Please slow down. Your maximum request limit per minute reached.",
-                      "path": "/v2.0/domain/whois/live",
-                      "status": 429,
                       "timestamp": "2026-07-10T13:47:02.486Z"
                     }
                   }
@@ -1007,7 +1018,7 @@
         "properties": {
           "domainNames": {
             "type": "array",
-            "description": "List of domain names to retrieve WHOIS data for.",
+            "description": "List of domain names to retrieve WHOIS data for. A name sent more than once returns one entry but is charged each time it succeeds.",
             "maxItems": 100,
             "items": {
               "type": "string"
@@ -1017,7 +1028,7 @@
       },
       "BulkWhoisLookupResponse": {
         "type": "object",
-        "description": "Wrapper object containing one WHOIS result or error per requested domain, in request order.",
+        "description": "Wrapper object containing one WHOIS result or error per distinct domain requested. The entries are not guaranteed to follow the request order, so match each one to your list by domain_name.",
         "required": ["bulk_whois_response"],
         "properties": {
           "bulk_whois_response": {
@@ -1038,13 +1049,12 @@
       },
       "BulkWhoisLookupItemError": {
         "type": "object",
-        "description": "Per-item error, returned in place of a WHOIS result when an individual domain's extension is unsupported or its lookup otherwise fails.",
+        "description": "Per-item error, returned in place of a WHOIS result when an individual domain's extension is unsupported, the name is not a valid domain, or its lookup otherwise fails.",
         "required": ["status", "domain_name", "status_code", "message"],
         "properties": {
           "status": {
             "type": "boolean",
-            "enum": [false],
-            "description": "Always false for a per-item error."
+            "description": "false when the extension is unsupported, true when the name is invalid. Test status_code, not status, to tell that an entry failed."
           },
           "domain_name": {
             "type": "string",
@@ -1071,7 +1081,6 @@
           "status",
           "domain_name",
           "query_time",
-          "whois_server",
           "domain_registered"
         ],
         "properties": {
@@ -1089,12 +1098,52 @@
           },
           "whois_server": {
             "type": "string",
-            "description": "WHOIS or RDAP server that provided this record."
+            "description": "WHOIS or RDAP server that provided this record. Not returned for every lookup; registry_data carries its own whois_server."
           },
           "domain_registered": {
             "type": "string",
             "enum": ["yes", "no", "restricted"],
             "description": "Domain registration status; 'restricted' means the registry withholds registration details."
+          },
+          "domain_handle": {
+            "type": "string",
+            "description": "Registry handle of the domain, returned when the registry publishes one."
+          },
+          "abuse_contact": {
+            "type": "object",
+            "description": "Where to send abuse reports for the domain: the registrar's name, email and phone.",
+            "properties": {
+              "registrar_name": {
+                "type": "string",
+                "description": "Name of the registrar the abuse contact belongs to."
+              },
+              "email_address": {
+                "type": "string",
+                "description": "Email address for abuse reports."
+              },
+              "phone_number": {
+                "type": "string",
+                "description": "Phone number for abuse reports."
+              }
+            }
+          },
+          "eligibility_info": {
+            "type": "object",
+            "description": "Eligibility record that some registries require for a registration, such as the trademark behind a name in an extension that asks for one.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Identifier of the eligibility record, such as a trademark number."
+              },
+              "name": {
+                "type": "string",
+                "description": "Name the eligibility record is held under."
+              },
+              "type": {
+                "type": "string",
+                "description": "Kind of eligibility, such as Trademark Owner."
+              }
+            }
           },
           "create_date": {
             "type": "string",
@@ -1197,6 +1246,14 @@
           "phone_number": {
             "type": ["string", "null"],
             "description": "Registrar contact phone number, when published."
+          },
+          "handle": {
+            "type": "string",
+            "description": "Registrar handle, returned when the registry publishes one."
+          },
+          "registry_id": {
+            "type": "string",
+            "description": "Registry identifier of the registrar, when published."
           }
         }
       },
@@ -1204,6 +1261,18 @@
         "type": "object",
         "description": "A contact record (registrant, administrative, technical, billing, or reseller) published in the domain's WHOIS record.",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "Contact ID, when published."
+          },
+          "handle": {
+            "type": "string",
+            "description": "Contact handle, returned when the registry publishes one."
+          },
+          "id_type": {
+            "type": "string",
+            "description": "Kind of identifier held in id, such as cnpj or Registry, when the registry publishes it."
+          },
           "name": {
             "type": "string",
             "description": "Contact's full name."

@@ -507,28 +507,6 @@
               }
             }
           },
-          "429": {
-            "description": "Too Many Requests — The per-minute request limit is reached",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "rateLimited": {
-                    "summary": "Per-minute request limit reached",
-                    "value": {
-                      "timestamp": "2024-07-10T13:47:02.486Z",
-                      "status": 429,
-                      "error": "Fetching Whois Data Failed",
-                      "message": "Please slow down. Your maximum request limit per minute reached.",
-                      "path": "/v1.0/asn/whois/live"
-                    }
-                  }
-                }
-              }
-            }
-          },
           "499": {
             "description": "Client Closed Request — The request or connection timeout set by the client is too short, so the server closes the connection before completing the response",
             "content": {

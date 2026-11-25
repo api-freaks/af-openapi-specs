@@ -289,33 +289,6 @@
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
               }
             }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded – API rate limit exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "error": {
-                    "summary": "Error response",
-                    "value": {
-                      "timestamp": "2026-06-06T14:00:00.000Z",
-                      "path": "/v1.0/phone/validation/bulk",
-                      "status": 429,
-                      "error": "Too Many Requests",
-                      "message": "API rate limit exceeded."
-                    }
-                  }
-                }
-              }
-            },
-            "headers": {
-              "X-AF-Credits-Cost": {
-                "$ref": "#/components/headers/X-AF-Credits-Cost"
-              }
-            }
           }
         },
         "operationId": "bulkValidatePhoneNumbers"

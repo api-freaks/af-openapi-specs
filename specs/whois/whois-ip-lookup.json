@@ -21,7 +21,7 @@
       "get": {
         "tags": ["WHOIS APIs"],
         "summary": "Retrieve WHOIS registration and ownership data for an IP address",
-        "description": "Returns WHOIS details for an IPv4 or IPv6 address including IP range, organization, contacts, routes, and raw WHOIS output.",
+        "description": "Returns WHOIS details for an IPv4 or IPv6 address including IP range, organization, contacts, routes, and raw WHOIS output. Private, loopback and other reserved addresses return the IANA special-use block and are charged like any other lookup; the IPv6 loopback address ::1 returns only the raw registry reply.",
         "operationId": "lookupIpWhois",
         "parameters": [
           {
@@ -122,6 +122,17 @@
                     }
                   }
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/IpWhoisResponse"
+                },
+                "examples": {
+                  "typicalSuccessXml": {
+                    "summary": "Typical successful response, as XML (format=xml)",
+                    "value": "<whois>\n  <status>true</status>\n  <ip_address>8.8.8.8</ip_address>\n  <query_time>2026-11-25 07:13:41</query_time>\n  <whois_server>whois.arin.net</whois_server>\n  <inet_nums>\n    <inet_nums>\n      <start_ip>8.8.8.0</start_ip>\n      <end_ip>8.8.8.255</end_ip>\n      <cidr>\n        <cidr>8.8.8.0/24</cidr>\n      </cidr>\n      <net_name>GOGL</net_name>\n      <net_handle>NET-8-8-8-0-2</net_handle>\n      <status>Direct Allocation</status>\n      <organization>Google LLC (GOGL)</organization>\n      <date_created>2023-12-28</date_created>\n      <date_updated>2023-12-28</date_updated>\n      <source>https://rdap.arin.net/registry/ip/8.8.8.0</source>\n      <parents>\n        <parents>NET8 (NET-8-0-0-0-0)</parents>\n      </parents>\n    </inet_nums>\n  </inet_nums>\n  <organization>\n    <handle>GOGL</handle>\n    <name>Google LLC</name>\n    <address>\n      <address>1600 Amphitheatre Parkway</address>\n      <address>Mountain View</address>\n      <address>CA</address>\n      <address>94043</address>\n      <address>US</address>\n    </address>\n    <street>Amphitheatre Parkway</street>\n    <city>Mountain View</city>\n    <state>CA</state>\n    <zip_code>94043</zip_code>\n    <country>\n      <country>US</country>\n    </country>\n    <date_created>2000-03-30</date_created>\n    <date_updated>2019-10-31</date_updated>\n    <source>https://rdap.arin.net/registry/entity/GOGL</source>\n  </organization>\n  <technical_contacts>\n    <technical_contacts>\n      <handle>ZG39-ARIN</handle>\n      <name>Google LLC</name>\n      <email>\n        <email>arin-contact@google.com</email>\n      </email>\n      <phone>\n        <phone>+1-650-253-0000</phone>\n      </phone>\n      <source>https://rdap.arin.net/registry/entity/ZG39-ARIN</source>\n    </technical_contacts>\n  </technical_contacts>\n  <abuse_contacts>\n    <abuse_contacts>\n      <handle>ABUSE5250-ARIN</handle>\n      <name>Abuse</name>\n      <email>\n        <email>network-abuse@google.com</email>\n      </email>\n      <phone>\n        <phone>+1-650-253-0000</phone>\n      </phone>\n      <source>https://rdap.arin.net/registry/entity/ABUSE5250-ARIN</source>\n    </abuse_contacts>\n  </abuse_contacts>\n  <routes>\n    <routes>\n      <source>https://rdap.arin.net/registry/ip/8.8.8.0</source>\n    </routes>\n  </routes>\n  <whois_raw_response># # ARIN WHOIS data and services are subject to the Terms of Use # available at: https://w ...</whois_raw_response>\n</whois>"
+                  }
+                }
               }
             },
             "headers": {
@@ -149,9 +160,7 @@
                         {
                           "start_ip": "8.8.8.0",
                           "end_ip": "8.8.8.255",
-                          "cidr": [
-                            "8.8.8.0/24"
-                          ],
+                          "cidr": ["8.8.8.0/24"],
                           "net_name": "GOGL",
                           "net_handle": "NET-8-8-8-0-2",
                           "status": "Direct Allocation",
@@ -159,9 +168,7 @@
                           "date_created": "2023-12-28",
                           "date_updated": "2023-12-28",
                           "source": "https://rdap.arin.net/registry/ip/8.8.8.0",
-                          "parents": [
-                            "NET8 (NET-8-0-0-0-0)"
-                          ]
+                          "parents": ["NET8 (NET-8-0-0-0-0)"]
                         }
                       ]
                     }
@@ -429,28 +436,6 @@
               }
             }
           },
-          "429": {
-            "description": "Too Many Requests -- The per-minute request limit is reached",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "rateLimited": {
-                    "summary": "Per-minute request limit reached",
-                    "value": {
-                      "timestamp": "2024-07-10T13:47:02.486Z",
-                      "status": 429,
-                      "error": "Fetching Whois Data Failed",
-                      "message": "Please slow down. Your maximum request limit per minute reached.",
-                      "path": "/v1.0/ip/whois/live"
-                    }
-                  }
-                }
-              }
-            }
-          },
           "499": {
             "description": "Client Closed Request -- The request or connection timeout set by the client is too short",
             "content": {
@@ -576,7 +561,13 @@
       "IpWhoisPartialResponse": {
         "type": "object",
         "description": "Partial WHOIS response (HTTP 206). Same shape as IpWhoisResponse, but only the fields the registry returned are present; whois_raw_response, the organization and the contact lists may be missing.",
-        "required": ["status", "ip_address", "query_time", "whois_server", "inet_nums"],
+        "required": [
+          "status",
+          "ip_address",
+          "query_time",
+          "whois_server",
+          "inet_nums"
+        ],
         "properties": {
           "status": {
             "$ref": "#/components/schemas/IpWhoisResponse/properties/status"
@@ -718,7 +709,6 @@
             "type": "string",
             "description": "Unparsed WHOIS response from the WHOIS server."
           }
-
         }
       },
       "InetNum": {
@@ -974,8 +964,6 @@
             "type": "string",
             "description": "WHOIS data source for this IRT object."
           }
-
-
         }
       },
       "IpWhoisOrganization": {

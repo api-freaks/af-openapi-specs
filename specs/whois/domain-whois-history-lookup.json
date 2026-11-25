@@ -115,6 +115,17 @@
                     }
                   }
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainWhoisHistoryLookupResponse"
+                },
+                "examples": {
+                  "typicalSuccessXml": {
+                    "summary": "Typical successful response, as XML (format=xml), cut to the oldest and newest record",
+                    "value": "<HistoricalWhoisResponse>\n  <status>true</status>\n  <whois>historical</whois>\n  <total_records>25</total_records>\n  <whois_domains_historical>\n    <domainInfo>\n      <num>1</num>\n      <status>true</status>\n      <domain_name>example.com</domain_name>\n      <query_time>2022-04-28 12:56:13</query_time>\n      <whois_server />\n      <create_date>1992-01-01</create_date>\n      <update_date>2021-08-14</update_date>\n      <expiry_date>2022-08-13</expiry_date>\n    </domainInfo>\n    <domainInfo>\n      <num>25</num>\n      <status>true</status>\n      <domain_name>example.com</domain_name>\n      <query_time>2026-11-25 07:14:15</query_time>\n      <whois_server />\n      <domain_registered>yes</domain_registered>\n      <create_date>1992-01-01</create_date>\n      <update_date>2026-08-14</update_date>\n      <expiry_date>2027-08-13</expiry_date>\n      <name_servers>\n        <nameServer>elliott.ns.cloudflare.com</nameServer>\n        <nameServer>hera.ns.cloudflare.com</nameServer>\n      </name_servers>\n      <whois_raw_domain>% IANA WHOIS server % for more information on IANA, visit http://www.iana.org % This query ...</whois_raw_domain>\n      <registry_data>\n        <domain_name>EXAMPLE.COM</domain_name>\n        <query_time>2026-11-25 07:14:14</query_time>\n        <whois_server />\n        <domain_registered>yes</domain_registered>\n        <create_date>1995-08-14</create_date>\n        <update_date>2026-08-14</update_date>\n        <expiry_date>2027-08-13</expiry_date>\n        <domain_registrar>\n          <iana_id>376</iana_id>\n          <registrar_name>RESERVED-Internet Assigned Numbers Authority</registrar_name>\n          <website_url>http://res-dom.iana.org</website_url>\n        </domain_registrar>\n        <name_servers>\n          <nameServer>elliott.ns.cloudflare.com</nameServer>\n          <nameServer>hera.ns.cloudflare.com</nameServer>\n        </name_servers>\n        <domain_status>\n          <domainStatus>clientupdateprohibited</domainStatus>\n          <domainStatus>clientdeleteprohibited</domainStatus>\n          <domainStatus>clienttransferprohibited</domainStatus>\n        </domain_status>\n        <whois_raw_registery>Domain Name: EXAMPLE.COM    Registry Domain ID: 2336799_DOMAIN_COM-VRSN    Registrar WHOIS ...</whois_raw_registery>\n      </registry_data>\n    </domainInfo>\n  </whois_domains_historical>\n</HistoricalWhoisResponse>"
+                  }
+                }
               }
             },
             "headers": {
@@ -171,7 +182,7 @@
             }
           },
           "404": {
-            "description": "Not Found — No historical WHOIS records for the domain",
+            "description": "Not Found — No historical WHOIS records for the domain, or the endpoint was called with an HTTP method other than GET",
             "content": {
               "application/json": {
                 "schema": {
@@ -186,6 +197,43 @@
                       "error": "Record Not Found",
                       "message": "Record not found",
                       "path": "/v1.0/whois"
+                    }
+                  },
+                  "resourceNotFound": {
+                    "summary": "Wrong HTTP method or path",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 404,
+                      "timestamp": "2026-11-25T07:14:40.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "406": {
+            "description": "Not Acceptable — The format value is not supported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "unsupportedFormat": {
+                    "summary": "Unsupported format value",
+                    "value": {
+                      "error": "Unsupported Media Type",
+                      "message": "The media type specified in the request is not supported. For more details, please refer to the API documentation.",
+                      "path": "/v1.0/domain/whois/history",
+                      "status": 406,
+                      "timestamp": "2026-11-20T11:13:01.252Z"
                     }
                   }
                 }
@@ -346,28 +394,6 @@
                       "path": "/v1.0/domain/whois/history",
                       "status": 413,
                       "timestamp": "2026-11-20T11:13:00.576Z"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests — Per-minute request limit reached",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "rateLimited": {
-                    "summary": "Request limit per minute reached",
-                    "value": {
-                      "timestamp": "2024-07-10T13:47:02.486Z",
-                      "status": 429,
-                      "error": "Fetching Whois Data Failed",
-                      "message": "Please slow down. Your maximum request limit per minute reached.",
-                      "path": "/v1.0/domain/whois/history"
                     }
                   }
                 }
@@ -564,15 +590,7 @@
       "DomainWhoisHistoryRecord": {
         "type": "object",
         "description": "A single historical WHOIS snapshot captured at a point in time. Early snapshots may omit fields the registry did not publish at that time.",
-        "required": [
-          "num",
-          "status",
-          "domain_name",
-          "query_time",
-          "create_date",
-          "update_date",
-          "expiry_date"
-        ],
+        "required": ["num", "status", "domain_name"],
         "properties": {
           "num": {
             "type": "integer",
@@ -689,6 +707,14 @@
           "phone_number": {
             "type": ["string", "null"],
             "description": "Registrar contact phone number, when published."
+          },
+          "handle": {
+            "type": "string",
+            "description": "Registrar handle, returned when the registry publishes one."
+          },
+          "registry_id": {
+            "type": "string",
+            "description": "Registry identifier of the registrar, when published."
           }
         }
       },

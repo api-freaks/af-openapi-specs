@@ -3,6 +3,18 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.24] - 2026-11-25
+
+### Changed — WHOIS specs checked against the live API (25 Nov 2026)
+
+- **Domain WHOIS, Bulk WHOIS** — `whois_server` is no longer required on a record (the live API does not return it at the top level). Added `domain_handle`, `abuse_contact`, `eligibility_info`, `domain_registrar.handle` and `registry_id`, and contact `id` and `handle`. Added a 404 response for a wrong path, and corrected the inactive-TLD 403 example.
+- **Bulk WHOIS** — entries are not returned in request order, so the response description says to match by `domain_name`. A failed entry's `status` is `false` for an unsupported extension but `true` for an invalid name, so `status_code` is the field to test. A name sent twice returns one entry and is charged each time. Added the 400 examples for a `domainNames` list that holds non-text values and for a body that is not sent as `application/json`.
+- **WHOIS History** — `query_time`, `create_date`, `update_date` and `expiry_date` are optional on a record (older records omit them). Added `domain_registrar.handle` and `registry_id`, the 406 response, and a 404 example for a wrong HTTP method.
+- **IP WHOIS** — the operation notes that private, loopback and other reserved addresses return the IANA special-use block and are charged like any lookup, and that `::1` returns only the raw registry reply.
+- **429 removed** from Domain WHOIS, Bulk WHOIS, WHOIS History, IP WHOIS, ASN Lookup, Phone Validation and Bulk Phone Validation. These APIs have no concurrency limit (see the concurrency limits page), and a burst of 360 requests at up to 30 at a time on IP WHOIS returned no 429.
+- **Contact `id_type`** added to Domain WHOIS and Bulk WHOIS contacts (seen as `cnpj` and `Registry`).
+- **XML** — every success response that could be captured live now has an `application/xml` example: 200 on all four APIs and the Bulk WHOIS 206.
+
 ## [0.4.23] - 2026-11-25
 
 ### Changed — DNS Lookup: `host-name` is now optional
