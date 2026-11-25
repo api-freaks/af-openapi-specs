@@ -3,7 +3,7 @@
   "info": {
     "title": "Web Scraper API - JavaScript Rendering, Proxy Rotation & CAPTCHA Solving",
     "version": "1.0.0",
-    "description": "Executes a sequence of scraping instructions against a target URL and returns the extracted data. Two modes are available via the `jsEnabled` query parameter: `jsEnabled=true` renders the page in a real browser and supports `fill`, `click`, `wait`, iframe switching, image/audio CAPTCHA solving, and other interactive instructions, plus request-level `blockUrl` and `cookies`; `jsEnabled=false` fetches static HTML and supports `postForm`, `getForm`, `getPage`, and `extract`. Every mode's response is an `extractedData` object keyed by the field names used in your `extract` instructions --- each value is a string when its selector matched exactly one element, or an array of strings when it matched more than one; a selector that matches nothing is omitted from the response entirely. The `text` query parameter strips HTML tags from extracted values; under `jsEnabled=true`, single-element matches are always returned as plain text regardless of `text`, while multi-element matches keep tags unless `text=true` is set.",
+    "description": "Executes a sequence of scraping instructions against a target URL and returns the extracted data. Two modes are available via the `jsEnabled` query parameter: `jsEnabled=true` (the default) renders the page in a real browser and supports `fill`, `click`, `wait`, iframe switching, image/audio CAPTCHA solving, and other interactive instructions, plus request-level `blockUrl` and `cookies`; `jsEnabled=false` (must be set explicitly) fetches static HTML and supports `postForm`, `getForm`, `getPage`, and `extract`. Every mode's response is an `extractedData` object keyed by the field names used in your `extract` instructions --- each value is a string when its selector matched exactly one element, or an array of strings when it matched more than one; a selector that matches nothing is omitted from the response entirely. The `text` query parameter strips HTML tags from extracted values; under `jsEnabled=true` (the default), single-element matches are always returned as plain text regardless of `text`, while multi-element matches keep tags unless `text=true` is set.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -48,10 +48,10 @@
             "name": "jsEnabled",
             "in": "query",
             "required": false,
-            "description": "Set to true to render the page in a real browser for dynamic/JavaScript-driven pages (enables fill, click, wait, CAPTCHA-solving, and related instructions). Set to false to fetch static HTML only (enables postForm, getForm, getPage, extract). Default is false.",
+            "description": "Set to true to render the page in a real browser for dynamic/JavaScript-driven pages (enables fill, click, wait, CAPTCHA-solving, and related instructions). Set to false to fetch static HTML only (enables postForm, getForm, getPage, extract). Default is true, so static mode must be requested explicitly with jsEnabled=false. Any value other than false is treated as true.",
             "schema": {
               "type": "boolean",
-              "default": false
+              "default": true
             }
           },
           {
@@ -109,7 +109,7 @@
         ],
         "requestBody": {
           "required": false,
-          "description": "The request body shape depends on the jsEnabled query parameter, not on any field inside the body itself. Pass jsEnabled=true for the interactive/browser instruction set (JsEnabledTrueBody: fill, click, wait, blockUrl, cookies, CAPTCHA solving, and more). Pass jsEnabled=false (or omit it) for the static-HTML instruction set (JsEnabledFalseBody: postForm, getForm, getPage, extract). instructions is an ordered array executed sequentially.",
+          "description": "The request body shape depends on the jsEnabled query parameter, not on any field inside the body itself. Pass jsEnabled=true for the interactive/browser instruction set (JsEnabledTrueBody: fill, click, wait, blockUrl, cookies, CAPTCHA solving, and more). Pass jsEnabled=false for the static-HTML instruction set (JsEnabledFalseBody: postForm, getForm, getPage, extract). instructions is an ordered array executed sequentially. If jsEnabled is omitted, the interactive/browser instruction set applies (jsEnabled defaults to true).",
           "content": {
             "application/json": {
               "schema": {
@@ -124,7 +124,7 @@
               },
               "examples": {
                 "jsEnabledTrue": {
-                  "summary": "Example body for jsEnabled=true (fill, click, wait, extract)",
+                  "summary": "Example body for jsEnabled=true, the default (fill, click, wait, extract)",
                   "value": {
                     "blockUrl": [
                       "https://example.com/ads.js",
@@ -165,7 +165,7 @@
                   }
                 },
                 "jsEnabledFalse": {
-                  "summary": "Example body for jsEnabled=false (extract only)",
+                  "summary": "Example body for jsEnabled=false, set explicitly (extract only)",
                   "value": {
                     "instructions": [
                       {
@@ -304,6 +304,76 @@
                       "message": "Check the url or links",
                       "path": "/v1/scraping/params"
                     }
+                  },
+                  "jsInvalidSelector": {
+                    "summary": "Unparseable CSS or XPath selector (jsEnabled=true)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:02:47.975+00:00",
+                      "status": 400,
+                      "error": "Bad Request",
+                      "message": "Scraping stopped due to an Unknown Exception [Unexpected token \"!\" while parsing selector \"!![\"]",
+                      "path": "/v1/scraping/params"
+                    }
+                  },
+                  "jsTargetUnreachable": {
+                    "summary": "Target URL could not be resolved (jsEnabled=true)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:02:49.424+00:00",
+                      "status": 400,
+                      "error": "Bad Request",
+                      "message": "Scraping stopped due to an Unknown Exception [net::ERR_NAME_NOT_RESOLVED at https://thisdomaindoesnotexist12345xyz.com/]",
+                      "path": "/v1/scraping/params"
+                    }
+                  },
+                  "jsInvalidUrl": {
+                    "summary": "url is not a valid absolute URL (jsEnabled=true)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:02:45.069+00:00",
+                      "status": 400,
+                      "error": "Bad Request",
+                      "message": "Scraping stopped due to an Unknown Exception [Protocol error (Page.navigate): Cannot navigate to invalid URL]",
+                      "path": "/v1/scraping/params"
+                    }
+                  },
+                  "invalidBooleanParam": {
+                    "summary": "A boolean query parameter (for example text) has a non-boolean value",
+                    "value": {
+                      "timestamp": "2026-11-25T10:02:43.043+00:00",
+                      "status": 400,
+                      "error": "Bad Request",
+                      "message": "Scraping stopped due to an Unknown Exception [Failed to convert value of type 'java.lang.String' to required type 'boolean'; Invalid boolean value [foo]]",
+                      "path": "/v1/scraping/params"
+                    }
+                  },
+                  "instructionsNotAppropriate": {
+                    "summary": "Unknown instruction, or an instruction not supported by the selected mode (for example wait with jsEnabled=false)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:02:36.923+00:00",
+                      "status": 400,
+                      "error": "Bad Request",
+                      "message": "Instructions fields are not appropriate",
+                      "path": "/v1/scraping/params"
+                    }
+                  },
+                  "captchaDisabled": {
+                    "summary": "CAPTCHA instruction sent without captcha=true",
+                    "value": {
+                      "timestamp": "2026-11-25T10:08:09.382+00:00",
+                      "status": 400,
+                      "error": "Bad Request",
+                      "message": "Set 'captcha' to 'true' in the parameters to enable captcha solving",
+                      "path": "/v1/scraping/params"
+                    }
+                  },
+                  "formFieldsMissing": {
+                    "summary": "getForm/postForm instruction missing its link/selector or data (jsEnabled=false)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:08:10.293+00:00",
+                      "status": 400,
+                      "error": "Bad Request",
+                      "message": "check your postForm or getForm fields, Either they are missing the link/selector or data",
+                      "path": "/v1/scraping/params"
+                    }
                   }
                 }
               }
@@ -336,6 +406,39 @@
                       "path": "/v1.0/scraping",
                       "status": 404,
                       "timestamp": "2026-07-23T11:51:33.926Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              },
+              "X-Concurrent-Threads": {
+                "$ref": "#/components/headers/X-Concurrent-Threads"
+              },
+              "X-Concurrent-Threads-Active": {
+                "$ref": "#/components/headers/X-Concurrent-Threads-Active"
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable — the scraping service could not complete the request (for example a click or fill instruction targeting an element that never appears, which runs until the browser times out)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "serviceUnavailable": {
+                    "summary": "Scraping service unavailable or timed out",
+                    "value": {
+                      "error": "Service Unavailable",
+                      "message": "Service is unavailable. Please try after some time or contact support@apifreaks.com",
+                      "path": "/v1.0/scraping",
+                      "status": 503,
+                      "timestamp": "2026-11-25T10:04:14.938Z"
                     }
                   }
                 }
@@ -594,7 +697,7 @@
       },
       "JsEnabledFalseBody": {
         "type": "object",
-        "description": "Request body for jsEnabled=false (or omitted): fetches static HTML only, no browser rendering.",
+        "description": "Request body for jsEnabled=false: fetches static HTML only, no browser rendering.",
         "properties": {
           "instructions": {
             "type": "array",

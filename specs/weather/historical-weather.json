@@ -28,7 +28,7 @@
             "name": "format",
             "in": "query",
             "required": false,
-            "description": "Format of the response. Possible values: json.",
+            "description": "Format of the response. Only json is supported.",
             "schema": {
               "type": "string",
               "enum": ["json"],
@@ -58,7 +58,7 @@
             "name": "lat",
             "in": "query",
             "required": false,
-            "description": "Latitude of the location. Takes precedence over location and ip when more than one location parameter is supplied.",
+            "description": "Latitude of the location. Takes precedence over location and ip when more than one location parameter is supplied. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "schema": {
               "type": "number"
             }
@@ -67,7 +67,7 @@
             "name": "long",
             "in": "query",
             "required": false,
-            "description": "Longitude of the location. Must be provided together with lat.",
+            "description": "Longitude of the location. Must be provided together with lat. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "schema": {
               "type": "number"
             }
@@ -332,6 +332,36 @@
                       "error": "error",
                       "path": "/v1.0/weather/historical"
                     }
+                  },
+                  "UnsupportedPrecision": {
+                    "summary": "precision=minutely is not supported on this endpoint",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "'minutely' precision is not supported on this endpoint",
+                      "error": "invalid-params",
+                      "path": "/v1.0/weather/historical"
+                    }
+                  },
+                  "UnresolvedCoordinates": {
+                    "summary": "lat/long not a number, or exactly one of them is 0 (e.g. lat=abc&long=10 or lat=0&long=10)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "Please provide both lat and long parameters.",
+                      "error": "invalid-params",
+                      "path": "/v1.0/weather/historical"
+                    }
+                  },
+                  "MissingApiKey": {
+                    "summary": "No API key supplied (neither X-apiKey header nor apiKey query parameter)",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/weather/historical",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
                   }
                 }
               }
@@ -358,6 +388,43 @@
                       "message": "Location not found",
                       "error": "error",
                       "path": "/v1.0/weather/historical"
+                    }
+                  },
+                  "ResourceNotFound": {
+                    "summary": "Unsupported HTTP method for this endpoint (e.g. POST to a GET endpoint)",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/weather/historical",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/weather/historical",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
                     }
                   }
                 }

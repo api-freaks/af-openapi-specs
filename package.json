@@ -1,6 +1,6 @@
 {
   "name": "@apifreaks/openapi-specs",
-  "version": "0.4.24",
+  "version": "0.4.25",
   "description": "Public OpenAPI 3.1 specifications for all APIFreaks API products.",
   "type": "module",
   "main": "./dist/index.js",

@@ -33,7 +33,7 @@
               "default": "json",
               "enum": ["json", "xml"]
             },
-            "description": "Format of the response. Can be \"json\" or \"xml\"."
+            "description": "Format of the response. Can be \"json\" or \"xml\" (case-insensitive)."
           },
           {
             "in": "query",
@@ -339,6 +339,11 @@
                     }
                   }
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/AstronomyResponse"
+                }
               }
             },
             "headers": {
@@ -372,6 +377,58 @@
                     "value": {
                       "message": "You must provide date in the 'yyyy-MM-dd' format"
                     }
+                  },
+                  "invalidLongitude": {
+                    "summary": "Longitude out of range",
+                    "value": {
+                      "message": "Longitude must be between -180 and 180."
+                    }
+                  },
+                  "missingLong": {
+                    "summary": "lat supplied without long",
+                    "value": {
+                      "message": "'long' must not be null"
+                    }
+                  },
+                  "missingLat": {
+                    "summary": "long supplied without lat",
+                    "value": {
+                      "message": "'lat' must not be null"
+                    }
+                  },
+                  "nonNumericLat": {
+                    "summary": "Non-numeric lat, long or elevation (parameter name in the message)",
+                    "value": {
+                      "message": "Invalid value 'abc' for parameter 'lat'."
+                    }
+                  },
+                  "elevationTooHigh": {
+                    "summary": "elevation above 10000",
+                    "value": {
+                      "message": "Elevation cannot be greater than 10000 meters."
+                    }
+                  },
+                  "invalidLang": {
+                    "summary": "Unsupported lang value",
+                    "value": {
+                      "message": "This 'zz' lang is not valid. Please use 'en' as the default language"
+                    }
+                  },
+                  "invalidTimeZone": {
+                    "summary": "Unknown time_zone value",
+                    "value": {
+                      "message": "Check whether your input value is correct; time_zone_name = Bad"
+                    }
+                  },
+                  "missingApiKey": {
+                    "summary": "No API key supplied",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v2.0/geolocation/astronomy",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
                   }
                 }
               }
@@ -394,6 +451,70 @@
                     "summary": "Location not found",
                     "value": {
                       "message": "We couldn't find the location (ZZZNOTEXIST). Try a city or state level location address only."
+                    }
+                  },
+                  "resourceNotFound": {
+                    "summary": "Unsupported HTTP method (e.g. POST)",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v2.0/geolocation/astronomy",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v2.0/geolocation/astronomy",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "406": {
+            "description": "Not Acceptable — Unsupported format value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "unsupportedFormat": {
+                    "summary": "format=csv (only json and xml are supported)",
+                    "value": {
+                      "error": "Unsupported Media Type",
+                      "message": "The media type specified in the request is not supported. For more details, please refer to the API documentation.",
+                      "path": "/v2.0/geolocation/astronomy",
+                      "status": 406,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
                     }
                   }
                 }

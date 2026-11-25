@@ -21,7 +21,7 @@
       "post": {
         "tags": ["DNS APIs"],
         "summary": "Retrieve A, AAAA, MX, NS, SOA, SPF, TXT, and CNAME DNS records of multiple hostnames in a single request",
-        "description": "Perform DNS lookups for multiple hostnames in a single request. Supports up to 100 hostnames per request and returns DNS records including A, AAAA, MX, NS, SOA, SPF, TXT, and CNAME records. IP addresses in `ipAddresses` are looked up for PTR records. Entries in the response are not guaranteed to follow request order, and a hostname submitted more than once is returned once. Each hostname in `domainNames` costs 15 credits, including duplicates and unregistered domains; hostnames that cannot be processed, IP addresses, and error responses are not charged.",
+        "description": "Perform DNS lookups for multiple hostnames in a single request. Supports up to 100 hostnames per request and returns DNS records including A, AAAA, MX, NS, SOA, SPF, TXT, and CNAME records. IP addresses in `ipAddresses` are looked up for PTR records when `type` is `PTR` or `all`. Entries in the response are not guaranteed to follow request order, and a hostname submitted more than once is returned once. Each hostname in `domainNames` costs 15 credits, including duplicates and unregistered domains; hostnames that cannot be processed, IP addresses, and error responses are not charged.",
         "operationId": "bulkDnsLookup",
         "parameters": [
           {
@@ -41,12 +41,12 @@
             "required": true,
             "style": "form",
             "explode": false,
-            "description": "A comma-separated list of DNS record types for lookup (for example `MX,TXT`), or `all` for every supported type. Values are case-insensitive.",
+            "description": "A comma-separated list of DNS record types for lookup (for example `MX,TXT`), or `all` for every supported type. Values are case-insensitive. `PTR` (also included in `all`) is looked up only for the IP addresses in `ipAddresses`; with any other type the IP addresses are returned with an empty `dnsRecords` array.",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string",
-                "enum": ["A", "AAAA", "MX", "NS", "SOA", "SPF", "TXT", "CNAME", "all"]
+                "enum": ["A", "AAAA", "MX", "NS", "SOA", "SPF", "TXT", "CNAME", "PTR", "all"]
               }
             }
           }
@@ -502,7 +502,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Missing or unsupported type parameter, or a missing, empty or malformed request body (domainNames is required and must be a non-empty array)",
+            "description": "Bad Request — Missing or unsupported type parameter, a missing, empty or malformed request body (domainNames is required and must be a non-empty array; ipAddresses alone is rejected), or a missing API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -537,6 +537,16 @@
                       "path": "/v1.0/domain/dns/live",
                       "status": 400,
                       "timestamp": "2026-07-23T09:52:49.074Z"
+                    }
+                  },
+                  "missingApiKey": {
+                    "summary": "API key not sent",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/domain/dns/live",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
                     }
                   }
                 }
@@ -609,6 +619,55 @@
                           "dnsRecords": []
                         }
                       ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — API key invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/domain/dns/live",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Unsupported Media Type — format is not json or xml",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "badFormat": {
+                    "summary": "format value not supported",
+                    "value": {
+                      "error": "Unsupported Media Type",
+                      "message": "The media type specified in the request is not supported. For more details, please refer to the API documentation.",
+                      "path": "/v1.0/domain/dns/live",
+                      "status": 406,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
                     }
                   }
                 }

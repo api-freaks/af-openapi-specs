@@ -28,7 +28,7 @@
             "name": "format",
             "in": "query",
             "required": false,
-            "description": "Response format. Accepted values: `json` (default) or `xml`.",
+            "description": "Response format. Only `json` is supported; the default is `json`.",
             "schema": {
               "type": "string",
               "enum": ["json"],
@@ -125,6 +125,72 @@
             "headers": {
               "X-AF-Credits-Cost": {
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request — Missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingApiKey": {
+                    "summary": "API key not sent",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v2.0/commodity/symbols",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — API key invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v2.0/commodity/symbols",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — Wrong HTTP method used on the endpoint (e.g. POST instead of GET)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "wrongMethod": {
+                    "summary": "Wrong HTTP method used on the endpoint",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v2.0/commodity/symbols",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
               }
             }
           }
@@ -261,6 +327,34 @@
           "name": {
             "type": "string",
             "description": "Full name of the unit of measurement (e.g., Troy Ounce)."
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error envelope returned by the API on failed requests.",
+        "required": ["message"],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Short error category or exception type."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message describing the failure."
+          },
+          "path": {
+            "type": "string",
+            "description": "API endpoint path that produced the error."
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code returned with the error."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the error occurred (ISO 8601)."
           }
         }
       }

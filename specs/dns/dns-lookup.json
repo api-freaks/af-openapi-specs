@@ -3,7 +3,7 @@
   "info": {
     "title": "DNS Lookup API - Live DNS Records, TTLs & PTR Lookups for Any Hostname",
     "version": "1.0.0",
-    "description": "Performs a live DNS lookup for any hostname or IP address, returning real-time records from authoritative name servers. Supports A, AAAA, MX, NS, SOA, SPF, TXT, and CNAME record types, plus PTR records when querying by IP address via the ipAddress parameter. Each record object includes parsed fields such as address, target, priority, TTL, serial, or verification strings, depending on the record type. Pass a comma-separated list of record types with the type parameter, or use 'all' to retrieve every supported type. The optional format parameter allows switching between JSON and XML output.",
+    "description": "Performs a live DNS lookup for any hostname or IP address, returning real-time records from authoritative name servers. Supports A, AAAA, MX, NS, SOA, SPF, TXT, and CNAME record types, plus PTR records, which are looked up from an IP address passed in the ipAddress parameter with type PTR or all. Each record object includes parsed fields such as address, target, priority, TTL, serial, or verification strings, depending on the record type. Pass a comma-separated list of record types with the type parameter, or use 'all' to retrieve every supported type. The optional format parameter allows switching between JSON and XML output.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -42,7 +42,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Hostname or URL whose DNS records are required. Provide either `host-name` or `ipAddress`."
+            "description": "Hostname or URL whose DNS records are required. Send `host-name`, `ipAddress`, or both."
           },
           {
             "name": "ipAddress",
@@ -51,7 +51,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The IP address for requested DNS's PTR record. 'type' parameter must be set to 'all'. Provide either `host-name` or `ipAddress`."
+            "description": "IPv4 or IPv6 address whose PTR record is required. Use it with `type` set to `PTR` or `all`. Send `host-name`, `ipAddress`, or both; with both, `host-name` is used for the other record types and `ipAddress` for the PTR record."
           },
           {
             "name": "type",
@@ -68,10 +68,11 @@
                 "SPF",
                 "TXT",
                 "CNAME",
+                "PTR",
                 "all"
               ]
             },
-            "description": "A comma-separated list of DNS record types for lookup. Possible values: A, AAAA, MX, NS, SOA, SPF, TXT, CNAME, or all. When ipAddress is provided, type must be \"all\"."
+            "description": "A comma-separated list of DNS record types for lookup. Possible values: A, AAAA, MX, NS, SOA, SPF, TXT, CNAME, PTR, or all. Values are case-insensitive. PTR is looked up from `ipAddress`; the other types are looked up from `host-name`. With only `ipAddress` sent, use `PTR` or `all`."
           }
         ],
         "responses": {
@@ -241,7 +242,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Missing or invalid parameters",
+            "description": "Bad Request — Missing or invalid parameters, or missing API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -276,6 +277,95 @@
                       "error": "Invalid Param Exception",
                       "message": "Please pass domain param correct value[For Technical Support: support@whoisfreaks.com]",
                       "path": "/v2.0/dns/live"
+                    }
+                  },
+                  "ptrWithoutIpAddress": {
+                    "summary": "PTR requested without ipAddress",
+                    "value": {
+                      "timestamp": "2026-11-25T10:07:00.000Z",
+                      "status": 400,
+                      "error": "Invalid Param Exception",
+                      "message": "IP Address is required!",
+                      "path": "/v2.0/dns/live"
+                    }
+                  },
+                  "recordTypeWithoutHostName": {
+                    "summary": "Non-PTR type requested with only ipAddress",
+                    "value": {
+                      "timestamp": "2026-11-25T10:07:00.000Z",
+                      "status": 400,
+                      "error": "Invalid Param Exception",
+                      "message": "Domain name is required!",
+                      "path": "/v2.0/dns/live"
+                    }
+                  },
+                  "invalidIpAddress": {
+                    "summary": "Malformed ipAddress",
+                    "value": {
+                      "timestamp": "2026-11-25T10:07:00.000Z",
+                      "status": 400,
+                      "error": "Invalid Param Exception",
+                      "message": "Pass a valid value for 'ipAddress' param.",
+                      "path": "/v2.0/dns/live"
+                    }
+                  },
+                  "missingApiKey": {
+                    "summary": "API key not sent",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/domain/dns/live",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — API key invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/domain/dns/live",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Unsupported Media Type — format is not json or xml",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "badFormat": {
+                    "summary": "format value not supported",
+                    "value": {
+                      "error": "Unsupported Media Type",
+                      "message": "The media type specified in the request is not supported. For more details, please refer to the API documentation.",
+                      "path": "/v1.0/domain/dns/live",
+                      "status": 406,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
                     }
                   }
                 }
@@ -329,7 +419,7 @@
           },
           "ipAddress": {
             "type": "string",
-            "description": "IP address queried (present when ipAddress parameter is used instead of host-name)."
+            "description": "IP address queried (present when the ipAddress parameter is used, together with or instead of host-name)."
           },
           "dnsTypes": {
             "$ref": "#/components/schemas/DnsTypes",

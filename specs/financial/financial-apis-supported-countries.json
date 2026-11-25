@@ -3,7 +3,7 @@
   "info": {
     "title": "Financial APIs Supported Countries Reference",
     "version": "1.0.0",
-    "description": "Retrieve the countries and states supported by the VAT, IBAN, and SWIFT APIs. The response always includes all three categories — VAT_Supported_Countries_And_States, IBAN_Supported_Countries, and SWIFT_Supported_Countries — each with a different shape. VAT entries are keyed by lowercase country name and include an ISO code plus, for a handful of countries (US, Canada, Spain), a nested map of sub-national state/region codes. IBAN and SWIFT entries are flat arrays of {name, countryCode} objects.",
+    "description": "Retrieve the countries and states supported by the VAT, IBAN, and SWIFT APIs. Use the `type` query parameter (`vat`, `iban` or `swift`) to choose which list is returned; a call with a valid `type` returns only that list, under its own top-level key (VAT_Supported_Countries_And_States, IBAN_Supported_Countries or SWIFT_Supported_Countries). When `type` is omitted or is not one of the three values, all three lists are returned. VAT entries are keyed by lowercase country name and include an ISO code plus, for a handful of countries (US, Canada, Spain), a nested map of sub-national state/region codes. IBAN and SWIFT entries are flat arrays of {name, countryCode} objects.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -21,7 +21,7 @@
       "get": {
         "tags": ["Financial APIs"],
         "summary": "Get supported countries",
-        "description": "Returns the countries and states supported by the VAT, IBAN, and SWIFT APIs.",
+        "description": "Returns the list of countries (and, for VAT, states) supported by the VAT, IBAN, or SWIFT API, depending on the `type` parameter. Only the requested list is returned.",
         "operationId": "getSupportedCountries",
         "parameters": [
           {
@@ -40,22 +40,51 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "vat",
+                "iban",
+                "swift"
+              ]
             },
-            "description": "Accepted by the endpoint but currently has no effect — all three categories (VAT, IBAN, SWIFT) are always returned regardless of this value."
+            "description": "Selects which list to return: `vat`, `iban` or `swift`. Each value returns only its own list. Matching is case-insensitive. If omitted, or set to any other value, all three lists are returned. There is no default."
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response — always returns all three categories",
+            "description": "Successful response — returns the list selected by `type`, or all three lists when `type` is omitted or not recognised",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SupportedCountriesResponse"
                 },
                 "examples": {
-                  "typicalSuccess": {
-                    "summary": "Typical successful response (truncated)",
+                  "allLists": {
+                    "summary": "type omitted — all three lists (truncated)",
+                    "value": {
+                      "VAT_Supported_Countries_And_States": [
+                        {
+                          "germany": {
+                            "code": "de"
+                          }
+                        }
+                      ],
+                      "IBAN_Supported_Countries": [
+                        {
+                          "name": "Albania",
+                          "countryCode": "AL"
+                        }
+                      ],
+                      "SWIFT_Supported_Countries": [
+                        {
+                          "name": "Afghanistan",
+                          "countryCode": "AF"
+                        }
+                      ]
+                    }
+                  },
+                  "vatList": {
+                    "summary": "type=vat — VAT list only (truncated)",
                     "value": {
                       "VAT_Supported_Countries_And_States": [
                         {
@@ -73,27 +102,64 @@
                             }
                           }
                         }
-                      ],
+                      ]
+                    }
+                  },
+                  "ibanList": {
+                    "summary": "type=iban — IBAN list only (truncated)",
+                    "value": {
                       "IBAN_Supported_Countries": [
                         {
-                          "countryCode": "DE",
-                          "name": "Germany"
+                          "name": "Albania",
+                          "countryCode": "AL"
                         },
-                        {
-                          "countryCode": "GB",
-                          "name": "United Kingdom"
-                        }
-                      ],
-                      "SWIFT_Supported_Countries": [
                         {
                           "name": "Germany",
                           "countryCode": "DE"
-                        },
-                        {
-                          "name": "United States",
-                          "countryCode": "US"
                         }
                       ]
+                    }
+                  },
+                  "swiftList": {
+                    "summary": "type=swift — SWIFT list only (truncated)",
+                    "value": {
+                      "SWIFT_Supported_Countries": [
+                        {
+                          "name": "Afghanistan",
+                          "countryCode": "AF"
+                        },
+                        {
+                          "name": "Germany",
+                          "countryCode": "DE"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "406": {
+            "description": "Unsupported Media Type — format is not json or xml",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "badFormat": {
+                    "summary": "format value not supported",
+                    "value": {
+                      "error": "Unsupported Media Type",
+                      "message": "The media type specified in the request is not supported. For more details, please refer to the API documentation.",
+                      "path": "/v1.0/vat/supported-countries",
+                      "status": 406,
+                      "timestamp": "2026-11-25T10:00:55.394Z"
                     }
                   }
                 }
@@ -127,12 +193,7 @@
     "schemas": {
       "SupportedCountriesResponse": {
         "type": "object",
-        "description": "Countries and states supported by the VAT, IBAN, and SWIFT APIs.",
-        "required": [
-          "VAT_Supported_Countries_And_States",
-          "IBAN_Supported_Countries",
-          "SWIFT_Supported_Countries"
-        ],
+        "description": "Countries and states supported by the VAT, IBAN, and SWIFT APIs. Exactly one of the three properties is present, depending on the `type` request parameter.",
         "properties": {
           "VAT_Supported_Countries_And_States": {
             "type": "array",
@@ -161,6 +222,36 @@
             }
           }
         }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Short error category or exception type."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message describing the failure."
+          },
+          "path": {
+            "type": "string",
+            "description": "API endpoint path that produced the error."
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code returned with the error."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the error occurred (ISO 8601)."
+          }
+        },
+        "description": "Standard error envelope returned by the API on failed requests."
       },
       "VatCountryEntry": {
         "type": "object",

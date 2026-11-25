@@ -142,7 +142,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Missing parameters or invalid dates",
+            "description": "Bad Request — Missing parameters or invalid dates, or missing API key",
             "content": {
               "application/json": {
                 "examples": {
@@ -185,6 +185,16 @@
                       "error": "VALIDATION_ERROR",
                       "message": "Start date cannot be after end date"
                     }
+                  },
+                  "missingApiKey": {
+                    "summary": "API key not sent",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v2.0/commodity/fluctuation",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
                   }
                 },
                 "schema": {
@@ -195,6 +205,28 @@
             "headers": {
               "X-AF-Credits-Cost": {
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — API key invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v2.0/commodity/fluctuation",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
               }
             }
           },
@@ -226,7 +258,7 @@
             }
           },
           "404": {
-            "description": "Not found - Symbol or data not available",
+            "description": "Not found - Symbol or data not available, or wrong HTTP method",
             "content": {
               "application/json": {
                 "schema": {
@@ -256,6 +288,16 @@
                       "code": 404,
                       "error": "DATA_NOT_FOUND",
                       "message": "No data found for the given date range"
+                    }
+                  },
+                  "wrongMethod": {
+                    "summary": "Wrong HTTP method used on the endpoint",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v2.0/commodity/fluctuation",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
                     }
                   }
                 }

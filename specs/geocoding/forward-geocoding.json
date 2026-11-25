@@ -34,10 +34,21 @@
             }
           },
           {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "Response format. Only `json` is supported; any other value is ignored and the response is still returned as JSON.",
+            "schema": {
+              "type": "string",
+              "enum": ["json"],
+              "default": "json"
+            }
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of results to return. May return fewer if matches are weak.",
+            "description": "Maximum number of results to return. Must be an integer between 1 and 40. May return fewer if matches are weak.",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -202,6 +213,83 @@
                       "status": 400,
                       "timestamp": "2026-07-22T14:30:11.104Z"
                     }
+                  },
+                  "missingViewboxParams": {
+                    "summary": "Only some of the four viewbox parameters supplied",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "please pass correct parameters",
+                      "path": "/v1.0/geocoder/search",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:00:59.575Z"
+                    }
+                  },
+                  "invalidViewboxLatitudeRange": {
+                    "summary": "`min_lat` or `max_lat` outside the -90 to 90 range",
+                    "value": {
+                      "error": "Invalid Latitude Provided",
+                      "message": "Latitude must be between -90 and 90.",
+                      "path": "/v1.0/geocoder/search",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:01.969Z"
+                    }
+                  },
+                  "invalidViewboxLongitudeRange": {
+                    "summary": "`min_lon` or `max_lon` outside the -180 to 180 range",
+                    "value": {
+                      "error": "Invalid Longitude Provided",
+                      "message": "Longitude must be between -180 and 180.",
+                      "path": "/v1.0/geocoder/search",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:12.506Z"
+                    }
+                  },
+                  "invalidParameters": {
+                    "summary": "A numeric parameter is not a valid number",
+                    "value": {
+                      "error": "Invalid Parameters Provided",
+                      "message": "Please provide valid parameters.",
+                      "path": "/v1.0/geocoder/search",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:01.358Z"
+                    }
+                  },
+                  "missingApiKey": {
+                    "summary": "No API key supplied",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/geocoder/search",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:15.099Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/geocoder/search",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:01:15.616Z"
+                    }
                   }
                 }
               }
@@ -213,7 +301,7 @@
             }
           },
           "404": {
-            "description": "Not Found — No results matched the query",
+            "description": "Not Found — No results matched the query, or an unsupported HTTP method was used",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +316,43 @@
                       "path": "/v1.0/geocoder/search",
                       "status": 404,
                       "timestamp": "2026-07-22T14:29:58.349Z"
+                    }
+                  },
+                  "methodNotAllowed": {
+                    "summary": "Non-GET HTTP method used",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/geocoder/search",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:01:04.916Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error — Returned when the request cannot be processed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "internalError": {
+                    "summary": "Internal server error, e.g. a zero-width viewbox where `min_lon` equals `max_lon`",
+                    "value": {
+                      "error": "Internal Server Error",
+                      "message": "Internal Server Error Occurred.",
+                      "path": "/v1.0/geocoder/search",
+                      "status": 500,
+                      "timestamp": "2026-11-25T10:01:14.559Z"
                     }
                   }
                 }

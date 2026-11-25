@@ -29,10 +29,10 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["json", "xml"],
+              "enum": ["json"],
               "default": "json"
             },
-            "description": "Specifies the desired format for the API response. Choose 'json' for a JSON object. If not provided, the API defaults to JSON format."
+            "description": "Response format. Only `json` is supported; the default is `json`."
           }
         ],
         "requestBody": {
@@ -183,7 +183,7 @@
             }
           },
           "400": {
-            "description": "Bad Request – Missing or malformed request body",
+            "description": "Bad Request – Missing or malformed request body (missing or empty `numbers`, non-array value, or invalid JSON), or missing API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -199,6 +199,16 @@
                       "status": 400,
                       "timestamp": "2026-07-27T12:56:50.387Z"
                     }
+                  },
+                  "missingApiKey": {
+                    "summary": "API key not sent",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/phone/validation/bulk",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
                   }
                 }
               }
@@ -206,6 +216,28 @@
             "headers": {
               "X-AF-Credits-Cost": {
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — API key invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/phone/validation/bulk",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
               }
             }
           },

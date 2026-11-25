@@ -3,7 +3,7 @@
   "info": {
     "title": "Live Weather API",
     "version": "1.0.0",
-    "description": "Retrieve real-time weather conditions for any location worldwide. Supports lookup by city name or address, GPS coordinates, or IP address. Returns current temperature at 2m, apparent temperature, precipitation (rain, showers, snowfall), cloud cover, pressure at MSL and surface, wind speed and gusts at 10m, WMO weather code, air quality (European and US AQI indices plus pollutant concentrations), and astronomical data (sunrise/sunset, moon phase, day length). Pass a timezone to override the resolved location timezone. When no parameter is supplied the API auto-detects the requesting IP address. latitude, longitude, and elevation in the location object are always strings, never numbers. An extreme out-of-range coordinate (e.g. lat=999) returns a different, less specific error message than a moderately out-of-range one (e.g. lat=91).",
+    "description": "Retrieve real-time weather conditions for any location worldwide. Supports lookup by city name or address, GPS coordinates, or IP address. Returns current temperature at 2m, apparent temperature, precipitation (rain, showers, snowfall), cloud cover, pressure at MSL and surface, wind speed and gusts at 10m, WMO weather code, air quality (European and US AQI indices plus pollutant concentrations), and astronomical data (sunrise/sunset, moon phase, day length). Pass a timezone to override the resolved location timezone. When no parameter is supplied the API auto-detects the requesting IP address. latitude, longitude, and elevation in the location object are always strings, never numbers. lat or long outside the valid range returns a 400 (lat=91 or lat=999 both return the same message), while a non-numeric value, or exactly one of lat/long being 0, returns \"Please provide both lat and long parameters.\". Query parameter format is accepted but only JSON is returned.",
     "contact": {
       "name": "APIFreaks Support",
       "url": "https://apifreaks.com/contact",
@@ -25,12 +25,23 @@
         "operationId": "getLiveWeather",
         "parameters": [
           {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "Format of the response. Only json is supported.",
+            "schema": {
+              "type": "string",
+              "enum": ["json"],
+              "default": "json"
+            }
+          },
+          {
             "name": "location",
             "in": "query",
             "schema": {
               "type": "string"
             },
-            "description": "City name, place name, or full address.",
+            "description": "City name, place name, or full address. Ignored when lat and long are both provided; takes precedence over ip.",
             "required": false
           },
           {
@@ -39,7 +50,7 @@
             "schema": {
               "type": "number"
             },
-            "description": "Latitude of the location.",
+            "description": "Latitude of the location. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "required": false
           },
           {
@@ -48,7 +59,7 @@
             "schema": {
               "type": "number"
             },
-            "description": "Longitude of the location.",
+            "description": "Longitude of the location. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "required": false
           },
           {
@@ -57,7 +68,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "IP(v4 or v6) address for location inference.",
+            "description": "IP(v4 or v6) address for location inference. Ignored when location or lat/long is provided; if no location parameter is supplied at all, the requester's own IP is used.",
             "required": false
           },
           {
@@ -161,7 +172,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Missing/incomplete lat+long pair, coordinates out of range, invalid timezone, or invalid IP address",
+            "description": "Bad Request — Missing/incomplete lat+long pair, coordinates out of range or non-numeric, invalid timezone, invalid IP address, or missing API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -169,21 +180,11 @@
                 },
                 "examples": {
                   "InvalidCoordinates": {
-                    "summary": "Latitude or longitude out of range (e.g. lat=91)",
+                    "summary": "Latitude or longitude out of range (e.g. lat=91 or lat=999 with a non-zero long)",
                     "value": {
                       "timestamp": "2026-07-24T11:09:43.616Z",
                       "status": 400,
                       "message": "Invalid latitude or longitude values. Latitude must be between -90 and 90, and longitude must be between -180 and 180",
-                      "error": "invalid-params",
-                      "path": "/v1.0/weather/current"
-                    }
-                  },
-                  "ExtremeCoordinateValue": {
-                    "summary": "Extreme out-of-range value (e.g. lat=999) hits a different, misleading message than a moderate out-of-range value like lat=91",
-                    "value": {
-                      "timestamp": "2026-07-24T11:09:30.501Z",
-                      "status": 400,
-                      "message": "Please provide both lat and long parameters.",
                       "error": "invalid-params",
                       "path": "/v1.0/weather/current"
                     }
@@ -206,6 +207,36 @@
                       "message": "Invalid IP address",
                       "error": "invalid-params",
                       "path": "/v1.0/weather/current"
+                    }
+                  },
+                  "UnresolvedCoordinates": {
+                    "summary": "lat/long not a number, or exactly one of them is 0 (e.g. lat=abc&long=10 or lat=0&long=10)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "Please provide both lat and long parameters.",
+                      "error": "invalid-params",
+                      "path": "/v1.0/weather/current"
+                    }
+                  },
+                  "IncompleteCoordinates": {
+                    "summary": "Only one of lat/long supplied",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "please pass correct parameters",
+                      "path": "/v1.0/weather/current",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  },
+                  "MissingApiKey": {
+                    "summary": "No API key supplied (neither X-apiKey header nor apiKey query parameter)",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/weather/current",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
                     }
                   }
                 }
@@ -233,6 +264,43 @@
                       "message": "Location not found",
                       "error": "error",
                       "path": "/v1.0/weather/current"
+                    }
+                  },
+                  "ResourceNotFound": {
+                    "summary": "Unsupported HTTP method for this endpoint (e.g. POST to a GET endpoint)",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/weather/current",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/weather/current",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
                     }
                   }
                 }

@@ -28,7 +28,7 @@
             "name": "format",
             "in": "query",
             "required": false,
-            "description": "Format of the response. Possible values: json.",
+            "description": "Format of the response. Only json is supported.",
             "schema": {
               "type": "string",
               "enum": ["json"],
@@ -43,7 +43,7 @@
               "type": "string",
               "format": "date"
             },
-            "description": "Starting date for the data in YYYY-MM-DD format. Historical dates must be past dates only. Current or future dates are not allowed for historical data. Data available from 1940 onwards. For precision=daily, the difference between endDate and startDate must not exceed 90 days. For precision=hourly, the difference must not exceed 7 days."
+            "description": "Starting date for the data in YYYY-MM-DD format. Historical dates must be past dates only. Current or future dates are not allowed for historical data. Data available from 1940 onwards. For precision=daily, the range may span at most 90 days (endDate minus startDate of 89 days or less). For precision=hourly, the range may span at most 7 days (endDate minus startDate of 6 days or less)."
           },
           {
             "name": "endDate",
@@ -53,7 +53,7 @@
               "type": "string",
               "format": "date"
             },
-            "description": "End date for the data in YYYY-MM-DD format. Historical dates must be past dates only. Current or future dates are not allowed for historical data. Data available from 1940 onwards. For precision=daily, the difference between endDate and startDate must not exceed 90 days. For precision=hourly, the difference must not exceed 7 days."
+            "description": "End date for the data in YYYY-MM-DD format. Historical dates must be past dates only. Current or future dates are not allowed for historical data. Data available from 1940 onwards. For precision=daily, the range may span at most 90 days (endDate minus startDate of 89 days or less). For precision=hourly, the range may span at most 7 days (endDate minus startDate of 6 days or less)."
           },
           {
             "name": "location",
@@ -61,7 +61,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "City name, place name, or full address.",
+            "description": "City name, place name, or full address. Ignored when lat and long are both provided; takes precedence over ip.",
             "required": false
           },
           {
@@ -70,7 +70,7 @@
             "schema": {
               "type": "number"
             },
-            "description": "Latitude of the location, used together with long. A value of exactly 0 is treated as missing by the live API, and the location is then inferred from the requester IP instead of returning an error, so use a small non-zero value (e.g. 0.0001) for equator queries.",
+            "description": "Latitude of the location, used together with long. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "required": false
           },
           {
@@ -79,7 +79,7 @@
             "schema": {
               "type": "number"
             },
-            "description": "Longitude of the location, used together with lat. A value of exactly 0 is treated as missing by the live API, and the location is then inferred from the requester IP instead of returning an error, so use a small non-zero value (e.g. 0.0001) for prime-meridian queries.",
+            "description": "Longitude of the location, used together with lat. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "required": false
           },
           {
@@ -88,7 +88,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "IP(v4 or v6) address for location inference.",
+            "description": "IP(v4 or v6) address for location inference. Ignored when location or lat/long is provided; if no location parameter is supplied at all, the requester's own IP is used.",
             "required": false
           },
           {
@@ -99,7 +99,7 @@
               "type": "string",
               "default": "daily"
             },
-            "description": "Precision of the data. daily returns a daily aggregate per date; hourly returns 24 hourly readings per date instead and requires the date range to be 7 days or less.",
+            "description": "Precision of the data. daily returns a daily aggregate per date; hourly returns 24 hourly readings per date instead and requires the date range to span at most 7 days (inclusive of both dates).",
             "required": false
           },
           {
@@ -385,6 +385,80 @@
                       "message": "Check whether your input value is correct; timezone = NotATimezone",
                       "error": "error",
                       "path": "/v1.0/weather/time-series"
+                    }
+                  },
+                  "UnresolvedCoordinates": {
+                    "summary": "lat/long not a number, or exactly one of them is 0 (e.g. lat=abc&long=10 or lat=0&long=10)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "Please provide both lat and long parameters.",
+                      "error": "invalid-params",
+                      "path": "/v1.0/weather/time-series"
+                    }
+                  },
+                  "MissingApiKey": {
+                    "summary": "No API key supplied (neither X-apiKey header nor apiKey query parameter)",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/weather/time-series",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/weather/time-series",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — Wrong HTTP method or unknown resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "ResourceNotFound": {
+                    "summary": "Unsupported HTTP method for this endpoint (e.g. POST to a GET endpoint)",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/weather/time-series",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
                     }
                   }
                 }

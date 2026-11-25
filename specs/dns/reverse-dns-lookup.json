@@ -165,7 +165,7 @@
             }
           },
           "400": {
-            "description": "Invalid DNS type or missing required parameter",
+            "description": "Bad Request — Invalid DNS type, invalid value, missing required parameter, or missing API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -191,6 +191,66 @@
                       "status": 400,
                       "timestamp": "2026-07-23T09:51:58.951Z"
                     }
+                  },
+                  "ptrNotSupported": {
+                    "summary": "PTR requested (not available in reverse lookup)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:07:00.000Z",
+                      "status": 400,
+                      "error": "Invalid Param Exception",
+                      "message": "Reverse data does not have PTR record support. kindly try other Record Types.",
+                      "path": "/v2.1/dns/reverse"
+                    }
+                  },
+                  "multipleTypes": {
+                    "summary": "More than one type sent",
+                    "value": {
+                      "timestamp": "2026-11-25T10:07:00.000Z",
+                      "status": 400,
+                      "error": "Invalid Param Exception",
+                      "message": "Reverse query supports only single record type at a time.",
+                      "path": "/v2.1/dns/reverse"
+                    }
+                  },
+                  "invalidIpv4": {
+                    "summary": "type=A with a value that is not an IPv4 address or CIDR",
+                    "value": {
+                      "timestamp": "2026-11-25T10:07:00.000Z",
+                      "status": 400,
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide valid Ipv4 Address or CIDR Notation",
+                      "path": "/v2.1/dns/reverse"
+                    }
+                  },
+                  "invalidIpv6": {
+                    "summary": "type=AAAA with a value that is not an IPv6 address or CIDR",
+                    "value": {
+                      "timestamp": "2026-11-25T10:07:00.000Z",
+                      "status": 400,
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide valid Ipv6 Address or CIDR Notation",
+                      "path": "/v2.1/dns/reverse"
+                    }
+                  },
+                  "cidrSuffixOutOfRange": {
+                    "summary": "CIDR suffix outside the supported range (16-32 for IPv4, 64-128 for IPv6)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:07:00.000Z",
+                      "status": 400,
+                      "error": "CIDR Suffix Out of Range",
+                      "message": "IP Network Suffix must be in the range 16-32 for IPv4 CIDR Notation",
+                      "path": "/v2.1/dns/reverse"
+                    }
+                  },
+                  "missingApiKey": {
+                    "summary": "API key not sent",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/domain/dns/reverse",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
                   }
                 }
               }
@@ -207,8 +267,30 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized — API key invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/domain/dns/reverse",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
-            "description": "No reverse DNS records found for the given input",
+            "description": "Not Found — No reverse DNS records found for the given input, or wrong HTTP method",
             "content": {
               "application/json": {
                 "schema": {
@@ -224,6 +306,16 @@
                       "error": "Record not Found",
                       "message": "No Record Found across: zzsuperrandomnonexistentmxprovider99988.com"
                     }
+                  },
+                  "wrongMethod": {
+                    "summary": "Wrong HTTP method used on the endpoint",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/domain/dns/reverse",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
                   }
                 }
               }
@@ -237,6 +329,33 @@
               },
               "X-Concurrent-Threads-Active": {
                 "$ref": "#/components/headers/X-Concurrent-Threads-Active"
+              }
+            }
+          },
+          "406": {
+            "description": "Unsupported Media Type — format is not json or xml",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "badFormat": {
+                    "summary": "format value not supported",
+                    "value": {
+                      "error": "Unsupported Media Type",
+                      "message": "The media type specified in the request is not supported. For more details, please refer to the API documentation.",
+                      "path": "/v1.0/domain/dns/reverse",
+                      "status": 406,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
               }
             }
           }

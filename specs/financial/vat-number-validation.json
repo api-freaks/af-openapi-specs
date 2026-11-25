@@ -129,6 +129,24 @@
                     "value": {
                       "message": "Unsupported VAT country code. Supported prefixes are UK/GB and EU VAT country codes."
                     }
+                  },
+                  "InvalidRequesterCountry": {
+                    "summary": "requesterVatNumber has an invalid or unsupported country prefix",
+                    "value": {
+                      "message": "The requester member state code is invalid."
+                    }
+                  },
+                  "MandatoryFieldMissing": {
+                    "summary": "vatNumber has a valid prefix but no number (for example DE)",
+                    "value": {
+                      "message": "A mandatory field is missing"
+                    }
+                  },
+                  "UpstreamBusy": {
+                    "summary": "Upstream VIES service is at its concurrent-request limit (transient, retry later)",
+                    "value": {
+                      "message": "MS MAX CONCURRENT REQ"
+                    }
                   }
                 }
               }
@@ -151,6 +169,60 @@
                     "summary": "VAT number not found",
                     "value": {
                       "message": "targetVrn does not match a registered company"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "406": {
+            "description": "Unsupported Media Type — format is not json or xml",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "badFormat": {
+                    "summary": "format value not supported",
+                    "value": {
+                      "error": "Unsupported Media Type",
+                      "message": "The media type specified in the request is not supported. For more details, please refer to the API documentation.",
+                      "path": "/v1.0/vat/validation",
+                      "status": 406,
+                      "timestamp": "2026-11-25T10:00:55.394Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout — the upstream VIES/HMRC service did not respond in time (transient, retry later)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "GatewayTimeout": {
+                    "summary": "Upstream validation service timed out",
+                    "value": {
+                      "error": "Gateway Timeout",
+                      "message": "Request is timed-out. Please contact at support@apifreaks.com",
+                      "path": "/v1.0/vat/validation",
+                      "status": 504,
+                      "timestamp": "2026-11-25T10:06:09.994Z"
                     }
                   }
                 }

@@ -45,6 +45,17 @@
             }
           },
           {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "Response format. Only `json` is supported; any other value is ignored and the response is still returned as JSON.",
+            "schema": {
+              "type": "string",
+              "enum": ["json"],
+              "default": "json"
+            }
+          },
+          {
             "name": "Accept-Language",
             "in": "header",
             "required": false,
@@ -155,6 +166,97 @@
                       "path": "/v1.0/geocoder/reverse",
                       "status": 400,
                       "timestamp": "2026-07-22T14:29:46.809Z"
+                    }
+                  },
+                  "missingApiKey": {
+                    "summary": "No API key supplied",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/geocoder/reverse",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:15.099Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/geocoder/reverse",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:01:15.616Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — An unsupported HTTP method was used",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "methodNotAllowed": {
+                    "summary": "Non-GET HTTP method used",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/geocoder/reverse",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:01:28.856Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error — No address could be resolved for the coordinates (e.g. open ocean) or the request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "internalError": {
+                    "summary": "No address found for the coordinates, e.g. `lat=0&lon=0` in open ocean",
+                    "value": {
+                      "error": "Internal Server Error",
+                      "message": "Internal Server Error Occurred.",
+                      "path": "/v1.0/geocoder/reverse",
+                      "status": 500,
+                      "timestamp": "2026-11-25T10:01:25.626Z"
                     }
                   }
                 }

@@ -3,6 +3,21 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.25] - 2026-11-25
+
+### Changed — specs aligned with the live API (scraper, financial, DNS, commodity, phone, weather, geocoding)
+
+Checked against live responses; spec and website now agree.
+
+- **Web Scraper** — `jsEnabled` defaults to `true` (any value other than `false` runs in the browser); static mode must be requested with `jsEnabled=false`. New 400 examples for inappropriate instructions, missing form fields, captcha not enabled and browser-path failures, plus a 503.
+- **VAT Supported Countries** — `type` takes `vat`, `iban` or `swift` and returns only that list; omitted or unrecognised returns all three. No default. Added a 406 and an "all lists" example.
+- **DNS** — DNS Lookup: `host-name` optional (either `host-name` or `ipAddress`), `PTR` a valid `type`, `type` no longer has to be `all` with `ipAddress`. Bulk DNS: `PTR` added to `type`. DNS History and Reverse DNS: PTR/paging/IPv6/CIDR errors documented.
+- **Commodity Symbols and Phone Validation (single + bulk)** — `format` is `json` only.
+- **Air Quality** — added `precision` (`hourly` only).
+- **Geocoding** — Forward: `limit` states 1–40; `format` (JSON only) added to Forward and Reverse Geocoding; viewbox and range errors documented, plus the 500 for unresolvable coordinates.
+- **Weather** — `format` (JSON only) added to Live Weather and the other weather APIs (astronomy supports XML); date-window wording corrected; zero lat/long behaviour documented; bulk `timezone` removed from items.
+- **All categories above** — missing-key 400, invalid-key 401, wrong-method 404 and unsupported-`format` 406 responses added; parameter descriptions no longer state error behaviour.
+
 ## [0.4.24] - 2026-11-25
 
 ### Changed — WHOIS specs checked against the live API (25 Nov 2026)

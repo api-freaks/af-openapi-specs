@@ -170,7 +170,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Missing or invalid query parameters",
+            "description": "Bad Request — Missing or invalid query parameters, or missing API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -186,6 +186,16 @@
                       "status": 400,
                       "timestamp": "2026-09-14T08:43:43.964Z"
                     }
+                  },
+                  "missingApiKey": {
+                    "summary": "API key not sent",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v2.0/commodity/rates/latest",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
                   }
                 }
               }
@@ -193,6 +203,28 @@
             "headers": {
               "X-AF-Credits-Cost": {
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — API key invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v2.0/commodity/rates/latest",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
               }
             }
           },
@@ -224,7 +256,7 @@
             }
           },
           "404": {
-            "description": "Not found - Symbol or quote currency not available",
+            "description": "Not found - Symbol or quote currency not available, or wrong HTTP method",
             "content": {
               "application/json": {
                 "schema": {
@@ -270,6 +302,16 @@
                       "code": 404,
                       "error": "QUOTE_NOT_FOUND",
                       "message": "The quote currency is invalid, please visit the documentation for a list of valid quote currencies"
+                    }
+                  },
+                  "wrongMethod": {
+                    "summary": "Wrong HTTP method used on the endpoint",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v2.0/commodity/rates/latest",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
                     }
                   }
                 }

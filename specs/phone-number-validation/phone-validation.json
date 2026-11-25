@@ -29,10 +29,10 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["json", "xml"],
+              "enum": ["json"],
               "default": "json"
             },
-            "description": "Specifies the desired format for the API response. Choose 'json' for a JSON object. If not provided, the API defaults to JSON format."
+            "description": "Response format. Only `json` is supported; the default is `json`."
           }
         ],
         "requestBody": {
@@ -123,7 +123,7 @@
             }
           },
           "400": {
-            "description": "Bad Request – e.g. missing required field or both region codes provided",
+            "description": "Bad Request – e.g. missing required field, both region codes provided, malformed body, or missing API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -189,6 +189,46 @@
                       "message": "The phone number has more digits than any valid phone number can have.",
                       "path": "/v1.0/phone-number/info"
                     }
+                  },
+                  "number_too_short": {
+                    "summary": "Number too short after removing the international dialing prefix (e.g. `00`)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:07:00.000Z",
+                      "status": 400,
+                      "error": "Number Too Short",
+                      "message": "The number is too short after removing the international dialing prefix.",
+                      "path": "/v1.0/phone-number/info"
+                    }
+                  },
+                  "too_short_national_number": {
+                    "summary": "National number shorter than allowed (e.g. `00923` with `region` PK)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:07:00.000Z",
+                      "status": 400,
+                      "error": "Too Short National Number",
+                      "message": "The national number part is shorter than allowed for valid phone numbers.",
+                      "path": "/v1.0/phone-number/info"
+                    }
+                  },
+                  "invalid_parameters": {
+                    "summary": "Malformed JSON, missing body, or a non-string number",
+                    "value": {
+                      "timestamp": "2026-11-25T10:07:00.000Z",
+                      "status": 400,
+                      "error": "Invalid Parameters Provided",
+                      "message": "Please provide valid parameters.",
+                      "path": "/v1.0/phone-number/info"
+                    }
+                  },
+                  "missingApiKey": {
+                    "summary": "API key not sent",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/phone/validation",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
                   }
                 }
               }
@@ -196,6 +236,28 @@
             "headers": {
               "X-AF-Credits-Cost": {
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — API key invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/phone/validation",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
               }
             }
           },

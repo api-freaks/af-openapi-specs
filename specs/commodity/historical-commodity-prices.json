@@ -172,7 +172,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Missing parameters or invalid date",
+            "description": "Bad Request — Missing parameters or invalid date, or missing API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -208,6 +208,16 @@
                       "error": "VALIDATION_ERROR",
                       "message": "Invalid Date: The provided date does not exist."
                     }
+                  },
+                  "missingApiKey": {
+                    "summary": "API key not sent",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v2.0/commodity/rates/historical",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
                   }
                 }
               }
@@ -215,6 +225,28 @@
             "headers": {
               "X-AF-Credits-Cost": {
                 "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — API key invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v2.0/commodity/rates/historical",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
               }
             }
           },
@@ -246,7 +278,7 @@
             }
           },
           "404": {
-            "description": "Not found - Symbol or rate not available",
+            "description": "Not found - Symbol or rate not available, or wrong HTTP method",
             "content": {
               "application/json": {
                 "schema": {
@@ -276,6 +308,16 @@
                       "code": 404,
                       "error": "RATE_NOT_FOUND",
                       "message": "no rates found for the specified date"
+                    }
+                  },
+                  "wrongMethod": {
+                    "summary": "Wrong HTTP method used on the endpoint",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v2.0/commodity/rates/historical",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
                     }
                   }
                 }

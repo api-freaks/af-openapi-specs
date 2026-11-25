@@ -28,7 +28,7 @@
             "name": "format",
             "in": "query",
             "required": false,
-            "description": "Format of the response. Possible values: json.",
+            "description": "Format of the response. Only json is supported.",
             "schema": {
               "type": "string",
               "enum": ["json"],
@@ -48,7 +48,7 @@
             "name": "lat",
             "in": "query",
             "required": false,
-            "description": "Latitude of the location. Must be supplied together with long or the request fails with a 400. Takes priority over location and ip when combined with them.",
+            "description": "Latitude of the location. Must be supplied together with long. Takes priority over location and ip when combined with them. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "schema": {
               "type": "number"
             }
@@ -57,7 +57,7 @@
             "name": "long",
             "in": "query",
             "required": false,
-            "description": "Longitude of the location. Must be supplied together with lat or the request fails with a 400.",
+            "description": "Longitude of the location. Must be supplied together with lat. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "schema": {
               "type": "number"
             }
@@ -75,7 +75,7 @@
             "name": "startDate",
             "in": "query",
             "required": false,
-            "description": "Start date for the forecast in YYYY-MM-DD format. Must be supplied together with endDate — passing only one returns a 400. Forecast dates must be today or later, and the range between startDate and endDate must not exceed 16 days from today.",
+            "description": "Start date for the forecast in YYYY-MM-DD format. Must be supplied together with endDate. Forecast dates must be today or later, and both dates must fall within today through 15 days ahead (16 days inclusive).",
             "schema": {
               "type": "string",
               "format": "date"
@@ -85,7 +85,7 @@
             "name": "endDate",
             "in": "query",
             "required": false,
-            "description": "End date for the forecast in YYYY-MM-DD format. Must be supplied together with startDate — passing only one returns a 400. Forecast dates must be today or later, and the range between startDate and endDate must not exceed 16 days from today.",
+            "description": "End date for the forecast in YYYY-MM-DD format. Must be supplied together with startDate. Forecast dates must be today or later, and both dates must fall within today through 15 days ahead (16 days inclusive).",
             "schema": {
               "type": "string",
               "format": "date"
@@ -95,7 +95,7 @@
             "name": "forecastDays",
             "in": "query",
             "required": false,
-            "description": "Number of days to forecast starting today, from 1 to 16. Default is 7. Not used together with startDate/endDate.",
+            "description": "Number of days to forecast starting today, from 1 to 16. Default is 7. Ignored when startDate/endDate are provided.",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -385,6 +385,107 @@
                       "message": "Check whether your input value is correct; timezone = NotATimezone",
                       "error": "error",
                       "path": "/v1.0/weather/forecast"
+                    }
+                  },
+                  "ZeroForecastDays": {
+                    "summary": "forecastDays=0",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "End date must be on or after start date.",
+                      "error": "error",
+                      "path": "/v1.0/weather/forecast"
+                    }
+                  },
+                  "MissingApiKey": {
+                    "summary": "No API key supplied (neither X-apiKey header nor apiKey query parameter)",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/weather/forecast",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/weather/forecast",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — Wrong HTTP method or unknown resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "ResourceNotFound": {
+                    "summary": "Unsupported HTTP method for this endpoint (e.g. POST to a GET endpoint)",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/weather/forecast",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error — Returned when forecastDays is not a number",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InvalidForecastDaysType": {
+                    "summary": "forecastDays=abc (non-numeric); note the path in this response is duplicated",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 500,
+                      "message": "Internal Server Error",
+                      "error": "internal-server-error",
+                      "path": "/v1.0/weather/v1.0/weather/forecast"
                     }
                   }
                 }

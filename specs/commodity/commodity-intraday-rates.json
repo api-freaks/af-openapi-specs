@@ -302,7 +302,7 @@
             }
           },
           "400": {
-            "description": "Bad Request: Missing or invalid parameters, or the symbol has no intraday rates",
+            "description": "Bad Request: Missing or invalid parameters, or the symbol has no intraday rates, or missing API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -428,6 +428,16 @@
                       "error": "VALIDATION_ERROR",
                       "message": "Invalid interval '7m': use one of 1m, 5m, 10m, 15m, 30m, 45m, 1h, 2h, 4h, 8h, 12h, 1d"
                     }
+                  },
+                  "missingApiKey": {
+                    "summary": "API key not sent",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v2.0/commodity/rates/intraday",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
                   }
                 }
               }
@@ -438,8 +448,30 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized — API key invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v2.0/commodity/rates/intraday",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Not found: Symbol not supported, or no data for the requested window",
+            "description": "Not found: Symbol not supported, or no data for the requested window, or wrong HTTP method",
             "content": {
               "application/json": {
                 "schema": {
@@ -469,6 +501,16 @@
                       "code": 404,
                       "error": "DATA_NOT_FOUND",
                       "message": "No intraday data found for the specified window"
+                    }
+                  },
+                  "wrongMethod": {
+                    "summary": "Wrong HTTP method used on the endpoint",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v2.0/commodity/rates/intraday",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:07:00.000Z"
                     }
                   }
                 }

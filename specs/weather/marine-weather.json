@@ -28,7 +28,7 @@
             "name": "format",
             "in": "query",
             "required": false,
-            "description": "Format of the response. Possible values: json.",
+            "description": "Format of the response. Only json is supported.",
             "schema": {
               "type": "string",
               "enum": ["json"],
@@ -39,7 +39,7 @@
             "name": "startDate",
             "in": "query",
             "required": false,
-            "description": "Starting date for marine forecast data in YYYY-MM-DD format. Must be today or a future date, and must be supplied together with endDate — providing only one of the two returns a 400 error. The difference between endDate and startDate must not exceed 16 days.",
+            "description": "Starting date for marine forecast data in YYYY-MM-DD format. Must be today or a future date, and must be supplied together with endDate. Both dates must fall within today through 15 days ahead (16 days inclusive).",
             "schema": {
               "type": "string",
               "format": "date"
@@ -49,7 +49,7 @@
             "name": "endDate",
             "in": "query",
             "required": false,
-            "description": "End date for marine forecast data in YYYY-MM-DD format. Must be today or a future date, and must be supplied together with startDate — providing only one of the two returns a 400 error. The difference between endDate and startDate must not exceed 16 days.",
+            "description": "End date for marine forecast data in YYYY-MM-DD format. Must be today or a future date, and must be supplied together with startDate. Both dates must fall within today through 15 days ahead (16 days inclusive).",
             "schema": {
               "type": "string",
               "format": "date"
@@ -59,7 +59,7 @@
             "name": "location",
             "in": "query",
             "required": false,
-            "description": "City name, place name, or full address.",
+            "description": "City name, place name, or full address. Ignored when lat and long are both provided; takes precedence over ip.",
             "schema": {
               "type": "string"
             }
@@ -68,7 +68,7 @@
             "name": "lat",
             "in": "query",
             "required": false,
-            "description": "Latitude of the location.",
+            "description": "Latitude of the location. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "schema": {
               "type": "number"
             }
@@ -77,7 +77,7 @@
             "name": "long",
             "in": "query",
             "required": false,
-            "description": "Longitude of the location.",
+            "description": "Longitude of the location. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "schema": {
               "type": "number"
             }
@@ -289,9 +289,9 @@
                   "invalidTimezone": {
                     "summary": "Invalid timezone",
                     "value": {
-                      "timestamp": "2026-07-24T11:35:20.399Z",
+                      "timestamp": "2026-11-25T10:01:00.000Z",
                       "status": 400,
-                      "message": "Invalid timezone",
+                      "message": "Check whether your input value is correct; timezone = NotATimezone",
                       "error": "error",
                       "path": "/v1.0/weather/marine"
                     }
@@ -314,6 +314,56 @@
                       "path": "/v1.0/weather/marine",
                       "status": 400,
                       "timestamp": "2026-07-24T11:35:30.525Z"
+                    }
+                  },
+                  "invalidDateFormat": {
+                    "summary": "startDate or endDate not in YYYY-MM-DD format",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "startDate must be in yyyy-mm-dd format",
+                      "error": "invalid-params",
+                      "path": "/v1.0/weather/marine"
+                    }
+                  },
+                  "endBeforeStart": {
+                    "summary": "startDate later than endDate",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "startDate must be before or equal to endDate",
+                      "error": "params-exception-error",
+                      "path": "/v1.0/weather/marine"
+                    }
+                  },
+                  "InvalidCalendarDate": {
+                    "summary": "Well-formed but impossible date (e.g. startDate=2026-13-45)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "Bad Request",
+                      "error": "error",
+                      "path": "/v1.0/weather/marine"
+                    }
+                  },
+                  "UnresolvedCoordinates": {
+                    "summary": "lat/long not a number, or exactly one of them is 0 (e.g. lat=abc&long=10 or lat=0&long=10)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "Please provide both lat and long parameters.",
+                      "error": "invalid-params",
+                      "path": "/v1.0/weather/marine"
+                    }
+                  },
+                  "MissingApiKey": {
+                    "summary": "No API key supplied (neither X-apiKey header nor apiKey query parameter)",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/weather/marine",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
                     }
                   }
                 }
@@ -341,6 +391,43 @@
                       "message": "Location not found",
                       "error": "error",
                       "path": "/v1.0/weather/marine"
+                    }
+                  },
+                  "ResourceNotFound": {
+                    "summary": "Unsupported HTTP method for this endpoint (e.g. POST to a GET endpoint)",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/weather/marine",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/weather/marine",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
                     }
                   }
                 }

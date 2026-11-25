@@ -28,7 +28,7 @@
             "name": "format",
             "in": "query",
             "required": false,
-            "description": "Format of the response. Possible values: json.",
+            "description": "Format of the response. Only json is supported.",
             "schema": {
               "type": "string",
               "enum": ["json"],
@@ -43,7 +43,7 @@
               "type": "string",
               "format": "date"
             },
-            "description": "Starting date for flood forecast data in YYYY-MM-DD format. Forecast dates must be current or future dates only. Past dates are not allowed for forecast data. The difference between endDate and startDate must not exceed 16 days."
+            "description": "Starting date for flood forecast data in YYYY-MM-DD format. Forecast dates must be current or future dates only. Past dates are not allowed for forecast data. Both dates must fall within today through 15 days ahead (16 days inclusive)."
           },
           {
             "name": "endDate",
@@ -53,7 +53,7 @@
               "type": "string",
               "format": "date"
             },
-            "description": "End date for flood forecast data in YYYY-MM-DD format. Forecast dates must be current or future dates only. Past dates are not allowed for forecast data. The difference between endDate and startDate must not exceed 16 days."
+            "description": "End date for flood forecast data in YYYY-MM-DD format. Forecast dates must be current or future dates only. Past dates are not allowed for forecast data. Both dates must fall within today through 15 days ahead (16 days inclusive)."
           },
           {
             "name": "location",
@@ -61,7 +61,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "City name, place name, or full address.",
+            "description": "City name, place name, or full address. Ignored when lat and long are both provided; takes precedence over ip.",
             "required": false
           },
           {
@@ -70,7 +70,7 @@
             "schema": {
               "type": "number"
             },
-            "description": "Latitude of the location.",
+            "description": "Latitude of the location. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "required": false
           },
           {
@@ -79,7 +79,7 @@
             "schema": {
               "type": "number"
             },
-            "description": "Longitude of the location.",
+            "description": "Longitude of the location. lat=0 together with long=0 is treated as missing and the location falls back to the requester IP (or to location/ip if given); use a small non-zero value (for example 0.0001) to query the equator or prime meridian.",
             "required": false
           },
           {
@@ -88,14 +88,14 @@
             "schema": {
               "type": "string"
             },
-            "description": "IP(v4 or v6) address for location inference.",
+            "description": "IP(v4 or v6) address for location inference. Ignored when location or lat/long is provided; if no location parameter is supplied at all, the requester's own IP is used.",
             "required": false
           },
           {
             "name": "precision",
             "in": "query",
             "required": false,
-            "description": "Forecast data granularity. Only 'daily' is supported; any other value returns a 400 error.",
+            "description": "Forecast data granularity. Only 'daily' is supported.",
             "schema": {
               "type": "string",
               "enum": ["daily"],
@@ -276,11 +276,11 @@
                     }
                   },
                   "InvalidPrecision": {
-                    "summary": "Unsupported precision value",
+                    "summary": "Unknown precision value (e.g. precision=foo)",
                     "value": {
-                      "timestamp": "2026-07-24T11:35:40.099Z",
+                      "timestamp": "2026-11-25T10:01:00.000Z",
                       "status": 400,
-                      "message": "'hourly' precision is not supported on this endpoint",
+                      "message": "Invalid precision",
                       "error": "invalid-params",
                       "path": "/v1.0/weather/flood"
                     }
@@ -314,6 +314,36 @@
                       "error": "params-exception-error",
                       "path": "/v1.0/weather/flood"
                     }
+                  },
+                  "InvalidTimezone": {
+                    "summary": "Invalid timezone",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "Check whether your input value is correct; timezone = NotATimezone",
+                      "error": "error",
+                      "path": "/v1.0/weather/flood"
+                    }
+                  },
+                  "InvalidCalendarDate": {
+                    "summary": "Well-formed but impossible date (e.g. startDate=2026-13-45)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "Bad Request",
+                      "error": "error",
+                      "path": "/v1.0/weather/flood"
+                    }
+                  },
+                  "MissingApiKey": {
+                    "summary": "No API key supplied (neither X-apiKey header nor apiKey query parameter)",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/weather/flood",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
                   }
                 }
               }
@@ -340,6 +370,43 @@
                       "message": "Location not found",
                       "error": "error",
                       "path": "/v1.0/weather/flood"
+                    }
+                  },
+                  "ResourceNotFound": {
+                    "summary": "Unsupported HTTP method for this endpoint (e.g. POST to a GET endpoint)",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/weather/flood",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/weather/flood",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
                     }
                   }
                 }

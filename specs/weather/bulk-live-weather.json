@@ -27,7 +27,7 @@
             "name": "format",
             "in": "query",
             "required": false,
-            "description": "Format of the response. Possible values: json.",
+            "description": "Format of the response. Only json is supported.",
             "schema": {
               "type": "string",
               "enum": ["json"],
@@ -165,6 +165,32 @@
                         }
                       ]
                     }
+                  },
+                  "invalidTimezone": {
+                    "summary": "timezone query parameter is invalid — request still returns 200 with an error object per item",
+                    "value": {
+                      "bulk": [
+                        {
+                          "error": "Check whether your input value is correct; timezone = Bad"
+                        }
+                      ]
+                    }
+                  },
+                  "partialFailureMixed": {
+                    "summary": "Per-item errors: unknown location, only one of lat/long, empty item, ip + lat/long",
+                    "value": {
+                      "bulk": [
+                        {
+                          "error": "Location not found"
+                        },
+                        {
+                          "error": "Missing required location parameters"
+                        },
+                        {
+                          "error": "Missing required location parameters"
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -176,7 +202,7 @@
             }
           },
           "400": {
-            "description": "Bad Request — Missing/malformed request body, or a non-object item in the locations array",
+            "description": "Bad Request — Missing/malformed request body, an empty locations array, or an invalid item in the locations array (non-object item, unknown property, out-of-range or non-numeric lat/long, invalid ip, empty location)",
             "content": {
               "application/json": {
                 "schema": {
@@ -201,6 +227,204 @@
                       "message": "\"locations[0]\" must be of type object",
                       "error": "error",
                       "path": "/v1.0/weather/current/bulk"
+                    }
+                  },
+                  "EmptyLocations": {
+                    "summary": "locations missing, empty, not an array, or the body is not an object (same response as InvalidBody)",
+                    "value": {
+                      "error": "Invalid request body Exception",
+                      "message": "Please provide data in required format in request body",
+                      "path": "/v1.0/weather/current",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  },
+                  "ItemLatOutOfRange": {
+                    "summary": "lat outside -90..90 in an item (the whole request fails, unlike an unresolvable location)",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "\"locations[1].lat\" must be less than or equal to 90",
+                      "error": "error",
+                      "path": "/v1.0/weather/current/bulk"
+                    }
+                  },
+                  "ItemLongOutOfRange": {
+                    "summary": "long outside -180..180 in an item",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "\"locations[0].long\" must be less than or equal to 180",
+                      "error": "error",
+                      "path": "/v1.0/weather/current/bulk"
+                    }
+                  },
+                  "ItemLatNotNumber": {
+                    "summary": "lat or long not a number in an item",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "\"locations[0].lat\" must be a number",
+                      "error": "error",
+                      "path": "/v1.0/weather/current/bulk"
+                    }
+                  },
+                  "ItemInvalidIp": {
+                    "summary": "Invalid ip in an item",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "\"locations[2].ip\" must be a valid ip address of one of the following versions [ipv4, ipv6] with a optional CIDR",
+                      "error": "error",
+                      "path": "/v1.0/weather/current/bulk"
+                    }
+                  },
+                  "ItemUnknownField": {
+                    "summary": "Unknown property in an item",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "\"locations[0].bogus\" is not allowed",
+                      "error": "error",
+                      "path": "/v1.0/weather/current/bulk"
+                    }
+                  },
+                  "ItemTimezoneNotAllowed": {
+                    "summary": "timezone set on an item instead of as a query parameter",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "\"locations[0].timezone\" is not allowed",
+                      "error": "error",
+                      "path": "/v1.0/weather/current/bulk"
+                    }
+                  },
+                  "ItemEmptyLocation": {
+                    "summary": "Empty location string in an item",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 400,
+                      "message": "\"locations[0].location\" is not allowed to be empty",
+                      "error": "error",
+                      "path": "/v1.0/weather/current/bulk"
+                    }
+                  },
+                  "MissingApiKey": {
+                    "summary": "No API key supplied (neither X-apiKey header nor apiKey query parameter)",
+                    "value": {
+                      "error": "Invalid Param Exception",
+                      "message": "Please provide apiKey",
+                      "path": "/v1.0/weather/current",
+                      "status": 400,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — The API key is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidApiKey": {
+                    "summary": "Invalid API key",
+                    "value": {
+                      "error": "API Access Exception",
+                      "message": "Provided API key is invalid. [For Technical Support: support@apifreaks.com]",
+                      "path": "/v1.0/weather/current",
+                      "status": 401,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found — Unsupported HTTP method (e.g. PUT)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "ResourceNotFound": {
+                    "summary": "Unsupported HTTP method for this endpoint (e.g. POST to a GET endpoint)",
+                    "value": {
+                      "error": "Resource Not Found",
+                      "message": "The requested resource could not be found. Please verify the URL and try again.",
+                      "path": "/v1.0/weather/current",
+                      "status": 404,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large — More than 50 locations in the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "tooManyLocations": {
+                    "summary": "51 or more items in locations",
+                    "value": {
+                      "error": "Payload too large Exception",
+                      "message": "Maximum request body size limit exceeded",
+                      "path": "/v1.0/weather/current",
+                      "status": 413,
+                      "timestamp": "2026-11-25T10:01:00.000Z"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-AF-Credits-Cost": {
+                "$ref": "#/components/headers/X-AF-Credits-Cost"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error — Request body is not sent as JSON (missing or non-JSON Content-Type header)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingContentType": {
+                    "summary": "POST without Content-Type: application/json; note the path in this response is duplicated",
+                    "value": {
+                      "timestamp": "2026-11-25T10:01:00.000Z",
+                      "status": 500,
+                      "message": "Internal Server Error",
+                      "error": "internal-server-error",
+                      "path": "/v1.0/weather/v1.0/weather/current/bulk"
                     }
                   }
                 }
@@ -250,7 +474,7 @@
       },
       "BulkLocationItem": {
         "type": "object",
-        "description": "Each object specifies one location using exactly one of the supported lookup methods: location alone, lat+long together, or ip alone. None of these fields is required at the schema level — an item missing all of them is still accepted by the request, but resolves to a per-item error object in the response (see BulkCurrentResponse) rather than failing the whole request.",
+        "description": "Each object specifies one location using one of the supported lookup methods: location alone, lat+long together, or ip alone. If more than one is given, lat+long takes precedence over location, and location over ip. None of these fields is required at the schema level — an item missing all of them (or with only one of lat/long, or with lat or long equal to 0) is still accepted by the request, but resolves to a per-item error object in the response (see BulkCurrentResponse) rather than failing the whole request. Only the properties below are allowed (e.g. a per-item timezone is rejected with a 400; use the timezone query parameter instead), lat must be between -90 and 90, long between -180 and 180, ip a valid IPv4/IPv6 address, and location a non-empty string, otherwise the whole request fails with a 400.",
         "properties": {
           "location": {
             "type": "string",
