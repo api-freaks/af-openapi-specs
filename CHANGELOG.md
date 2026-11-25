@@ -3,6 +3,12 @@
 All notable changes to the `@apifreaks/openapi-specs` package are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.23] - 2026-11-25
+
+### Changed — DNS Lookup: `host-name` is now optional
+
+- `host-name` is no longer required: either `host-name` or `ipAddress` can be supplied. When neither is sent the API returns a 400 `Invalid Param Exception`, which is documented in the 400 examples. `host-name` and `ipAddress` descriptions updated to say so.
+
 ## [0.4.22] - 2026-11-25
 
 ### Changed — Website Screenshot + Bulk Screenshot parameter descriptions tightened
@@ -11,7 +17,7 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`delay`** — notes that values above 30000 are cut to 30 seconds without failing the request.
 - **`scroll_delay`** — notes that a very high value on a long page can exceed `timeout` and fail the request.
 - **`block_specific_requests`** — documents exact-URL matching and `*` wildcard behaviour, with an example.
-- **Captcha solver** — `solve_captcha`, `captcha_image`, `captcha_submit`, `captcha_error` and `captcha_attempts` descriptions clarify supported captcha types, the 30-second wait, and failure behaviour.
+- **Captcha solver** — `solve_captcha`, `captcha_image`, `captcha_submit`, `captcha_error` and `captcha_retries` descriptions clarify supported captcha types, the 30-second wait, and failure behaviour.
 
 ## [0.4.21] - 2026-11-20
 
