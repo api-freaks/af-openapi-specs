@@ -318,10 +318,10 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["load", "domcontentloaded", "networkidle"],
+              "enum": ["load", "domcontentloaded", "networkidle0", "networkidle2"],
               "default": "load"
             },
-            "description": "Controls when rendering starts based on page load lifecycle. `load` (all resources), `domcontentloaded` (HTML parsed), `networkidle` (no network activity for 500ms)."
+            "description": "Controls when rendering starts based on the page load lifecycle. `load` waits for all resources, `domcontentloaded` waits for the HTML to be parsed, `networkidle0` waits until there are no network requests for 500ms, and `networkidle2` waits until no more than 2 requests are active for 500ms. Use `networkidle2` when a page keeps one or two long-running requests open, such as a polling call, that stop `networkidle0` from completing. Write the value in lowercase, exactly as listed."
           },
           {
             "name": "delay",
@@ -331,7 +331,7 @@
               "type": "integer",
               "default": 0
             },
-            "description": "Wait period in milliseconds before capture. Allows animations, API responses, and dynamic elements to finish rendering."
+            "description": "Wait period in milliseconds before capture. Allows animations, API responses, and dynamic elements to finish rendering. A value above 30000 is cut to 30 seconds and the request still succeeds."
           },
           {
             "name": "lazy_load",
@@ -351,7 +351,7 @@
               "type": "integer",
               "default": 500
             },
-            "description": "Delay in milliseconds between scroll steps when `lazy_load` is enabled. Use higher values for heavy pages."
+            "description": "Delay in milliseconds between scroll steps when `lazy_load` is enabled. Use higher values for heavy pages. On a long page, a very high value can push the total time past `timeout` and fail the request."
           },
           {
             "name": "timeout",
@@ -727,7 +727,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Fine-grained blocking of specific URLs or patterns. Separate multiple rules by comma, space, or newline. Default: empty."
+            "description": "Blocks specific requests. Separate rules by comma, space, or newline. A rule without `*` must match the full request URL exactly, including the scheme and path; a bare domain or partial path does not match. A rule with `*` is a wildcard: each `*` matches any run of characters, including dots and slashes, the whole URL must match, and matching is not case-sensitive. Use wildcards for URLs that change on every load, such as a random subdomain or port, for example `https://*.example.com:*/*`. Default: empty."
           },
           {
             "name": "extract_text",
@@ -835,7 +835,7 @@
               "type": "boolean",
               "default": false
             },
-            "description": "Solves a captcha made of text drawn in a picture, then takes the screenshot. Requires captcha_image and captcha_input. Adds 20 credits per request."
+            "description": "Solves a captcha made of text drawn in a picture, then takes the screenshot. Requires captcha_image and captcha_input. It reads text inside a picture only; checkbox challenges and challenges that ask you to select pictures are not supported. Adds 20 credits per request."
           },
           {
             "name": "captcha_image",
@@ -844,7 +844,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "CSS selector of the captcha picture. Required when solve_captcha is true."
+            "description": "CSS selector of the captcha picture, for example `#captcha-img`. Required when solve_captcha is true. The solver waits up to 30 seconds for it to appear."
           },
           {
             "name": "captcha_input",
@@ -862,7 +862,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "CSS selector of the button to click after the answer is typed."
+            "description": "CSS selector of the button to click after the answer is typed. Without it the answer is typed but no button is pressed, which works only when the page checks the answer as you type."
           },
           {
             "name": "captcha_error",
@@ -871,7 +871,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "CSS selector of the message shown for a wrong answer. While it is visible, the solver tries again."
+            "description": "CSS selector of the message shown for a wrong answer. While it is visible, the solver tries again. Without it the solver cannot tell that a guess was wrong and makes one try."
           },
           {
             "name": "captcha_refresh",
@@ -892,7 +892,7 @@
               "maximum": 5,
               "default": 3
             },
-            "description": "Number of guesses the solver makes, from 1 to 5."
+            "description": "Number of guesses the solver makes, from 1 to 5. When every guess is rejected, the request fails."
           },
           {
             "name": "ocr_model",
