@@ -42,7 +42,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Hostname or URL whose DNS records are required. Provide either `host-name` or `ipAddress`. If neither is sent, the API returns a 400 error."
+            "description": "Hostname or URL whose DNS records are required. Provide either `host-name` or `ipAddress`."
           },
           {
             "name": "ipAddress",
@@ -51,7 +51,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The IP address for requested DNS's PTR record. 'type' parameter must be set to 'all'. Provide either `host-name` or `ipAddress`; if neither is sent, the API returns a 400 error."
+            "description": "The IP address for requested DNS's PTR record. 'type' parameter must be set to 'all'. Provide either `host-name` or `ipAddress`."
           },
           {
             "name": "type",

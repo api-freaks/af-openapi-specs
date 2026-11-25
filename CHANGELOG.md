@@ -7,7 +7,7 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed — DNS Lookup: `host-name` is now optional
 
-- `host-name` is no longer required: either `host-name` or `ipAddress` can be supplied. When neither is sent the API returns a 400 `Invalid Param Exception`, which is documented in the 400 examples. `host-name` and `ipAddress` descriptions updated to say so.
+- `host-name` is no longer required: either `host-name` or `ipAddress` can be supplied. The 400 example for a missing parameter is relabelled accordingly, and the `host-name` and `ipAddress` descriptions say either one can be sent.
 
 ## [0.4.22] - 2026-11-25
 
